@@ -25,7 +25,7 @@ class UniversalRAGIngestor:
         Output: A Python f-string template.
         """
 
-        os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
+        os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.getenv("HUGGINGFACEHUB_API_TOKEN")
         if not os.environ.get("HUGGINGFACEHUB_API_TOKEN"):
             os.environ["HUGGINGFACEHUB_API_TOKEN"] = getpass.getpass(
                 "Enter Hugging Face token (HUGGINGFACEHUB_API_TOKEN): "
