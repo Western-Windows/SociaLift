@@ -5,14 +5,19 @@ import sys
 import pandas as pd
 from datetime import datetime, timedelta
 
-# Try to import config
+"""
+Filename: get_page_insights.py
+Version: 1.0
+Description:
+This script fetches and processes insights data for a Facebook Page.
+"""
+
 try:
     from config import Config
 except ImportError:
     print("❌ Error: config.py not found.")
     sys.exit(1)
 
-# Configure Logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -45,7 +50,7 @@ class PageInsightsFetcher:
             "page_follows": "last"
         }
 
-        # 3. Explanations
+        # 2. Explanations
         self.explanations = {
             "page_post_engagements": "Total number of times people engaged with your posts (likes, comments, shares, clicks).",
             "page_daily_follows": "The number of new people who liked/followed your Page (Monthly Sum).",
@@ -65,7 +70,7 @@ class PageInsightsFetcher:
             "page_actions_post_reactions_total": "Total number of all reactions (Like, Love, Wow, etc.) on your Page's posts."
         }
 
-    def fetch_insights(self, days_ago=365):
+    def fetch_insights(self, days_ago=90):
         """
         Fetches insights for the last 'days_ago' days.
         """
@@ -101,10 +106,9 @@ class PageInsightsFetcher:
 
                     for entry in values:
                         raw_val = entry.get("value", 0)
-                        
-                        # 🔧 CRITICAL FIX: Sum up dictionary values if API returns breakdown
+            
                         if isinstance(raw_val, dict):
-                            # e.g. {'like': 10, 'love': 5} -> 15
+                     
                             cleaned_val = sum(raw_val.values())
                         else:
                             cleaned_val = raw_val
@@ -129,41 +133,36 @@ class PageInsightsFetcher:
         df['date'] = pd.to_datetime(df['date'])
         df['value'] = pd.to_numeric(df['value']).fillna(0)
 
-        # We will build a dictionary keyed by "YYYY-MM"
         month_map = {}
 
         for metric in df['metric'].unique():
             metric_df = df[df['metric'] == metric].copy()
             metric_df.set_index('date', inplace=True)
-            
-            # Determine Rule
+       
             rule = self.aggregation_rules.get(metric, 'sum')
-            
-            # Resample (Support both old 'M' and new 'ME' pandas versions)
+          
             try:
                 resampled = metric_df.resample('ME')['value'].agg(rule)
             except ValueError:
                 resampled = metric_df.resample('M')['value'].agg(rule)
             
             for date_idx, val in resampled.items():
-                # Only keep valid data points
+
                 if pd.notna(val):
                     month_key = date_idx.strftime('%Y-%m')
                     
                     if month_key not in month_map:
                         month_map[month_key] = {"month": month_key}
-                    
-                    # Add the metric object to this month
+   
                     month_map[month_key][metric] = {
                         "value": int(val),
                         "explanation": self.explanations.get(metric, "")
                     }
 
-        # Convert the dictionary map to a sorted list
         final_list = sorted(list(month_map.values()), key=lambda x: x['month'])
         return final_list
 
-    def save_to_json(self, data, filename="monthly_detailed_insights.json"):
+    def save_to_json(self, data, filename="./Graph API/JSON/monthly_detailed_insights.json"):
         try:
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
@@ -179,8 +178,7 @@ if __name__ == "__main__":
     
     if daily_raw:
         grouped_data = fetcher.group_and_aggregate(daily_raw)
-        
-        # 3. Save
+
         fetcher.save_to_json(grouped_data)
     else:
         print("⚠️ No data found.")

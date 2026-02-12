@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""
-Clean Country-Based Trend Fetcher (Safe Mode)
 
-Changes:
-1. Country is a parameter (default = Egypt).
-2. Category filtering REMOVED.
-3. Returns TOP 50 trending topics.
-4. Keeps original PyTrends scraping logic intact.
+"""
+Filename: get_trends_google.py
+Version: 1.0
+Description:
+This script fetches and processes Google Trends data for a specific country.
+It uses a predefined list of neutral seed terms to gather related rising trends, then applies classification to categorize them according to custom page categories.
 """
 
 import requests
@@ -31,7 +30,6 @@ except ImportError:
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
-# 🔑 Neutral seeds (category-free)
 SEED_TERMS = [
     # 1. Local Business & Services
     "Advertising/Marketing Service",
@@ -117,7 +115,6 @@ SEED_TERMS = [
     "Religious Organization"
 ]
 
-# 🌍 Country map
 COUNTRY_MAP = {
     "egypt": "EG",
     "united states": "US",
@@ -145,9 +142,6 @@ class ContentManager:
             backoff_factor=0.5
         )
 
-    # ==========================
-    # 🌍 TREND SCRAPER (UNCHANGED LOGIC)
-    # ==========================
     def fetch_trends(self):
         all_trends = {}
 
@@ -177,14 +171,12 @@ class ContentManager:
             except Exception:
                 continue
 
-        # 🔝 keep top 50
         sorted_trends = sorted(
             all_trends.items(),
             key=lambda x: x[1],
             reverse=True
         )[:50]
 
-        # ✅ OLD JSON FORMAT PRESERVED
         return [
             {
                 "topic": keyword,
@@ -193,9 +185,6 @@ class ContentManager:
             for keyword, score in sorted_trends
         ]
 
-        # ==========================
-        # 📅 FACEBOOK EVENTS (UNCHANGED)
-        # ==========================
     def get_detailed_events(self):
         try:
             url = f"{self.base_url}/{self.page_id}/events"
@@ -210,13 +199,10 @@ class ContentManager:
             return []
 
     def save(self, data):
-        with open("top_trends.json", "w", encoding="utf-8") as f:
+        with open("./Graph API/JSON/top_trends.json", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        print("\n💾 Saved to top_trends.json")
-
-# ==========================
-# 🚀 MAIN
-# ==========================
+        print("\n💾 Saved to ./Graph API/JSON/top_trends.json")
+    
 def main(country="egypt"):
     print("\n" + "=" * 50)
     print("   COUNTRY-BASED TREND SCANNER")

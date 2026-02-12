@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
+
 """
-Facebook Comment Fetcher (Detailed)
-Features:
-1. Fetches Top-Level Comments AND Replies.
-2. Identifies 'is_reply' status and links to 'reply_to_id'.
-3. Custom filename for specific post scans.
+Filename: get_comments.py
+Version: 2.0
+Description:
+This script fetches comments from Facebook posts using the Graph API, with options to filter for unreplied threads.
+It retrieves both top-level comments and their replies, checks if the page has replied, and saves the results in a structured JSON format.
 """
 
 import requests
 import json
 import logging
 import sys
-import time
 try:
     from config import Config
 except ImportError:
@@ -49,23 +49,18 @@ class FacebookFetcher:
             logger.error(f"Failed to fetch posts: {e}")
             return []
 
-    def get_comments(self, post_id):
+    def get_raw_comments(self, post_id):
         """
-        Fetches Top-Level comments AND their Replies.
+        Fetches Top-Level comments AND their Replies from API.
+        Returns a raw list of comment objects.
         """
         all_items = []
-        
         fields = (
             "id,message,created_time,like_count,permalink_url,from{id},"
             "comments.limit(500){id,message,created_time,like_count,permalink_url,from{id}}"
         )
-        
         url = f"{self.base_url}/{post_id}/comments"
-        params = {
-            "access_token": self.token,
-            "fields": fields,
-            "limit": 50
-        }
+        params = {"access_token": self.token, "fields": fields, "limit": 50}
 
         print(f"   🔍 Fetching comments for Post {post_id}...")
         
@@ -83,11 +78,9 @@ class FacebookFetcher:
                     params = {}
                 else:
                     url = None
-
             except Exception as e:
                 logger.error(f"Error fetching comments: {e}")
                 break
-
         return all_items
 
     def save_to_json(self, data, filename):
@@ -98,9 +91,82 @@ class FacebookFetcher:
         except Exception as e:
             logger.error(f"Failed to save file: {e}")
 
-# ==========================
-# 🎮 Interactive Main
-# ==========================
+def process_single_post(fetcher, post, filter_mode):
+    """
+    Fetches and filters comments for a single post.
+    Returns a dict with post details and filtered comments, or None if empty.
+    filter_mode: "1" (All), "2" (Unreplied only)
+    """
+    pid = post['id']
+    raw_comments = fetcher.get_raw_comments(pid)
+    
+    if not raw_comments:
+        return None
+
+    valid_threads = []
+
+    for top_c in raw_comments:
+        thread_data = parse_thread(top_c, fetcher.page_id)
+
+        if filter_mode == "2":
+
+            if thread_data['page_replied'] or thread_data['is_page_top']:
+                continue
+
+        valid_threads.extend(thread_data['items'])
+
+    if not valid_threads:
+        return None
+
+    return {
+        "post_id": pid,
+        "post_snippet": post.get('message', '')[:50],
+        "total_matches": len(valid_threads),
+        "comments": valid_threads
+    }
+
+def parse_thread(top_comment, page_id):
+    """
+    Parses a top-level comment and its replies.
+    Returns metadata about the thread (e.g., did the page reply?).
+    """
+    items = []
+    page_replied = False
+    
+    top_author_id = top_comment.get('from', {}).get('id')
+    is_page_top = (top_author_id == page_id)
+    if is_page_top: page_replied = True
+
+    items.append({
+        "id": top_comment.get('id'),
+        "message": top_comment.get('message'),
+        "created_time": top_comment.get('created_time'),
+        "is_by_page": is_page_top,
+        "link": top_comment.get('permalink_url'),
+        "is_reply": False
+    })
+
+    replies = top_comment.get('comments', {}).get('data', [])
+    for reply in replies:
+        rep_author_id = reply.get('from', {}).get('id')
+        is_page_reply = (rep_author_id == page_id)
+        if is_page_reply: page_replied = True
+
+        items.append({
+            "id": reply.get('id'),
+            "message": reply.get('message'),
+            "created_time": reply.get('created_time'),
+            "is_by_page": is_page_reply,
+            "link": reply.get('permalink_url'),
+            "is_reply": True,
+            "reply_to_id": top_comment.get('id')
+        })
+
+    return {
+        "items": items,
+        "page_replied": page_replied,
+        "is_page_top": is_page_top
+    }
 
 def get_int_input(prompt, default=None):
     while True:
@@ -112,139 +178,65 @@ def get_int_input(prompt, default=None):
         except ValueError:
             print("      ❌ Please enter a valid number.")
 
-def main():
+def get_target_posts(fetcher):
+    """Asks user what to scan (Feed vs Specific ID). Returns list of post dicts."""
+    print("\n" + "=" * 40)
+    print("   💬 FACEBOOK COMMENT MANAGER")
+    print("=" * 40)
+    print("   1. 📰 Scan Recent Page Feed")
+    print("   2. 📌 Check Specific Post ID")
+    print("   0. 🚪 Exit")
+    print("-" * 40)
+
+    choice = input("   👉 Select option: ").strip()
+
+    if choice == "0":
+        print("   👋 Goodbye!")
+        sys.exit(0)
+
+    if choice == "1":
+        limit = get_int_input("How many recent posts? (default 5)", 5)
+        return fetcher.get_page_posts(limit)
+    
+    elif choice == "2":
+        pid = input("   🔹 Enter Post ID: ").strip()
+        if pid:
+            return [{"id": pid, "message": "Specific Post Request"}]
+    
+    print("   ❌ Invalid choice.")
+    return []
+
+def run_interactive_mode():
     fetcher = FacebookFetcher()
 
     while True:
-        print("\n" + "=" * 40)
-        print("   💬 FACEBOOK COMMENT MANAGER (DETAILED)")
-        print("=" * 40)
-        print("   1. 📰 Scan Recent Page Feed")
-        print("   2. 📌 Check Specific Post ID")
-        print("   0. 🚪 Exit")
-        print("-" * 40)
+        posts = get_target_posts(fetcher)
+        if not posts: continue
 
-        choice = input("   👉 Select option: ").strip()
-
-        if choice == "0":
-            print("   👋 Goodbye!")
-            sys.exit(0)
-
-        posts_to_check = []
-        is_single_post_mode = False # Flag for filename logic
-        
-        if choice == "1":
-            limit = get_int_input("How many recent posts to scan? (default 5)", 5)
-            posts_to_check = fetcher.get_page_posts(limit)
-        elif choice == "2":
-            pid = input("   🔹 Enter Post ID: ").strip()
-            if pid:
-                posts_to_check = [{"id": pid, "message": "Specific Post"}]
-                is_single_post_mode = True
-        else:
-            print("   ❌ Invalid choice.")
-            continue
-        
-        # --- Filter Selection ---
         print("\n   [Filter Options]")
-        print("   1. Fetch ALL Comments (Including Page Replies)")
-        print("   2. Fetch ONLY Unreplied Threads (No Page Reply)")
-        
+        print("   1. Fetch ALL Comments")
+        print("   2. Fetch ONLY Unreplied Threads")
         filter_choice = input("   👉 Select filter (1 or 2): ").strip()
         
-        grouped_results = []
+        results = []
         print(f"\n   🚀 Starting Scan...")
+        
+        for post in posts:
+            data = process_single_post(fetcher, post, filter_choice)
+            if data:
+                print(f"      👉 Post {post['id']}: Found {data['total_matches']} items.")
+                results.append(data)
 
-        for post in posts_to_check:
-            pid = post['id']
-            p_message = post.get('message', '')
-            
-            raw_top_level = fetcher.get_comments(pid)
-            
-            if not raw_top_level:
-                continue
-
-            processed_thread = []
-
-            for top_c in raw_top_level:
-                replies_data = top_c.get('comments', {}).get('data', [])
-                
-                # Check if Page replied in this thread
-                page_replied_in_thread = False
-                thread_items = []
-
-                # --- 1. Process Top Level Comment ---
-                top_id = top_c.get('id')
-                top_author_id = top_c.get('from', {}).get('id')
-                is_page_top = (top_author_id == fetcher.page_id)
-                if is_page_top: page_replied_in_thread = True
-                
-                thread_items.append({
-                    "id": top_id,
-                    "message": top_c.get('message'),
-                    "created_time": top_c.get('created_time'),
-                    "is_by_page": is_page_top,
-                    "link": top_c.get('permalink_url'),
-                    
-                    # ✅ NEW FIELDS: Top level is never a reply
-                    "is_reply": False,
-                    "reply_to_id": None
-                })
-
-                # --- 2. Process Replies ---
-                for reply in replies_data:
-                    rep_author_id = reply.get('from', {}).get('id')
-                    is_page_reply = (rep_author_id == fetcher.page_id)
-                    if is_page_reply: page_replied_in_thread = True
-                    
-                    thread_items.append({
-                        "id": reply.get('id'),
-                        "message": reply.get('message'),
-                        "created_time": reply.get('created_time'),
-                        "is_by_page": is_page_reply,
-                        "link": reply.get('permalink_url'),
-                        
-                        # ✅ NEW FIELDS: Identify reply & link to parent
-                        "is_reply": True,
-                        "reply_to_id": top_id
-                    })
-
-                # --- Apply Logic ---
-                if filter_choice == "2":
-                    # Unreplied Logic
-                    if page_replied_in_thread: continue
-                    if is_page_top: continue
-                    processed_thread.extend(thread_items)
-                else:
-                    # All Comments Logic
-                    processed_thread.extend(thread_items)
-
-            # Add to results
-            if processed_thread:
-                count = len(processed_thread)
-                print(f"      👉 Post {pid}: Found {count} items.")
-                
-                grouped_results.append({
-                    "post_id": pid,
-                    "post_snippet": p_message[:50],
-                    "total_matches": count,
-                    "comments": processed_thread
-                })
-
-        # --- Save with Custom Filename ---
-        if grouped_results:
-            if is_single_post_mode and len(posts_to_check) == 1:
-                # ✅ Custom Name for Specific Post
-                specific_id = posts_to_check[0]['id']
-                filename = f"post_{specific_id}_comments.json"
+        if results:
+            if len(posts) == 1:
+                filename = f"./Graph API/JSON/post_{posts[0]['id']}_comments.json"
             else:
-                # Generic Name for Feed Scan
-                suffix = "all" if filter_choice == "1" else "unreplied_threads"
-                filename = f"comments_{suffix}.json"
-                
-            fetcher.save_to_json(grouped_results, filename)
+                suffix = "all" if filter_choice == "1" else "unreplied"
+                filename = f"./Graph API/JSON/comments_{suffix}.json"
+            
+            fetcher.save_to_json(results, filename)
         else:
             print("\n   ✅ No matching comments found.")
 
 if __name__ == "__main__":
-    main()
+    run_interactive_mode()

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
+
 """
-Facebook Messenger Data Fetcher
-Features:
-1. Fetch Full Conversation History
-2. Fetch ONLY Unread Messages (Conversations waiting for reply)
-3. Interactive Menu Interface
+Filename: get_messages.py
+Version: 1.10
+Description:
+This script is designed to fetch messages from Facebook Messenger.
+It includes features to fetch full conversation history, unread messages.
 """
 
 import json
@@ -15,14 +16,12 @@ import time
 from datetime import datetime
 from typing import Dict, List, Optional
 
-# Check for config
 try:
     from config import Config
 except ImportError:
     print("❌ Error: config.py not found. Please ensure you have the configuration file.")
     sys.exit(1)
 
-# Configure logging (Hidden in interactive mode to keep UI clean)
 logging.basicConfig(level=logging.ERROR, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -91,15 +90,12 @@ class MessengerDataManager:
         print(f"🔄 Processing data (Unread Only: {unread_only})...")
 
         for conv in raw_conversations:
-            # FILTER: Unread Check
             unread_count = conv.get('unread_count', 0)
             if unread_only and unread_count == 0:
                 continue
 
             conv_id = conv.get('id')
             updated = conv.get('updated_time')
-            
-            # 1. Extract User Participants
             participants_raw = conv.get('participants', {}).get('data', [])
             clean_participants = []
             for p in participants_raw:
@@ -109,7 +105,6 @@ class MessengerDataManager:
                         "name": p.get('name', 'Unknown')
                     })
 
-            # 2. Fetch Messages
             messages_raw = self.get_messages(conv_id, msg_limit)
             clean_messages = []
             for m in messages_raw:
@@ -122,7 +117,6 @@ class MessengerDataManager:
                     "has_attachment": 'attachments' in m
                 })
 
-            # 3. Build Object
             final_data.append({
                 "conversation_id": conv_id,
                 "status": "unread" if unread_count > 0 else "read",
@@ -133,7 +127,6 @@ class MessengerDataManager:
             })
             
             processed_count += 1
-            # print(f"   ✅ Processed chat with {clean_participants[0]['name'] if clean_participants else 'Unknown'}")
 
         return final_data
 
@@ -144,8 +137,6 @@ class MessengerDataManager:
             print(f"\n💾 Saved {len(data)} conversations to '{filename}'")
         except Exception as e:
             print(f"❌ Failed to write JSON: {e}")
-
-# --- Interactive Helpers ---
 
 def get_int_input(prompt: str, default: int) -> int:
     val = input(f"   🔹 {prompt} (default {default}): ").strip()
@@ -179,17 +170,16 @@ def main():
             sys.exit(0)
 
         elif choice in ["1", "2"]:
-            # Setup params based on user input
+
             unread_mode = (choice == "2")
             mode_name = "Unread" if unread_mode else "Full"
-            default_filename = "messenger_unread.json" if unread_mode else "messenger_full.json"
+            default_filename = "./Graph API/JSON/messenger_unread.json" if unread_mode else "./Graph API/JSON/messenger_full.json"
 
             print(f"\n   [Settings for {mode_name} Export]")
             conv_limit = get_int_input("Conversations to check", 20)
             msg_limit = get_int_input("Messages per chat", 20)
             filename = default_filename
 
-            # Execute
             print("\n   ⏳ Starting extraction...")
             data = manager.unread_messages(conv_limit, msg_limit, unread_only=unread_mode)
 
@@ -200,8 +190,6 @@ def main():
                     print("\n   ✅ No unread conversations found!")
                 else:
                     print("\n   ⚠️ No data found.")
-            
-            input("\n   Press Enter to return to menu...")
         
         else:
             print("   ❌ Invalid selection.")

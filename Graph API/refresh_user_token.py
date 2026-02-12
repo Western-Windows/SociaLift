@@ -3,10 +3,17 @@ import os
 import sys
 from dotenv import load_dotenv, set_key
 
-# 1. Load environment variables
+
+"""
+Filename: refresh_user_token.py
+Version: 1.0
+Description:
+This script is designed to automatically renew Facebook user access tokens.
+"""
+
 env_file = "Graph API/.env"
 if not os.path.exists(env_file):
-    env_file = ".env" # Fallback
+    env_file = ".env" 
 load_dotenv(env_file)
 
 APP_ID = os.getenv("FACEBOOK_APP_ID")
@@ -20,7 +27,6 @@ def auto_renew_token():
         print("❌ Error: Missing credentials in .env file.")
         return
 
-    # 2. Attempt to exchange the current token for a Long-Lived Token
     url = "https://graph.facebook.com/v24.0/oauth/access_token"
     params = {
         "grant_type": "fb_exchange_token",
@@ -33,7 +39,6 @@ def auto_renew_token():
         response = requests.get(url, params=params)
         data = response.json()
 
-        # ✅ CASE 1: SUCCESS
         if "access_token" in data:
             new_long_token = data["access_token"]
             expires_seconds = data.get("expires_in", 0)
@@ -42,16 +47,14 @@ def auto_renew_token():
             print(f"✅ Success! Token extended.")
             print(f"   📅 New Validity: ~{days_left:.1f} days")
 
-            # 3. Update .env file silently WITHOUT QUOTES
             set_key(
                 dotenv_path=env_file, 
                 key_to_set="FACEBOOK_ACCESS_TOKEN", 
                 value_to_set=new_long_token, 
-                quote_mode="never"  # <--- THIS REMOVES THE QUOTES
+                quote_mode="never" 
             )
-            print(f"   💾 Updated .env file with new token (no quotes).")
+            print(f"   💾 Updated .env file with new token ")
 
-        # ❌ CASE 2: FAILURE (Token is Expired/Invalid)
         else:
             error = data.get("error", {})
             print(f"❌ Failed to extend token.")

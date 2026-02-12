@@ -7,10 +7,17 @@ import sys
 from deep_translator import GoogleTranslator
 from transformers import pipeline
 
+"""
+Filename: get_trends_X.py
+Version: 1.0
+Description:
+This script fetches, translates, and classifies trends in X platform for a specific country 
+using a custom list of page categories.
+"""
+
 class SmartTrendScraper:
     def __init__(self):
         print("⏳ Loading AI Model (facebook/bart-large-mnli)...")
-        # Load the zero-shot classification model
         self.classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
         self.translator = GoogleTranslator(source='auto', target='en')
         print("✅ Model Loaded.")
@@ -20,15 +27,12 @@ class SmartTrendScraper:
         Fetches, translates, and classifies trends for a specific country 
         using a custom list of categories.
         """
-        
-        # Default categories if none provided
         if categories is None:
             categories = [
                 "Sports", "Politics", "Technology", "Entertainment", 
                 "Business", "Health", "Social Issues", "Music"
             ]
 
-        # 1. Construct URL based on country
         country_slug = country.lower().replace(" ", "-")
         if country_slug in ["worldwide", "global"]:
             url = "https://trends24.in/"
@@ -51,8 +55,6 @@ class SmartTrendScraper:
             
             response.encoding = 'utf-8'
             soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Get the latest list (first one)
             trend_cards = soup.select(".trend-card__list")
             if not trend_cards:
                 print("⚠️ No trend lists found.")
@@ -69,28 +71,20 @@ class SmartTrendScraper:
                     topic_original = link_tag.text.strip()
                     link = link_tag['href']
                     tweet_count = item.find("span", class_="tweet-count").text if item.find("span", class_="tweet-count") else "N/A"
-
-                    # 🅰️ TRANSLATE
                     try:
                         topic_en = self.translator.translate(topic_original)
                         time.sleep(0.1) 
                     except:
                         topic_en = topic_original
-
-                    # 🧠 CLASSIFY (AI) with DYNAMIC CATEGORIES
                     try:
                         ai_result = self.classifier(topic_en, categories, multi_label=False)
                         top_category = ai_result['labels'][0]
                         confidence = ai_result['scores'][0]
-                        
-                        # Only accept if confidence is decent (>30%), else "General"
-                        if confidence < 0.3:
+                        if confidence < 0.2:
                             top_category = "General/Unsure"
                     except:
                         top_category = "Error"
                         confidence = 0
-
-                    print(f"   🔹 {i}. {topic_original} -> {top_category} ({int(confidence*100)}%)")
 
                     entry = {
                         "rank": i,
@@ -103,14 +97,13 @@ class SmartTrendScraper:
                     }
                     trends_data.append(entry)
 
-            # 💾 Save to JSON
             self.save_results(country, trends_data)
 
         except Exception as e:
             print(f"❌ Critical Error: {e}")
 
     def save_results(self, country, data):
-        filename = f"trends_{country.lower().replace(' ', '_')}_classified.json"
+        filename = f"./Graph API/JSON/trends_{country.lower().replace(' ', '_')}_classified.json"
         
         output = {
             "meta": {
@@ -127,18 +120,16 @@ class SmartTrendScraper:
         
         print(f"\n✅ Success! Saved to: {filename}")
 
-# ==========================================
-# 🚀 MAIN EXECUTION
-# ==========================================
 if __name__ == "__main__":
     scraper = SmartTrendScraper()
     
-    # 1. Define Country
+
     target_country = "egypt" 
     if len(sys.argv) > 1:
         target_country = sys.argv[1]
 
-    # 2. Define Your Custom Categories Here
+
+    # Must be replaced with actual categories relevant to the page
     my_custom_categories = [
         "Football", 
         "Economy", 
@@ -146,6 +137,4 @@ if __name__ == "__main__":
         "TV Shows", 
         "Tech News"
     ]
-
-    # 3. Run with both parameters
     scraper.get_trends(country=target_country, categories=my_custom_categories)

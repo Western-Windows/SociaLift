@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
+
 """
-Facebook Post Manager
-Features:
-1. Edit an existing post's message.
-2. Delete a post permanently by ID.
+Filename: post_manager.py
+Version: 1.0
+Description:
+This script is designed to manage Facebook posts, including editing and deleting posts.
 """
 
 import requests
 import logging
 import sys
 
-# Try to import config
 try:
     from config import Config
 except ImportError:
     print("❌ Error: config.py not found. Please ensure you have the configuration file.")
     sys.exit(1)
 
-# Configure logging
 logging.basicConfig(level=logging.ERROR, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -56,7 +55,6 @@ class FacebookPostManager:
         """Updates the text content of a post."""
         print(f"   📝 Updating Post {post_id}...")
         
-        # To edit, we send a POST request to the post ID with the new message
         result = self._request(
             method="POST", 
             endpoint=post_id, 
@@ -67,17 +65,14 @@ class FacebookPostManager:
     def delete_post(self, post_id):
         """Permanently deletes a post."""
         print(f"   🗑️  Deleting Post {post_id}...")
-        
-        # To delete, we send a DELETE request to the post ID
+     
         result = self._request(
             method="DELETE", 
             endpoint=post_id
         )
         return result
 
-# ==========================
-# 🎮 Interactive Main
-# ==========================
+
 
 def get_input(prompt):
     return input(f"   🔹 {prompt}: ").strip()

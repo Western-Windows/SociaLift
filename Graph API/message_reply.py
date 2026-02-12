@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
+
 """
-Facebook Messenger Reply Tool
-Focused script to send replies to specific user PSIDs.
+Filename: message_reply.py
+Version: 1.0
+Description:
+This script is designed to send replies to specific user PSIDs on Facebook Messenger.
 """
 
 import requests
 import logging
 import sys
 from typing import Dict, Optional
-
-# Try to import config
 try:
     from config import Config
 except ImportError:
     print("❌ Error: config.py not found.")
     sys.exit(1)
 
-# Configure logging
 logging.basicConfig(level=logging.ERROR, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -48,23 +48,20 @@ class FacebookMessenger:
 
         url = f"{self.base_url}/me/messages"
         params = {"access_token": self.access_token}
-        
-        # Construct Payload
+     
         payload = {
             "recipient": {"id": recipient_psid},
             "message": {"text": message_text},
-            "messaging_type": "RESPONSE" # Good practice to specify type
+            "messaging_type": "RESPONSE"
         }
 
         try:
-            # 1. Send Typing Indicator (Optional UX improvement)
+     
             self._send_action(recipient_psid, "typing_on")
-            
-            # 2. Send Actual Message
+           
             response = self.session.post(url, params=params, json=payload)
             response.raise_for_status()
-            
-            # 3. Turn off typing
+
             self._send_action(recipient_psid, "typing_off")
             
             data = response.json()
@@ -86,7 +83,7 @@ class FacebookMessenger:
         try:
             self.session.post(url, params={"access_token": self.access_token}, json=payload)
         except:
-            pass # Ignore errors for typing indicators
+            pass 
 
     def _handle_error(self, e):
         """Parses and prints API errors clearly."""
@@ -96,8 +93,7 @@ class FacebookMessenger:
                 msg = err.get('error', {}).get('message', str(e))
                 code = err.get('error', {}).get('code')
                 print(f"   ❌ API Error ({code}): {msg}")
-                
-                # Contextual Help
+        
                 if code == 230:
                     print("      ℹ️  Permissions missing. Check 'pages_messaging'.")
                 elif code == 100:
@@ -106,10 +102,6 @@ class FacebookMessenger:
                 print(f"   ❌ HTTP Error: {e}")
         else:
             print(f"   ❌ Network Error: {e}")
-
-# ==========================
-# 🎮 Interactive Main
-# ==========================
 
 def get_input(prompt):
     return input(f"   🔹 {prompt}: ").strip()
@@ -125,7 +117,6 @@ def main():
         print(f"❌ {e}")
         sys.exit(1)
 
-    # 1. Get Target User
     psid = get_input("Enter User PSID (Page Scoped ID)")
     
     if not psid:
@@ -135,7 +126,6 @@ def main():
     print(f"\n   Targeting User: {psid}")
     print("   (Type 'exit' to quit)\n")
 
-    # 2. Message Loop
     while True:
         msg = get_input("Type message")
         

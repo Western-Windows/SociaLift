@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+"""
+Filename: facebook_posting.py
+Version: 1.10
+Description:
+This script is designed to post content to Facebook pages using the Graph API,
+containg methods to post text, photos, and videos, also to schedule and get scheduled posts.
+"""
+
 import logging
 import requests
 import sys
@@ -7,19 +16,17 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 
-# Try to import config, else prompt user
 try:
     from config import Config
 except ImportError:
     print("❌ Error: config.py not found. Please ensure you have the configuration file.")
     sys.exit(1)
 
-# Configure Logger (hidden in interactive mode to keep UI clean, errors still show)
 logging.basicConfig(level=logging.ERROR, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 class FacebookPoster:
-    MAX_VIDEO_SIZE_BYTES = 1024 * 1024 * 1024  # 1GB Limit
+    MAX_VIDEO_SIZE_BYTES = 1024 * 1024 * 1024
 
     def __init__(self):
         self.access_token = Config.FACEBOOK_PAGE_ACCESS_TOKEN

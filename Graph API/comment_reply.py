@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+
 """
-Facebook Direct Comment Manager (Simple)
-Features:
-1. Target a specific Comment ID directly.
-2. Send Replies (Text).
-3. Like Comments (Only supported reaction).
+Filename: comment_reply.py
+Version: 1.10
+Description:
+This script is designed to reply to Facebook comments by its ID and like them.
 """
 
 import requests
@@ -12,20 +12,15 @@ import logging
 import sys
 from typing import Dict
 
-# Try to import config
 try:
     from config import Config
 except ImportError:
     print("❌ Error: config.py not found.")
     sys.exit(1)
 
-# Configure logging
 logging.basicConfig(level=logging.ERROR, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-# ==========================================
-# 🧠 LOGIC LAYER
-# ==========================================
 
 class FacebookBot:
     """Handles direct interactions with Facebook Comments."""
@@ -61,7 +56,6 @@ class FacebookBot:
         }
 
         try:
-            # Using specific /likes endpoint for standard likes
             response = requests.post(f"{self.base_url}/{comment_id}/likes", params=params)
             response.raise_for_status()
             result = response.json()
@@ -84,11 +78,7 @@ class FacebookBot:
                 'success': False,
                 'error': f'Failed to like comment: {e}'
             }
-
-# ==========================================
-# 🎨 UI LAYER
-# ==========================================
-
+        
 def get_input(prompt):
     return input(f"   🔹 {prompt}: ").strip()
 
@@ -97,12 +87,8 @@ def print_header():
     print("   🎯 DIRECT COMMENT MANAGER")
     print("=" * 45)
 
-# ==========================================
-# 🎮 MAIN CONTROLLER
-# ==========================================
 
 def main():
-    # 1. Setup
     try:
         bot = FacebookBot()
     except ValueError:
@@ -111,7 +97,6 @@ def main():
 
     print_header()
 
-    # 2. Get Target Directly
     comment_id = get_input("Enter Target Comment ID")
     if not comment_id:
         print("   👋 Exiting.")
@@ -135,7 +120,6 @@ def main():
             if not comment_id: break
             continue
 
-        # --- REPLY ---
         elif choice == "1":
             msg = get_input("Type your reply")
             if msg:
@@ -145,7 +129,6 @@ def main():
                 else:
                     print("      ❌ Failed to reply.")
 
-        # --- LIKE ---
         elif choice == "2":
             print(f"      ⏳ Liking comment...")
             result = bot.like_comment(comment_id)

@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+
 """
-Facebook Page Token Manager
-Retrieves and manages Page Access Tokens securely.
+Filename: get_page_credentials.py
+Version: 1.10
+Description:
+    This script is designed to manage Facebook Page credentials, including fetching and updating Page Access Tokens.
 """
 
 import os

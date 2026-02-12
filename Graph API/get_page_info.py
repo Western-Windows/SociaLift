@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
+
 """
-Facebook Comprehensive Page Info Fetcher
-Features:
-1. Fetches ALL basic fields requested (ID, stats, contact, location).
-2. Adds extra available fields (Bio, WhatsApp, Mission, Founded, etc.).
-3. Groups output logically in the console.
-4. Saves raw data to JSON.
+Filename: get_page_info.py
+Version: 1.0
+Description:
+This script is designed to fetch comprehensive information about a Facebook Page.
+It includes features to display and save detailed page information.
 """
 
 import requests
@@ -14,7 +14,6 @@ import logging
 import sys
 from datetime import datetime
 
-# Try to import config
 try:
     from config import Config
 except ImportError:
@@ -36,13 +35,10 @@ class PageInfoManager:
         """
         print(f"   🔍 Fetching comprehensive details for Page ID: {self.page_id}...")
 
-        # 1. Your Requested Fields + 2. Additional Useful Fields
         fields_list = [
             # --- Basic Identity ---
             'id', 'name', 'username', 'about', 'bio', 'description', 
             'category', 'category_list', 'verification_status', 'is_published',
-            
-            # --- Links & Contact ---
             'link', 'website', 'emails', 'phone', 'whatsapp_number',
             
             # --- Location & Hours ---
@@ -61,7 +57,6 @@ class PageInfoManager:
             'cover', 'picture{url}'
         ]
 
-        # Convert list to comma-separated string
         fields_str = ",".join(fields_list)
 
         url = f"{self.base_url}/{self.page_id}"
@@ -80,65 +75,12 @@ class PageInfoManager:
                 print(f"   ❌ Facebook Error: {e.response.json().get('error', {}).get('message')}")
             return None
 
-    def display_and_save(self, data):
+    def save_data(self, data):
         if not data:
             print("   ⚠️ No data found.")
             return
 
-        # --- 1. Display Formatted Data ---
-        print("\n" + "="*50)
-        print(f"   📄 {data.get('name', 'Unknown Page').upper()}")
-        print("="*50)
-        
-        # Identity
-        print(f"\n   🆔 IDENTITY")
-        print(f"      • ID: {data.get('id')}")
-        print(f"      • Handle: @{data.get('username', 'N/A')}")
-        print(f"      • Category: {data.get('category', 'N/A')}")
-        print(f"      • Status: {data.get('verification_status', 'not_verified')}")
-        print(f"      • Bio: {data.get('bio', 'N/A')}")
-
-        # Contact
-        print(f"\n   📞 CONTACT")
-        emails = data.get('emails', [])
-        print(f"      • Email: {emails[0] if emails else 'N/A'}")
-        print(f"      • Phone: {data.get('phone', 'N/A')}")
-        print(f"      • WhatsApp: {data.get('whatsapp_number', 'N/A')}")
-        print(f"      • Website: {data.get('website', 'N/A')}")
-        print(f"      • Facebook Link: {data.get('link', 'N/A')}")
-
-        # Location
-        print(f"\n   📍 LOCATION")
-        loc = data.get('location', {})
-        if loc:
-            addr = loc.get('street', '')
-            city = loc.get('city', '')
-            country = loc.get('country', '')
-            zip_code = loc.get('zip', '')
-            print(f"      • Address: {addr}, {city}, {country} {zip_code}")
-            print(f"      • Coordinates: {loc.get('latitude')}, {loc.get('longitude')}")
-        else:
-            print(f"      • No location data.")
-
-        # Stats
-        print(f"\n   📊 METRICS")
-        print(f"      • Followers: {data.get('followers_count', 0):,}")
-        print(f"      • Likes (Fans): {data.get('fan_count', 0):,}")
-        print(f"      • Talking About: {data.get('talking_about_count', 0):,}")
-        print(f"      • Check-ins/Were Here: {data.get('were_here_count', 0):,}")
-        
-        if data.get('overall_star_rating'):
-            print(f"      • Rating: {data.get('overall_star_rating')} ⭐ ({data.get('rating_count')} votes)")
-
-        # Details
-        print(f"\n   📝 DETAILS")
-        print(f"      • Founded: {data.get('founded', 'N/A')}")
-        print(f"      • Price Range: {data.get('price_range', 'N/A')}")
-        print(f"      • Products: {data.get('products', 'N/A')[:50]}...") # Truncated
-        print(f"      • Mission: {data.get('mission', 'N/A')[:50]}...") # Truncated
-
-        # --- 2. Save Full Data to JSON ---
-        filename = "page_complete_info.json"
+        filename = "./Graph API/JSON/page_complete_info.json"
         try:
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
@@ -151,7 +93,7 @@ class PageInfoManager:
 def main():
     manager = PageInfoManager()
     data = manager.get_full_page_details()
-    manager.display_and_save(data)
+    manager.save_data(data)
 
 if __name__ == "__main__":
     main()

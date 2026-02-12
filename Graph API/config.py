@@ -1,6 +1,13 @@
 import os
 from dotenv import load_dotenv
 
+"""
+Filename: config.py
+Version: 1.10
+Description:
+This script is designed to handle configuration settings for the Facebook Graph API integration.
+"""
+
 # Load environment variables
 load_dotenv()
 

@@ -7,14 +7,19 @@ import sys
 from datetime import datetime
 from typing import List, Dict, Optional
 
-# Try to import config, else prompt user
+"""
+Filename: get_posts_insights.py
+Version: 1.0
+Description:
+This script fetches and processes insights data for Facebook posts.
+"""
+
 try:
     from config import Config
 except ImportError:
     print("❌ Error: config.py not found. Please ensure you have the configuration file.")
     sys.exit(1)
 
-# Configure logging
 logging.basicConfig(level=logging.ERROR, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -43,9 +48,6 @@ class FacebookAnalyticsManager:
             logger.error(f"⚠️ Request failed: {e}")
             return None
 
-    # ==========================
-    # 📥 Fetching Methods
-    # ==========================
 
     def _get_fields_string(self):
         """
@@ -73,7 +75,6 @@ class FacebookAnalyticsManager:
         all_posts = []
         fields = self._get_fields_string()
         
-        # Optimize API call
         api_limit = min(limit, 25) if limit else 25
         
         url = f"{self.base_url}/{self.page_id}/posts"
@@ -145,9 +146,6 @@ class FacebookAnalyticsManager:
         
         return all_comments
 
-    # ==========================
-    # 🔄 Processing Methods
-    # ==========================
 
     def process_data(self, raw_posts: List[Dict]):
         """Cleans data and extracts the specific insights requested."""
@@ -160,27 +158,23 @@ class FacebookAnalyticsManager:
         for index, post in enumerate(raw_posts, 1):
             print(f"   Processing {index}/{len(raw_posts)}: {post.get('id')}...")
 
-            # 1. Basic Stats
             stats = {
                 "shares": post.get('shares', {}).get('count', 0),
                 "likes": post.get('reactions', {}).get('summary', {}).get('total_count', 0),
                 "comments_count": post.get('comments', {}).get('summary', {}).get('total_count', 0),
             }
 
-            # 2. Extract Requested Insights
-            # Default values
             insights_data = {
-                "views": 0,       # post_media_view
-                "reach": 0,      # post_impressions_unique
-                "total_clicks": 0,      # post_clicks
-                "reactions_breakdown": {} # post_reactions_by_type_total
+                "views": 0,     
+                "reach": 0,      
+                "total_clicks": 0,    
+                "reactions_breakdown": {} 
             }
 
             if 'insights' in post and 'data' in post['insights']:
                 for item in post['insights']['data']:
                     name = item.get('name')
                     try:
-                        # Value is typically nested in values[0]['value']
                         val = item['values'][0]['value']
                         
                         if name == 'post_media_view':
@@ -195,22 +189,12 @@ class FacebookAnalyticsManager:
                     except (KeyError, IndexError):
                         pass
 
-            # # 3. Fetch Comments
-            # comments_data = []
-            # if stats['comments_count'] > 0:
-            #     comments_data = self.get_all_comments_for_post(post['id'])
-
-            # 4. Build Object
             clean_post = {
                 "post_id": post.get('id'),
                 "published_date": post.get('created_time'),
                 "message": post.get('message', ''),
                 "url": post.get('permalink_url'),
-                
-                # Main Engagement Stats
                 "engagement_stats": stats,
-                
-                # The New Insights Section
                 "performance_metrics": insights_data,
             }
             final_dataset.append(clean_post)
@@ -234,10 +218,6 @@ class FacebookAnalyticsManager:
             print(f"\n🎉 Success! Exported to {filename}")
         except Exception as e:
             logger.error(f"❌ Failed to write JSON: {e}")
-
-# ==========================
-# 🎮 Interactive Main
-# ==========================
 
 def get_int_input(prompt):
     while True:
@@ -263,7 +243,7 @@ def main():
         choice = input("   👉 Select option: ").strip()
 
         raw_posts = []
-        filename = "fb_data.json"
+        filename = "./Graph API/JSON/fb_data.json"
 
         if choice == "0":
             print("   👋 Goodbye!")
@@ -271,18 +251,18 @@ def main():
 
         elif choice == "1":
             raw_posts = manager.get_posts(limit=None)
-            filename = "fb_full_history.json"
+            filename = "./Graph API/JSON/fb_full_history.json"
 
         elif choice == "2":
             k = get_int_input("Enter number of posts (K)")
             raw_posts = manager.get_posts(limit=k)
-            filename = f"fb_recent_{k}.json"
+            filename = f"./Graph API/JSON/fb_recent_{k}.json"
 
         elif choice == "3":
             pid = input("   🔹 Enter Post ID: ").strip()
             if pid:
                 raw_posts = manager.get_single_post(pid)
-                filename = f"fb_post_{pid}.json"
+                filename = f"./Graph API/JSON/fb_post_{pid}.json"
 
         else:
             print("   ❌ Invalid selection.")
