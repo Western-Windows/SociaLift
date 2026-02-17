@@ -1,0 +1,460 @@
+{
+  "meta": {
+    "country": "egypt",
+    "source": "Trends24",
+    "timestamp": "2026-02-17T17:07:55.911072",
+    "total_trends": 50
+  },
+  "trends": [
+    {
+      "rank": 1,
+      "topic_original": "#صحاب_الارض",
+      "topic_english": "#Earth_owners",
+      "category": "Economy",
+      "confidence": 0.46,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%23%D8%B5%D8%AD%D8%A7%D8%A8_%D8%A7%D9%84%D8%A7%D8%B1%D8%B6"
+    },
+    {
+      "rank": 2,
+      "topic_original": "#فرصه_استثمار_بعد_الفطار",
+      "topic_english": "#Investment_opportunity_after_Iftar",
+      "category": "Economy",
+      "confidence": 0.4,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%23%D9%81%D8%B1%D8%B5%D9%87_%D8%A7%D8%B3%D8%AA%D8%AB%D9%85%D8%A7%D8%B1_%D8%A8%D8%B9%D8%AF_%D8%A7%D9%84%D9%81%D8%B7%D8%A7%D8%B1"
+    },
+    {
+      "rank": 3,
+      "topic_original": "#اتنين_غيرنا",
+      "topic_english": "#Two_others",
+      "category": "General/Unsure",
+      "confidence": 0.29,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%23%D8%A7%D8%AA%D9%86%D9%8A%D9%86_%D8%BA%D9%8A%D8%B1%D9%86%D8%A7"
+    },
+    {
+      "rank": 4,
+      "topic_original": "#الكينج",
+      "topic_english": "#King",
+      "category": "Viral Memes",
+      "confidence": 0.4,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%23%D8%A7%D9%84%D9%83%D9%8A%D9%86%D8%AC"
+    },
+    {
+      "rank": 5,
+      "topic_original": "#محمد_امام",
+      "topic_english": "#Mohamed_Imam",
+      "category": "Viral Memes",
+      "confidence": 0.49,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%23%D9%85%D8%AD%D9%85%D8%AF_%D8%A7%D9%85%D8%A7%D9%85"
+    },
+    {
+      "rank": 6,
+      "topic_original": "رمضان كريم",
+      "topic_english": "Ramadan Kareem",
+      "category": "General/Unsure",
+      "confidence": 0.29,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%B1%D9%85%D8%B6%D8%A7%D9%86%20%D9%83%D8%B1%D9%8A%D9%85"
+    },
+    {
+      "rank": 7,
+      "topic_original": "الترجي التونسي",
+      "topic_english": "Esperance Tunis",
+      "category": "Economy",
+      "confidence": 0.37,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%AA%D8%B1%D8%AC%D9%8A%20%D8%A7%D9%84%D8%AA%D9%88%D9%86%D8%B3%D9%8A"
+    },
+    {
+      "rank": 8,
+      "topic_original": "الملعب المالي",
+      "topic_english": "Financial playing field",
+      "category": "Economy",
+      "confidence": 0.76,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D9%84%D8%B9%D8%A8%20%D8%A7%D9%84%D9%85%D8%A7%D9%84%D9%8A"
+    },
+    {
+      "rank": 9,
+      "topic_original": "ستاد مالي",
+      "topic_english": "Mali Stadium",
+      "category": "Viral Memes",
+      "confidence": 0.32,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%B3%D8%AA%D8%A7%D8%AF%20%D9%85%D8%A7%D9%84%D9%8A"
+    },
+    {
+      "rank": 10,
+      "topic_original": "نصف النهايي",
+      "topic_english": "Semi-final",
+      "category": "General/Unsure",
+      "confidence": 0.28,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D9%86%D8%B5%D9%81%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D9%8A%D9%8A"
+    },
+    {
+      "rank": 11,
+      "topic_original": "الجيش الملكي",
+      "topic_english": "Royal army",
+      "category": "Viral Memes",
+      "confidence": 0.34,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%AC%D9%8A%D8%B4%20%D8%A7%D9%84%D9%85%D9%84%D9%83%D9%8A"
+    },
+    {
+      "rank": 12,
+      "topic_original": "صن داونز",
+      "topic_english": "Sun Downs",
+      "category": "General/Unsure",
+      "confidence": 0.29,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%B5%D9%86%20%D8%AF%D8%A7%D9%88%D9%86%D8%B2"
+    },
+    {
+      "rank": 13,
+      "topic_original": "اليوم الثلاثاء",
+      "topic_english": "Today is Tuesday",
+      "category": "Economy",
+      "confidence": 0.34,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%8A%D9%88%D9%85%20%D8%A7%D9%84%D8%AB%D9%84%D8%A7%D8%AB%D8%A7%D8%A1"
+    },
+    {
+      "rank": 14,
+      "topic_original": "17 فبراير 2026",
+      "topic_english": "February 17, 2026",
+      "category": "Tech News",
+      "confidence": 0.38,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=17%20%D9%81%D8%A8%D8%B1%D8%A7%D9%8A%D8%B1%202026"
+    },
+    {
+      "rank": 15,
+      "topic_original": "رجل علي رجل",
+      "topic_english": "Man upon man",
+      "category": "Viral Memes",
+      "confidence": 0.36,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%B1%D8%AC%D9%84%20%D8%B9%D9%84%D9%8A%20%D8%B1%D8%AC%D9%84"
+    },
+    {
+      "rank": 16,
+      "topic_original": "شباب بلوزداد الجزايري",
+      "topic_english": "Youth Belouizdad Algeria",
+      "category": "Viral Memes",
+      "confidence": 0.34,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%B4%D8%A8%D8%A7%D8%A8%20%D8%A8%D9%84%D9%88%D8%B2%D8%AF%D8%A7%D8%AF%20%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D9%8A"
+    },
+    {
+      "rank": 17,
+      "topic_original": "والترجي",
+      "topic_english": "And please",
+      "category": "General/Unsure",
+      "confidence": 0.26,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D9%88%D8%A7%D9%84%D8%AA%D8%B1%D8%AC%D9%8A"
+    },
+    {
+      "rank": 18,
+      "topic_original": "التميز المالي",
+      "topic_english": "Financial excellence",
+      "category": "Economy",
+      "confidence": 0.75,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%AA%D9%85%D9%8A%D8%B2%20%D8%A7%D9%84%D9%85%D8%A7%D9%84%D9%8A"
+    },
+    {
+      "rank": 19,
+      "topic_original": "15 مارس",
+      "topic_english": "March 15",
+      "category": "Tech News",
+      "confidence": 0.33,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=15%20%D9%85%D8%A7%D8%B1%D8%B3"
+    },
+    {
+      "rank": 20,
+      "topic_original": "اتحاد العاصمه",
+      "topic_english": "Capital Union",
+      "category": "Economy",
+      "confidence": 0.76,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D8%AA%D8%AD%D8%A7%D8%AF%20%D8%A7%D9%84%D8%B9%D8%A7%D8%B5%D9%85%D9%87"
+    },
+    {
+      "rank": 21,
+      "topic_original": "محمد بن زايد",
+      "topic_english": "Mohammed bin Zayed",
+      "category": "General/Unsure",
+      "confidence": 0.3,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D9%85%D8%AD%D9%85%D8%AF%20%D8%A8%D9%86%20%D8%B2%D8%A7%D9%8A%D8%AF"
+    },
+    {
+      "rank": 22,
+      "topic_original": "الاهلي",
+      "topic_english": "Al-Ahly",
+      "category": "Football",
+      "confidence": 0.31,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%A7%D9%87%D9%84%D9%8A"
+    },
+    {
+      "rank": 23,
+      "topic_original": "المصري البورسعيدي",
+      "topic_english": "Egyptian Port Said",
+      "category": "General/Unsure",
+      "confidence": 0.29,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A%20%D8%A7%D9%84%D8%A8%D9%88%D8%B1%D8%B3%D8%B9%D9%8A%D8%AF%D9%8A"
+    },
+    {
+      "rank": 24,
+      "topic_original": "22 مارس",
+      "topic_english": "March 22",
+      "category": "Tech News",
+      "confidence": 0.34,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=22%20%D9%85%D8%A7%D8%B1%D8%B3"
+    },
+    {
+      "rank": 25,
+      "topic_original": "المبادرات المتميزه",
+      "topic_english": "Outstanding initiatives",
+      "category": "Tech News",
+      "confidence": 0.31,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D8%A8%D8%A7%D8%AF%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%AA%D9%85%D9%8A%D8%B2%D9%87"
+    },
+    {
+      "rank": 26,
+      "topic_original": "الوداد",
+      "topic_english": "Wydad",
+      "category": "Economy",
+      "confidence": 0.39,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%88%D8%AF%D8%A7%D8%AF"
+    },
+    {
+      "rank": 27,
+      "topic_original": "الاعمال المزدهره",
+      "topic_english": "Booming business",
+      "category": "Economy",
+      "confidence": 0.89,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%A7%D8%B9%D9%85%D8%A7%D9%84%20%D8%A7%D9%84%D9%85%D8%B2%D8%AF%D9%87%D8%B1%D9%87"
+    },
+    {
+      "rank": 28,
+      "topic_original": "المدارس الحكوميه",
+      "topic_english": "Government schools",
+      "category": "General/Unsure",
+      "confidence": 0.3,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D8%AF%D8%A7%D8%B1%D8%B3%20%D8%A7%D9%84%D8%AD%D9%83%D9%88%D9%85%D9%8A%D9%87"
+    },
+    {
+      "rank": 29,
+      "topic_original": "كاس الكونفدراليه الافريقيه",
+      "topic_english": "African Confederation Cup",
+      "category": "Football",
+      "confidence": 0.56,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D9%83%D8%A7%D8%B3%20%D8%A7%D9%84%D9%83%D9%88%D9%86%D9%81%D8%AF%D8%B1%D8%A7%D9%84%D9%8A%D9%87%20%D8%A7%D9%84%D8%A7%D9%81%D8%B1%D9%8A%D9%82%D9%8A%D9%87"
+    },
+    {
+      "rank": 30,
+      "topic_original": "المباراه النهاييه",
+      "topic_english": "The final match",
+      "category": "Football",
+      "confidence": 0.32,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D8%A8%D8%A7%D8%B1%D8%A7%D9%87%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D9%8A%D9%8A%D9%87"
+    },
+    {
+      "rank": 31,
+      "topic_original": "يومي الاربعاء",
+      "topic_english": "Every Wednesday",
+      "category": "General/Unsure",
+      "confidence": 0.25,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D9%8A%D9%88%D9%85%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B1%D8%A8%D8%B9%D8%A7%D8%A1"
+    },
+    {
+      "rank": 32,
+      "topic_original": "الموشر العام",
+      "topic_english": "General indicator",
+      "category": "Economy",
+      "confidence": 0.33,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D9%88%D8%B4%D8%B1%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85"
+    },
+    {
+      "rank": 33,
+      "topic_original": "دوري الابطال",
+      "topic_english": "Champions League",
+      "category": "Football",
+      "confidence": 0.77,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%AF%D9%88%D8%B1%D9%8A%20%D8%A7%D9%84%D8%A7%D8%A8%D8%B7%D8%A7%D9%84"
+    },
+    {
+      "rank": 34,
+      "topic_original": "الشهر الكريم",
+      "topic_english": "The holy month",
+      "category": "General/Unsure",
+      "confidence": 0.28,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%B4%D9%87%D8%B1%20%D8%A7%D9%84%D9%83%D8%B1%D9%8A%D9%85"
+    },
+    {
+      "rank": 35,
+      "topic_original": "تويتر",
+      "topic_english": "Twitter",
+      "category": "Viral Memes",
+      "confidence": 0.37,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%AA%D9%88%D9%8A%D8%AA%D8%B1"
+    },
+    {
+      "rank": 36,
+      "topic_original": "عماد متعب",
+      "topic_english": "Imad Miteb",
+      "category": "General/Unsure",
+      "confidence": 0.29,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%B9%D9%85%D8%A7%D8%AF%20%D9%85%D8%AA%D8%B9%D8%A8"
+    },
+    {
+      "rank": 37,
+      "topic_original": "دور الثمانيه",
+      "topic_english": "Round of eight",
+      "category": "General/Unsure",
+      "confidence": 0.28,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%AF%D9%88%D8%B1%20%D8%A7%D9%84%D8%AB%D9%85%D8%A7%D9%86%D9%8A%D9%87"
+    },
+    {
+      "rank": 38,
+      "topic_original": "الشهر الفضيل",
+      "topic_english": "The holy month",
+      "category": "General/Unsure",
+      "confidence": 0.28,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%B4%D9%87%D8%B1%20%D8%A7%D9%84%D9%81%D8%B6%D9%8A%D9%84"
+    },
+    {
+      "rank": 39,
+      "topic_original": "جنيف",
+      "topic_english": "Geneva",
+      "category": "Economy",
+      "confidence": 0.46,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%AC%D9%86%D9%8A%D9%81"
+    },
+    {
+      "rank": 40,
+      "topic_original": "القرارات الماليه الحكيمه",
+      "topic_english": "Wise financial decisions",
+      "category": "Economy",
+      "confidence": 0.76,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%82%D8%B1%D8%A7%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%A7%D9%84%D9%8A%D9%87%20%D8%A7%D9%84%D8%AD%D9%83%D9%8A%D9%85%D9%87"
+    },
+    {
+      "rank": 41,
+      "topic_original": "التفوق الاقتصادي",
+      "topic_english": "Economic superiority",
+      "category": "Economy",
+      "confidence": 0.96,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%AA%D9%81%D9%88%D9%82%20%D8%A7%D9%84%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%D9%8A"
+    },
+    {
+      "rank": 42,
+      "topic_original": "محمود بسيوني",
+      "topic_english": "Mahmoud Bassiouni",
+      "category": "General/Unsure",
+      "confidence": 0.27,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D9%85%D8%AD%D9%85%D9%88%D8%AF%20%D8%A8%D8%B3%D9%8A%D9%88%D9%86%D9%8A"
+    },
+    {
+      "rank": 43,
+      "topic_original": "اليوم الاثنين",
+      "topic_english": "Today is Monday",
+      "category": "Economy",
+      "confidence": 0.44,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%8A%D9%88%D9%85%20%D8%A7%D9%84%D8%A7%D8%AB%D9%86%D9%8A%D9%86"
+    },
+    {
+      "rank": 44,
+      "topic_original": "سما فنه",
+      "topic_english": "He named his art",
+      "category": "Economy",
+      "confidence": 0.35,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%B3%D9%85%D8%A7%20%D9%81%D9%86%D9%87"
+    },
+    {
+      "rank": 45,
+      "topic_original": "المتابعه اليوميه",
+      "topic_english": "Daily follow-up",
+      "category": "Tech News",
+      "confidence": 0.3,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D8%AA%D8%A7%D8%A8%D8%B9%D9%87%20%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A%D9%87"
+    },
+    {
+      "rank": 46,
+      "topic_original": "كاثلين سوزا",
+      "topic_english": "Kathleen Souza",
+      "category": "General/Unsure",
+      "confidence": 0.28,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D9%83%D8%A7%D8%AB%D9%84%D9%8A%D9%86%20%D8%B3%D9%88%D8%B2%D8%A7"
+    },
+    {
+      "rank": 47,
+      "topic_original": "الدعم الحالي",
+      "topic_english": "Current support",
+      "category": "General/Unsure",
+      "confidence": 0.28,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%AF%D8%B9%D9%85%20%D8%A7%D9%84%D8%AD%D8%A7%D9%84%D9%8A"
+    },
+    {
+      "rank": 48,
+      "topic_original": "برشلونة",
+      "topic_english": "Barcelona",
+      "category": "Football",
+      "confidence": 0.55,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A8%D8%B1%D8%B4%D9%84%D9%88%D9%86%D8%A9"
+    },
+    {
+      "rank": 49,
+      "topic_original": "المركز الاعلامي",
+      "topic_english": "Media Center",
+      "category": "TV Shows",
+      "confidence": 0.36,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D9%85%D8%B1%D9%83%D8%B2%20%D8%A7%D9%84%D8%A7%D8%B9%D9%84%D8%A7%D9%85%D9%8A"
+    },
+    {
+      "rank": 50,
+      "topic_original": "الاسره الكريمه",
+      "topic_english": "The honorable family",
+      "category": "Economy",
+      "confidence": 0.3,
+      "tweet_count": "",
+      "url": "https://twitter.com/search?q=%D8%A7%D9%84%D8%A7%D8%B3%D8%B1%D9%87%20%D8%A7%D9%84%D9%83%D8%B1%D9%8A%D9%85%D9%87"
+    }
+  ]
+}
