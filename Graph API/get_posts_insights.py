@@ -160,7 +160,7 @@ class FacebookAnalyticsManager:
 
             stats = {
                 "shares": post.get('shares', {}).get('count', 0),
-                "likes": post.get('reactions', {}).get('summary', {}).get('total_count', 0),
+                "reactions": post.get('reactions', {}).get('summary', {}).get('total_count', 0),
                 "comments_count": post.get('comments', {}).get('summary', {}).get('total_count', 0),
             }
 
