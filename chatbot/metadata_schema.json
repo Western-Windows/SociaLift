@@ -1,0 +1,10 @@
+[
+    "ProductId",
+    "Gender",
+    "Category",
+    "SubCategory",
+    "ProductType",
+    "Colour",
+    "Size",
+    "BrandName"
+]
