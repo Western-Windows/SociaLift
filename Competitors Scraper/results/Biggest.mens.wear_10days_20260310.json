@@ -1,0 +1,79 @@
+{
+  "fb_username_or_userid": "100076518067632",
+  "profile": [
+    " · Men's clothes shop",
+    "٣٠ ش السودان، قسم الدقي الجيزة, Giza, Egypt",
+    "010 01277843",
+    "info@biggestmenswear.com",
+    "biggestmenswear.com"
+  ],
+  "data": [
+    {
+      "post_id": "939582161935711",
+      "post_url": "https://www.facebook.com/939582161935711",
+      "username_or_userid": "100076518067632",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Biggest men's wear",
+        "short_name": "Biggest men's wear",
+        "id": "100076518067632"
+      },
+      "published_date": "2026-03-10 18:00:27",
+      "published_date2": "2026-03-10",
+      "time": 1773165627,
+      "reaction_count.count": 5,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 5
+      },
+      "context": "قميص شيك ومريح بشكل استثنائي❤\nبمقاسات تلبس لحد 8XL \n #اختيارك_الصح #Biggest #ملوك_البيج_سايز",
+      "video_view_count": null
+    },
+    {
+      "post_id": "937795642114363",
+      "post_url": "https://www.facebook.com/937795642114363",
+      "username_or_userid": "100076518067632",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Biggest men's wear",
+        "short_name": "Biggest men's wear",
+        "id": "100076518067632"
+      },
+      "published_date": "2026-03-08 08:01:07",
+      "published_date2": "2026-03-08",
+      "time": 1772956867,
+      "reaction_count.count": 16,
+      "comment_rendering_instance.comments.total_count": 25,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 14,
+        "أحببته": 2
+      },
+      "context": "قميص أكسفورد قطن 100%\nراحة وأناقة طول اليوم 👔\n\nمتوفر الآن بـألوان مميزة:\nنبيتي – أسود – كحلي – أبيض – اللبني -تركواز – رمادي فاتح – رمادي غامق\n\nاطلبه الآن من خلال الفروع أو أونلاين\n #Biggest #اختيارك_الصح #ملوك_البيج_سايز",
+      "video_view_count": null
+    },
+    {
+      "post_id": "931275269433067",
+      "post_url": "https://www.facebook.com/931275269433067",
+      "username_or_userid": "100076518067632",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Biggest men's wear",
+        "short_name": "Biggest men's wear",
+        "id": "100076518067632"
+      },
+      "published_date": "2026-02-27 19:00:04",
+      "published_date2": "2026-02-27",
+      "time": 1772218804,
+      "reaction_count.count": 7,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 7
+      },
+      "context": "القميص البابلو من أرقي القطع التي لا غني عنها \nمتوفر منه 4 ألوان مميزة وبمقاسات تلبس لحد 8XL \n#ملوك_البيج_سايز #Biggest",
+      "video_view_count": null
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "page": "Emergenhelp",
+    "region": "Egypt",
+    "region_code": "EG",
+    "generated_at": "2026-02-23T01:54:45.154140"
+  },
+  "upcoming_holidays": [
+    {
+      "date": "2026-03-20",
+      "holiday_name": "Eid al-Fitr (estimated)",
+      "days_until": 25,
+      "content_advice": "Plan content."
+    },
+    {
+      "date": "2026-03-21",
+      "holiday_name": "Eid al-Fitr (estimated)",
+      "days_until": 26,
+      "content_advice": "Plan content."
+    },
+    {
+      "date": "2026-04-13",
+      "holiday_name": "Spring Festival",
+      "days_until": 49,
+      "content_advice": "Plan content."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "country": "egypt",
+    "region_code": "EG",
+    "generated_at": "2026-02-23T01:58:25.661368"
+  },
+  "filter_settings": {
+    "categories_used": [
+      "Technology",
+      "Software",
+      "Gaming",
+      "Business",
+      "Automotive",
+      "Sports"
+    ],
+    "total_scanned": 0,
+    "relevant_found": 0
+  },
+  "filtered_trends": []
+}

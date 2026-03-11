@@ -1,0 +1,81 @@
+{
+  "fb_username_or_userid": "100094319983090",
+  "profile": [
+    "Shop Now",
+    "Page",
+    " · Clothing (brand)",
+    "010 61450942",
+    "comfowear@gmail.com",
+    "56% recommend (11 Reviews)",
+    "﻿",
+    "14,793 followers"
+  ],
+  "data": [
+    {
+      "post_id": "791439994009993",
+      "post_url": "https://www.facebook.com/791439994009993",
+      "username_or_userid": "100094319983090",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "COMFO WEAR ",
+        "short_name": "COMFO WEAR ",
+        "id": "100094319983090"
+      },
+      "published_date": "2026-02-24 18:33:36",
+      "published_date2": "2026-02-24",
+      "time": 1771958016,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {},
+      "context": "Meet your new everyday jacket — effortless comfort in denim 🤍\nDesigned to fit everyone, made to wear everywhere.\nAvailable now-Don’t miss it‼️\n#denim #jacket #comfowear #unisexjackets #wintercollaction",
+      "video_view_count": null
+    },
+    {
+      "post_id": "791427514011241",
+      "post_url": "https://www.facebook.com/791427514011241",
+      "username_or_userid": "100094319983090",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "COMFO WEAR ",
+        "short_name": "COMFO WEAR ",
+        "id": "100094319983090"
+      },
+      "published_date": "2026-02-24 18:13:00",
+      "published_date2": "2026-02-24",
+      "time": 1771956780,
+      "reaction_count.count": 2,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 2
+      },
+      "context": "Your new everyday jacket. Comfort in denim.🤍\nAvailable now-Don’t miss it ‼️\n#denim #comfowear #wintercollection❄️ #unisexjacket #denimjacket",
+      "video_view_count": null
+    },
+    {
+      "post_id": "757148814105778",
+      "post_url": "https://www.facebook.com/757148814105778",
+      "username_or_userid": "100094319983090",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "COMFO WEAR ",
+        "short_name": "COMFO WEAR ",
+        "id": "100094319983090"
+      },
+      "published_date": "2026-01-14 18:01:34",
+      "published_date2": "2026-01-14",
+      "time": 1768413694,
+      "reaction_count.count": 5,
+      "comment_rendering_instance.comments.total_count": 3,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 2,
+        "أغضبني": 2,
+        "أدعمه": 1
+      },
+      "context": "Our Best Selling…🤩\nGet yours now‼️\n#comfowear #bestseller #offers #wintercollection❄️",
+      "video_view_count": null
+    }
+  ]
+}

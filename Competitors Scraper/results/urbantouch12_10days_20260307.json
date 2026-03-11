@@ -1,0 +1,78 @@
+{
+  "fb_username_or_userid": "100072148609894",
+  "profile": [
+    "No refund � or exchange ",
+    "To make order send a message with pic",
+    "Page",
+    " · Clothing (brand)",
+    "177,365 followers"
+  ],
+  "data": [
+    {
+      "post_id": "879289867819292",
+      "post_url": "https://www.facebook.com/879289867819292",
+      "username_or_userid": "100072148609894",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Elegance",
+        "short_name": "Elegance",
+        "id": "100072148609894"
+      },
+      "published_date": "2025-12-16 11:10:41",
+      "published_date2": "2025-12-16",
+      "time": 1765883441,
+      "reaction_count.count": 3,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 3
+      },
+      "context": "Timeless coats for colder days☃️☃️\n\nعنوان :٢٠ ش الحريه م.الجديده\n\n #WinterWonderland #fashion #shopnow #winterfashion",
+      "video_view_count": null
+    },
+    {
+      "post_id": "879288081152804",
+      "post_url": "https://www.facebook.com/879288081152804",
+      "username_or_userid": "100072148609894",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Elegance",
+        "short_name": "Elegance",
+        "id": "100072148609894"
+      },
+      "published_date": "2025-12-16 11:07:38",
+      "published_date2": "2025-12-16",
+      "time": 1765883258,
+      "reaction_count.count": 3,
+      "comment_rendering_instance.comments.total_count": 3,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 3
+      },
+      "context": "Luxury in every pleat 🖤🖤\n\nAddress:20 st horeya masr gdeda \n\n #christmas2026 # #newyear #shopnow #fashion #modestwear #urbantouch",
+      "video_view_count": null
+    },
+    {
+      "post_id": "860012846413661",
+      "post_url": "https://www.facebook.com/860012846413661",
+      "username_or_userid": "100072148609894",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Elegance",
+        "short_name": "Elegance",
+        "id": "100072148609894"
+      },
+      "published_date": "2025-11-19 18:22:43",
+      "published_date2": "2025-11-19",
+      "time": 1763576563,
+      "reaction_count.count": 5,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 5
+      },
+      "context": "Scarf coat available now in brown / grey \n\nOrder yours now 🔥🔥\n\n#fashionblogger #shopping #MadeInEgypt #bloggers #ModestWear #ShopNow #fashion #fashionista #winterfashion #wintercollection",
+      "video_view_count": null
+    }
+  ]
+}

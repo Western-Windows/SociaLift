@@ -1,0 +1,80 @@
+{
+  "fb_username_or_userid": "100081930696571",
+  "profile": [
+    " · Costume shop",
+    "21 Cleopatra st, Elkorba- Heliopolis · Cairo, Egypt, Cairo, Egypt",
+    "012 27097700",
+    "passion.eg.1",
+    "Closed now",
+    "88% recommend (20 Reviews)",
+    "﻿"
+  ],
+  "data": [
+    {
+      "post_id": "886802610727421",
+      "post_url": "https://www.facebook.com/886802610727421",
+      "username_or_userid": "100081930696571",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Passion for Casual Wear",
+        "short_name": "Passion for Casual Wear",
+        "id": "100081930696571"
+      },
+      "published_date": "2026-01-19 15:09:50",
+      "published_date2": "2026-01-19",
+      "time": 1768835390,
+      "reaction_count.count": 1,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 1
+      },
+      "context": "Don’t miss out! Catch the offer before quantities run out🔥 #passion #sale #offers #descounts #supersale",
+      "video_view_count": null
+    },
+    {
+      "post_id": "875138538560495",
+      "post_url": "https://www.facebook.com/875138538560495",
+      "username_or_userid": "100081930696571",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Passion for Casual Wear",
+        "short_name": "Passion for Casual Wear",
+        "id": "100081930696571"
+      },
+      "published_date": "2026-01-03 18:16:02",
+      "published_date2": "2026-01-03",
+      "time": 1767464162,
+      "reaction_count.count": 2,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 2
+      },
+      "context": "Basic hoodie all colors available .. sizes S M L Xl, COTTON 100%🤍 #cottonhoodie #hoodie #passionforcasual #discount #sale",
+      "video_view_count": null
+    },
+    {
+      "post_id": "843740958366920",
+      "post_url": "https://www.facebook.com/843740958366920",
+      "username_or_userid": "100081930696571",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Passion for Casual Wear",
+        "short_name": "Passion for Casual Wear",
+        "id": "100081930696571"
+      },
+      "published_date": "2025-11-21 23:51:17",
+      "published_date2": "2025-11-21",
+      "time": 1763769077,
+      "reaction_count.count": 1,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 1
+      },
+      "context": "New Waterproof jacket❤️❤️. #new #collection #passion #soiree #fashion #casual #passionforcasual #sale #supersale",
+      "video_view_count": null
+    }
+  ]
+}
