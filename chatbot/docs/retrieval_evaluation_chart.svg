@@ -1,0 +1,387 @@
+<svg width="100%" viewBox="0 0 680 1080" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TITLE -->
+<!-- ═══════════════════════════════════════════════ -->
+<text font-family="sans-serif" font-size="15" font-weight="500" fill="#1A2332" x="340" y="28" text-anchor="middle" dominant-baseline="central">Retrieval Evaluation — Progress Across All Trials</text>
+<text font-family="sans-serif" font-size="11" fill="#5A6472" x="340" y="46" text-anchor="middle" dominant-baseline="central">40 queries · sentence-transformers/all-MiniLM-L6-v2 · Best strategy per trial shown</text>
+<line x1="40" y1="56" x2="640" y2="56" stroke="#D3D1C7" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 1: MRR progression line chart -->
+<!-- ═══════════════════════════════════════════════ -->
+<text font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C" x="40" y="74" dominant-baseline="central">MRR — Mean Reciprocal Rank (best strategy per trial)</text>
+
+<!-- Chart area: x=80..620, y=85..175, range 0.40–0.80 -->
+<!-- Grid lines -->
+<line x1="80" y1="85" x2="620" y2="85" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="105" x2="620" y2="105" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="125" x2="620" y2="125" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="145" x2="620" y2="145" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="165" x2="620" y2="165" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="175" x2="620" y2="175" stroke="#B4B2A9" stroke-width="0.5"/>
+
+<!-- Y axis labels: 0.80 at y=85, 0.75→105, 0.70→125, 0.65→145, 0.60→165, 0.55→175 approx -->
+<!-- scale: range 0.55–0.80 = 0.25, height=90px → 1unit=360px -->
+<!-- y = 175 - (val - 0.55)*360 -->
+<text font-family="sans-serif" font-size="10" fill="#888780" x="75" y="85" text-anchor="end" dominant-baseline="central">0.80</text>
+<text font-family="sans-serif" font-size="10" fill="#888780" x="75" y="105" text-anchor="end" dominant-baseline="central">0.75</text>
+<text font-family="sans-serif" font-size="10" fill="#888780" x="75" y="125" text-anchor="end" dominant-baseline="central">0.70</text>
+<text font-family="sans-serif" font-size="10" fill="#888780" x="75" y="145" text-anchor="end" dominant-baseline="central">0.65</text>
+<text font-family="sans-serif" font-size="10" fill="#888780" x="75" y="165" text-anchor="end" dominant-baseline="central">0.60</text>
+
+<!-- X positions: Baseline=155, T1=230, T2=305, T3=380, T4=455, T5=530, Final=605 -->
+<!-- MRR values: Baseline=0.545, T1=0.694(HybridRRF), T2=0.694(HybridRRF), T3=0.699(BM25), T4=0.696(BM25), T5=0.699(QueryRouter), Final=0.720(FullGraph) -->
+<!-- y = 175 - (val-0.55)*360 -->
+<!-- Baseline: 175-(0.545-0.55)*360 = 175+1.8=176.8 → clip to 175 -->
+<!-- T1: 175-(0.694-0.55)*360 = 175-51.84=123.16 -->
+<!-- T2: 123.16 -->
+<!-- T3: 175-(0.699-0.55)*360 = 175-53.64=121.36 -->
+<!-- T4: 175-(0.696-0.55)*360 = 175-52.56=122.44 -->
+<!-- T5: 121.36 -->
+<!-- Final: 175-(0.720-0.55)*360 = 175-61.2=113.8 -->
+
+<polyline points="155,175.8 230,123.2 305,123.2 380,121.4 455,122.4 530,121.4 605,113.8" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linejoin="round"/>
+
+<!-- Dots -->
+<circle cx="155" cy="175.8" r="4" fill="#888780" stroke="white" stroke-width="1.5"/>
+<circle cx="230" cy="123.2" r="4" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+<circle cx="305" cy="123.2" r="4" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+<circle cx="380" cy="121.4" r="4" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+<circle cx="455" cy="122.4" r="4" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+<circle cx="530" cy="121.4" r="4" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+<circle cx="605" cy="113.8" r="5" fill="#1A56A0" stroke="white" stroke-width="1.5"/>
+
+<!-- Value labels -->
+<text font-family="sans-serif" font-size="10" fill="#888780" x="155" y="188" text-anchor="middle">0.545</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="230" y="113" text-anchor="middle">0.694</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="305" y="113" text-anchor="middle">0.694</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="380" y="111" text-anchor="middle">0.699</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="455" y="112" text-anchor="middle">0.696</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="530" y="111" text-anchor="middle">0.699</text>
+<text font-family="sans-serif" font-size="10" fill="#0C447C" font-weight="500" x="605" y="104" text-anchor="middle">0.720</text>
+
+<!-- X axis labels -->
+<text font-family="sans-serif" font-size="10" fill="#5A6472" x="155" y="195" text-anchor="middle">Baseline</text>
+<text font-family="sans-serif" font-size="10" fill="#5A6472" x="230" y="195" text-anchor="middle">Trial 1</text>
+<text font-family="sans-serif" font-size="10" fill="#5A6472" x="305" y="195" text-anchor="middle">Trial 2</text>
+<text font-family="sans-serif" font-size="10" fill="#5A6472" x="380" y="195" text-anchor="middle">Trial 3</text>
+<text font-family="sans-serif" font-size="10" fill="#5A6472" x="455" y="195" text-anchor="middle">Trial 4</text>
+<text font-family="sans-serif" font-size="10" fill="#5A6472" x="530" y="195" text-anchor="middle">Trial 5</text>
+<text font-family="sans-serif" font-size="10" fill="#1A56A0" font-weight="500" x="605" y="195" text-anchor="middle">Final</text>
+
+<!-- improvement arrow annotation -->
+<line x1="155" y1="165" x2="605" y2="113.8" stroke="#E24B4A" stroke-width="0.8" stroke-dasharray="3 3"/>
+<text font-family="sans-serif" font-size="10" fill="#A32D2D" x="380" y="133" text-anchor="middle">+32.1% MRR gain</text>
+
+<line x1="80" y1="205" x2="640" y2="205" stroke="#E8E6E0" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 2: Full metrics table per trial -->
+<!-- ═══════════════════════════════════════════════ -->
+<text font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C" x="40" y="220" dominant-baseline="central">Full metrics — best strategy per trial</text>
+
+<!-- Table header -->
+<rect x="40" y="232" width="600" height="22" rx="4" fill="#1A56A0"/>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="100" y="243" text-anchor="middle" dominant-baseline="central">Trial</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="195" y="243" text-anchor="middle" dominant-baseline="central">Best Strategy</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="293" y="243" text-anchor="middle" dominant-baseline="central">Hit@k</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="343" y="243" text-anchor="middle" dominant-baseline="central">Recall</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="393" y="243" text-anchor="middle" dominant-baseline="central">Prec.</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="443" y="243" text-anchor="middle" dominant-baseline="central">MRR</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="493" y="243" text-anchor="middle" dominant-baseline="central">MAP</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="543" y="243" text-anchor="middle" dominant-baseline="central">NDCG</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="608" y="243" text-anchor="middle" dominant-baseline="central">k</text>
+
+<!-- Row data: alternating fill -->
+<!-- Baseline -->
+<rect x="40" y="254" width="600" height="22" fill="#F1EFE8"/>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="100" y="265" text-anchor="middle" dominant-baseline="central">Baseline (PoC)</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="195" y="265" text-anchor="middle" dominant-baseline="central">Semantic Only</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="293" y="265" text-anchor="middle" dominant-baseline="central">0.700</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="343" y="265" text-anchor="middle" dominant-baseline="central">0.637</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="393" y="265" text-anchor="middle" dominant-baseline="central">0.145</text>
+<text font-family="sans-serif" font-size="10" fill="#A32D2D" x="443" y="265" text-anchor="middle" dominant-baseline="central">0.545</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="493" y="265" text-anchor="middle" dominant-baseline="central">0.509</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="543" y="265" text-anchor="middle" dominant-baseline="central">0.555</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="608" y="265" text-anchor="middle" dominant-baseline="central">5</text>
+
+<!-- Trial 1 -->
+<rect x="40" y="276" width="600" height="22" fill="#FFFFFF"/>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="100" y="287" text-anchor="middle" dominant-baseline="central">Trial 1 · 3ea0302</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="195" y="287" text-anchor="middle" dominant-baseline="central">Hybrid (BM25+Sem.)</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="293" y="287" text-anchor="middle" dominant-baseline="central">0.725</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="343" y="287" text-anchor="middle" dominant-baseline="central">0.685</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="393" y="287" text-anchor="middle" dominant-baseline="central">0.427</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="443" y="287" text-anchor="middle" dominant-baseline="central">0.694</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="493" y="287" text-anchor="middle" dominant-baseline="central">0.669</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="543" y="287" text-anchor="middle" dominant-baseline="central">0.687</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="608" y="287" text-anchor="middle" dominant-baseline="central">5</text>
+
+<!-- Trial 2 -->
+<rect x="40" y="298" width="600" height="22" fill="#F1EFE8"/>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="100" y="309" text-anchor="middle" dominant-baseline="central">Trial 2 · bd716f4</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="195" y="309" text-anchor="middle" dominant-baseline="central">Hybrid (RRF)</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="293" y="309" text-anchor="middle" dominant-baseline="central">0.725</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="343" y="309" text-anchor="middle" dominant-baseline="central">0.685</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="393" y="309" text-anchor="middle" dominant-baseline="central">0.427</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="443" y="309" text-anchor="middle" dominant-baseline="central">0.694</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="493" y="309" text-anchor="middle" dominant-baseline="central">0.669</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="543" y="309" text-anchor="middle" dominant-baseline="central">0.687</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="608" y="309" text-anchor="middle" dominant-baseline="central">5</text>
+
+<!-- Trial 3 -->
+<rect x="40" y="320" width="600" height="22" fill="#FFFFFF"/>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="100" y="331" text-anchor="middle" dominant-baseline="central">Trial 3 · 9878036</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="195" y="331" text-anchor="middle" dominant-baseline="central">BM25 Only</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="293" y="331" text-anchor="middle" dominant-baseline="central">0.775</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="343" y="331" text-anchor="middle" dominant-baseline="central">0.714</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="393" y="331" text-anchor="middle" dominant-baseline="central">0.407</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="443" y="331" text-anchor="middle" dominant-baseline="central">0.699</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="493" y="331" text-anchor="middle" dominant-baseline="central">0.673</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="543" y="331" text-anchor="middle" dominant-baseline="central">0.691</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="608" y="331" text-anchor="middle" dominant-baseline="central">10</text>
+
+<!-- Trial 4 -->
+<rect x="40" y="342" width="600" height="22" fill="#F1EFE8"/>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="100" y="353" text-anchor="middle" dominant-baseline="central">Trial 4 · 4d66452</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="195" y="353" text-anchor="middle" dominant-baseline="central">BM25 Only</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="293" y="353" text-anchor="middle" dominant-baseline="central">0.750</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="343" y="353" text-anchor="middle" dominant-baseline="central">0.710</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="393" y="353" text-anchor="middle" dominant-baseline="central">0.414</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="443" y="353" text-anchor="middle" dominant-baseline="central">0.696</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="493" y="353" text-anchor="middle" dominant-baseline="central">0.673</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="543" y="353" text-anchor="middle" dominant-baseline="central">0.692</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="608" y="353" text-anchor="middle" dominant-baseline="central">7</text>
+
+<!-- Trial 5 -->
+<rect x="40" y="364" width="600" height="22" fill="#FFFFFF"/>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="100" y="375" text-anchor="middle" dominant-baseline="central">Trial 5 · 17bc2b3</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="195" y="375" text-anchor="middle" dominant-baseline="central">Query Router</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="293" y="375" text-anchor="middle" dominant-baseline="central">0.775</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="343" y="375" text-anchor="middle" dominant-baseline="central">0.715</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="393" y="375" text-anchor="middle" dominant-baseline="central">0.409</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="443" y="375" text-anchor="middle" dominant-baseline="central">0.699</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="493" y="375" text-anchor="middle" dominant-baseline="central">0.673</text>
+<text font-family="sans-serif" font-size="10" fill="#2C2C2A" x="543" y="375" text-anchor="middle" dominant-baseline="central">0.692</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="608" y="375" text-anchor="middle" dominant-baseline="central">10</text>
+
+<!-- Final -->
+<rect x="40" y="386" width="600" height="24" rx="0" fill="#1A56A0"/>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="100" y="398" text-anchor="middle" dominant-baseline="central">Final · 36a70dc</text>
+<text font-family="sans-serif" font-size="10" fill="#B5D4F4" x="195" y="398" text-anchor="middle" dominant-baseline="central">Full Graph</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="293" y="398" text-anchor="middle" dominant-baseline="central">0.775</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E6F1FB" x="343" y="398" text-anchor="middle" dominant-baseline="central">0.705</text>
+<text font-family="sans-serif" font-size="10" fill="#B5D4F4" x="393" y="398" text-anchor="middle" dominant-baseline="central">0.310</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#9FE1CB" x="443" y="398" text-anchor="middle" dominant-baseline="central">0.720</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#9FE1CB" x="493" y="398" text-anchor="middle" dominant-baseline="central">0.892</text>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#9FE1CB" x="543" y="398" text-anchor="middle" dominant-baseline="central">0.838</text>
+<text font-family="sans-serif" font-size="10" fill="#B5D4F4" x="608" y="398" text-anchor="middle" dominant-baseline="central">10</text>
+
+<line x1="40" y1="416" x2="640" y2="416" stroke="#E8E6E0" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 3: Strategy comparison bar chart T1-T5 -->
+<!-- ═══════════════════════════════════════════════ -->
+<text font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C" x="40" y="432" dominant-baseline="central">MRR by strategy — Trial 1 vs Trial 5 (best ablation comparison)</text>
+<text font-family="sans-serif" font-size="10" fill="#5A6472" x="40" y="448" dominant-baseline="central">Showing all strategies evaluated across both trials (k=5 → k=10 with Query Router)</text>
+
+<!-- Bar chart: x start=80, bar width=52, gap=8 -->
+<!-- Strategies: BM25 Only, Hybrid RRF, RAG Fusion, Hybrid Sem70, Hybrid 50/50, Hybrid BM25 70, Sem Only -->
+<!-- Chart area y: 460–560, range 0.40–0.75 = 0.35, height=100px → 1unit=285.7px -->
+<!-- y = 560 - (val-0.40)*285.7 -->
+
+<!-- Grid -->
+<line x1="80" y1="460" x2="630" y2="460" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="488" x2="630" y2="488" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="517" x2="630" y2="517" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="545" x2="630" y2="545" stroke="#E8E6E0" stroke-width="0.5"/>
+<line x1="80" y1="560" x2="630" y2="560" stroke="#B4B2A9" stroke-width="0.5"/>
+
+<text font-family="sans-serif" font-size="9" fill="#888780" x="76" y="460" text-anchor="end" dominant-baseline="central">0.75</text>
+<text font-family="sans-serif" font-size="9" fill="#888780" x="76" y="488" text-anchor="end" dominant-baseline="central">0.70</text>
+<text font-family="sans-serif" font-size="9" fill="#888780" x="76" y="517" text-anchor="end" dominant-baseline="central">0.65</text>
+<text font-family="sans-serif" font-size="9" fill="#888780" x="76" y="545" text-anchor="end" dominant-baseline="central">0.60</text>
+
+<!-- BM25 Only: T1=0.688, T5=0.699 -->
+<!-- T1 bar: y=560-(0.688-0.40)*285.7=560-82.3=477.7, h=82.3 -->
+<!-- T5 bar: y=560-(0.699-0.40)*285.7=560-85.4=474.6, h=85.4 -->
+<rect x="90" y="477.7" width="22" height="82.3" fill="#5DCAA5" rx="2"/>
+<rect x="114" y="474.6" width="22" height="85.4" fill="#1D9E75" rx="2"/>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="113" y="573" text-anchor="middle">BM25</text>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="113" y="581" text-anchor="middle">Only</text>
+
+<!-- Hybrid RRF: T1=0.694, T5=0.699 -->
+<rect x="158" y="475.3" width="22" height="84.7" fill="#5DCAA5" rx="2"/>
+<rect x="182" y="474.6" width="22" height="85.4" fill="#1D9E75" rx="2"/>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="181" y="573" text-anchor="middle">Hybrid</text>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="181" y="581" text-anchor="middle">RRF</text>
+
+<!-- RAG Fusion: T1=0.688, T5=0.647 -->
+<rect x="226" y="477.7" width="22" height="82.3" fill="#5DCAA5" rx="2"/>
+<rect x="250" y="491.6" width="22" height="68.4" fill="#1D9E75" rx="2"/>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="249" y="573" text-anchor="middle">RAG</text>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="249" y="581" text-anchor="middle">Fusion</text>
+
+<!-- Hybrid Sem70: T1=0.622, T5=0.485 -->
+<rect x="294" y="502.9" width="22" height="57.1" fill="#5DCAA5" rx="2"/>
+<rect x="318" y="521.5" width="22" height="38.5" fill="#1D9E75" rx="2"/>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="317" y="573" text-anchor="middle">Hybrid</text>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="317" y="581" text-anchor="middle">Sem70%</text>
+
+<!-- Query Router: T1=N/A, T5=0.699 -->
+<rect x="380" y="474.6" width="22" height="85.4" fill="#7F77DD" rx="2"/>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="380" y="573" text-anchor="middle">Query</text>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="380" y="581" text-anchor="middle">Router</text>
+<text font-family="sans-serif" font-size="8" fill="#534AB7" x="380" y="566" text-anchor="middle">new T5</text>
+
+<!-- Hybrid+Rerank: T5=0.661 -->
+<rect x="418" y="484.6" width="22" height="75.4" fill="#1D9E75" rx="2"/>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="418" y="573" text-anchor="middle">Hybrid+</text>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="418" y="581" text-anchor="middle">Rerank</text>
+
+<!-- Semantic Only: T1=0.622, T5=0.589 -->
+<rect x="456" y="502.9" width="22" height="57.1" fill="#5DCAA5" rx="2"/>
+<rect x="480" y="511.6" width="22" height="48.4" fill="#1D9E75" rx="2"/>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="479" y="573" text-anchor="middle">Semantic</text>
+<text font-family="sans-serif" font-size="8" fill="#5A6472" x="479" y="581" text-anchor="middle">Only</text>
+
+<!-- Legend -->
+<rect x="510" y="470" width="12" height="12" rx="2" fill="#5DCAA5"/>
+<text font-family="sans-serif" font-size="9" fill="#5A6472" x="526" y="476" dominant-baseline="central">Trial 1 (k=5)</text>
+<rect x="510" y="488" width="12" height="12" rx="2" fill="#1D9E75"/>
+<text font-family="sans-serif" font-size="9" fill="#5A6472" x="526" y="494" dominant-baseline="central">Trial 5 (k=10)</text>
+<rect x="510" y="506" width="12" height="12" rx="2" fill="#7F77DD"/>
+<text font-family="sans-serif" font-size="9" fill="#5A6472" x="526" y="512" dominant-baseline="central">New in T5</text>
+
+<line x1="40" y1="596" x2="640" y2="596" stroke="#E8E6E0" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 4: Difficulty breakdown — Final graph -->
+<!-- ═══════════════════════════════════════════════ -->
+<text font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C" x="40" y="612" dominant-baseline="central">Final pipeline — performance by difficulty level (Full Graph, k=10)</text>
+
+<!-- 3 difficulty columns: EASY x=130, MEDIUM x=340, HARD x=550 -->
+<!-- Metrics: Hit, Recall, MRR -->
+
+<!-- EASY box -->
+<rect x="60" y="628" width="180" height="110" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="11" font-weight="500" fill="#085041" x="150" y="646" text-anchor="middle" dominant-baseline="central">EASY (24 queries)</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="150" y="664" text-anchor="middle" dominant-baseline="central">Hit@k: 0.750  ·  75.0%</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="150" y="682" text-anchor="middle" dominant-baseline="central">Recall: 0.750</text>
+<text font-family="sans-serif" font-size="10" fill="#0F6E56" x="150" y="700" text-anchor="middle" dominant-baseline="central">MRR: 0.729</text>
+<rect x="80" y="713" width="140" height="16" rx="4" fill="#1D9E75"/>
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#E1F5EE" x="150" y="721" text-anchor="middle" dominant-baseline="central">Strong performance ✓</text>
+
+<!-- MEDIUM box -->
+<rect x="250" y="628" width="180" height="110" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="11" font-weight="500" fill="#633806" x="340" y="646" text-anchor="middle" dominant-baseline="central">MEDIUM (12 queries)</text>
+<text font-family="sans-serif" font-size="10" fill="#854F0B" x="340" y="664" text-anchor="middle" dominant-baseline="central">Hit@k: 0.833  ·  83.3%</text>
+<text font-family="sans-serif" font-size="10" fill="#854F0B" x="340" y="682" text-anchor="middle" dominant-baseline="central">Recall: 0.667</text>
+<text font-family="sans-serif" font-size="10" fill="#854F0B" x="340" y="700" text-anchor="middle" dominant-baseline="central">MRR: 0.692</text>
+<rect x="270" y="713" width="140" height="16" rx="4" fill="#BA7517"/>
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#FAEEDA" x="340" y="721" text-anchor="middle" dominant-baseline="central">Best Hit@k overall ✓</text>
+
+<!-- HARD box -->
+<rect x="440" y="628" width="180" height="110" rx="8" fill="#FAECE7" stroke="#F0997B" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="11" font-weight="500" fill="#4A1B0C" x="530" y="646" text-anchor="middle" dominant-baseline="central">HARD (4 queries)</text>
+<text font-family="sans-serif" font-size="10" fill="#993C1D" x="530" y="664" text-anchor="middle" dominant-baseline="central">Hit@k: 0.750  ·  75.0%</text>
+<text font-family="sans-serif" font-size="10" fill="#993C1D" x="530" y="682" text-anchor="middle" dominant-baseline="central">Recall: 0.554</text>
+<text font-family="sans-serif" font-size="10" fill="#993C1D" x="530" y="700" text-anchor="middle" dominant-baseline="central">MRR: 0.750</text>
+<rect x="460" y="713" width="140" height="16" rx="4" fill="#D85A30"/>
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#FAECE7" x="530" y="721" text-anchor="middle" dominant-baseline="central">Recall gap — future work</text>
+
+<line x1="40" y1="756" x2="640" y2="756" stroke="#E8E6E0" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 5: Key decisions timeline -->
+<!-- ═══════════════════════════════════════════════ -->
+<text font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C" x="40" y="772" dominant-baseline="central">Experimental decisions timeline</text>
+
+<!-- Timeline line -->
+<line x1="80" y1="820" x2="620" y2="820" stroke="#B4B2A9" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Nodes on timeline -->
+<!-- Baseline x=100, T1=195, T2=285, T3=375, T4=455, T5=540, Final=610 -->
+<circle cx="100" cy="820" r="6" fill="#888780" stroke="white" stroke-width="1.5"/>
+<circle cx="195" cy="820" r="6" fill="#5DCAA5" stroke="white" stroke-width="1.5"/>
+<circle cx="285" cy="820" r="6" fill="#5DCAA5" stroke="white" stroke-width="1.5"/>
+<circle cx="375" cy="820" r="6" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+<circle cx="455" cy="820" r="6" fill="#EF9F27" stroke="white" stroke-width="1.5"/>
+<circle cx="540" cy="820" r="6" fill="#7F77DD" stroke="white" stroke-width="1.5"/>
+<circle cx="610" cy="820" r="7" fill="#1A56A0" stroke="white" stroke-width="2"/>
+
+<!-- Labels above -->
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#5F5E5A" x="100" y="800" text-anchor="middle">Baseline</text>
+<text font-family="sans-serif" font-size="9" fill="#5F5E5A" x="100" y="810" text-anchor="middle">Sem. only</text>
+
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#085041" x="195" y="800" text-anchor="middle">Trial 1</text>
+<text font-family="sans-serif" font-size="9" fill="#085041" x="195" y="810" text-anchor="middle">+Hybrid</text>
+
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#085041" x="285" y="800" text-anchor="middle">Trial 2</text>
+<text font-family="sans-serif" font-size="9" fill="#085041" x="285" y="810" text-anchor="middle">RRF tuning</text>
+
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#0F6E56" x="375" y="800" text-anchor="middle">Trial 3</text>
+<text font-family="sans-serif" font-size="9" fill="#0F6E56" x="375" y="810" text-anchor="middle">k optimised</text>
+
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#854F0B" x="455" y="800" text-anchor="middle">Trial 4</text>
+<text font-family="sans-serif" font-size="9" fill="#854F0B" x="455" y="810" text-anchor="middle">Rerank test</text>
+
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#3C3489" x="540" y="800" text-anchor="middle">Trial 5</text>
+<text font-family="sans-serif" font-size="9" fill="#3C3489" x="540" y="810" text-anchor="middle">Qry Router</text>
+
+<text font-family="sans-serif" font-size="9" font-weight="500" fill="#0C447C" x="610" y="800" text-anchor="middle">Final</text>
+<text font-family="sans-serif" font-size="9" fill="#0C447C" x="610" y="810" text-anchor="middle">Full Graph</text>
+
+<!-- Labels below -->
+<text font-family="sans-serif" font-size="8" fill="#888780" x="100" y="834" text-anchor="middle">MRR 0.545</text>
+<text font-family="sans-serif" font-size="8" fill="#0F6E56" x="195" y="834" text-anchor="middle">MRR 0.694</text>
+<text font-family="sans-serif" font-size="8" fill="#0F6E56" x="285" y="834" text-anchor="middle">MRR 0.694</text>
+<text font-family="sans-serif" font-size="8" fill="#0F6E56" x="375" y="834" text-anchor="middle">MRR 0.699</text>
+<text font-family="sans-serif" font-size="8" fill="#854F0B" x="455" y="834" text-anchor="middle">rejected ✗</text>
+<text font-family="sans-serif" font-size="8" fill="#3C3489" x="540" y="834" text-anchor="middle">MRR 0.699</text>
+<text font-family="sans-serif" font-size="8" fill="#0C447C" font-weight="500" x="610" y="834" text-anchor="middle">MRR 0.720 ✓</text>
+
+<!-- Rerank annotation -->
+<line x1="455" y1="841" x2="455" y2="856" stroke="#EF9F27" stroke-width="0.8" stroke-dasharray="2 2"/>
+<rect x="390" y="856" width="130" height="28" rx="4" fill="#FAEEDA" stroke="#EF9F27" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="8" fill="#633806" x="455" y="866" text-anchor="middle" dominant-baseline="central">Cross-encoder rerank</text>
+<text font-family="sans-serif" font-size="8" fill="#633806" x="455" y="877" text-anchor="middle" dominant-baseline="central">no gain → dropped</text>
+
+<line x1="40" y1="900" x2="640" y2="900" stroke="#E8E6E0" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 6: Summary insight boxes -->
+<!-- ═══════════════════════════════════════════════ -->
+<text font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C" x="40" y="916" dominant-baseline="central">Key findings</text>
+
+<rect x="40" y="928" width="186" height="82" rx="6" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#085041" x="133" y="944" text-anchor="middle" dominant-baseline="central">+32% MRR improvement</text>
+<text font-family="sans-serif" font-size="9" fill="#0F6E56" x="133" y="960" text-anchor="middle" dominant-baseline="central">Baseline → Full Graph</text>
+<text font-family="sans-serif" font-size="9" fill="#0F6E56" x="133" y="975" text-anchor="middle" dominant-baseline="central">0.545 → 0.720</text>
+<text font-family="sans-serif" font-size="9" fill="#0F6E56" x="133" y="990" text-anchor="middle" dominant-baseline="central">40 queries, k=10</text>
+
+<rect x="238" y="928" width="186" height="82" rx="6" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#3C3489" x="331" y="944" text-anchor="middle" dominant-baseline="central">Hybrid RRF = best retriever</text>
+<text font-family="sans-serif" font-size="9" fill="#534AB7" x="331" y="960" text-anchor="middle" dominant-baseline="central">Beats pure semantic/BM25</text>
+<text font-family="sans-serif" font-size="9" fill="#534AB7" x="331" y="975" text-anchor="middle" dominant-baseline="central">on recall consistently</text>
+<text font-family="sans-serif" font-size="9" fill="#534AB7" x="331" y="990" text-anchor="middle" dominant-baseline="central">Trials 1–5 confirmed</text>
+
+<rect x="436" y="928" width="186" height="82" rx="6" fill="#FAECE7" stroke="#F0997B" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#4A1B0C" x="529" y="944" text-anchor="middle" dominant-baseline="central">Reranking: no benefit</text>
+<text font-family="sans-serif" font-size="9" fill="#993C1D" x="529" y="960" text-anchor="middle" dominant-baseline="central">Cross-encoder tested T4</text>
+<text font-family="sans-serif" font-size="9" fill="#993C1D" x="529" y="975" text-anchor="middle" dominant-baseline="central">No MRR gain, higher cost</text>
+<text font-family="sans-serif" font-size="9" fill="#993C1D" x="529" y="990" text-anchor="middle" dominant-baseline="central">Dropped → future work</text>
+
+<!-- success rate bar -->
+<rect x="40" y="1022" width="600" height="22" rx="4" fill="#F1EFE8"/>
+<rect x="40" y="1022" width="465" height="22" rx="4" fill="#1D9E75"/>
+<text font-family="sans-serif" font-size="10" font-weight="500" fill="#E1F5EE" x="260" y="1033" text-anchor="middle" dominant-baseline="central">Retrieval success rate: 92.5%  (37/40 queries)  —  Full Graph</text>
+<text font-family="sans-serif" font-size="10" fill="#5F5E5A" x="560" y="1033" text-anchor="middle" dominant-baseline="central">7.5% no-ctx</text>
+
+</svg>

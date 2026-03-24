@@ -1,0 +1,54 @@
+{
+  "route_id": 1,
+  "route_label": "generic_company_related",
+  "company_data": {
+    "company_name": {
+      "key": "companyName",
+      "description": "The official name of the retail brand.",
+      "value": "Fashion Hub"
+    },
+    "founder_info": {
+      "key": "founder",
+      "description": "The name and background of the person who started the company.",
+      "value": "Adelia Malinin"
+    },
+    "about_us": {
+      "key": "about",
+      "description": "A brief history and description of the products the shop sells, including brands like Nike and Catwalk.",
+      "value": "Founded in 1998 by Adelia Malinin, Fashion Hub is a premier multi-brand retailer specializing in high-quality Apparel and Footwear. Our shop features leading brands like Gini and Jony, Catwalk, and Nike. We cater to all age groups and genders, offering everything from casual tops and dresses to athletic footwear and formal shoes, ensuring a complete wardrobe solution for the modern family."
+    },
+    "contact_details": {
+      "key": "contactInfo",
+      "description": "Phone numbers, emails, and customer care contact points.",
+      "value": {
+        "phoneNumber": "+91-80-6156-1999",
+        "email": "support@fashionhub.com",
+        "customerCare": "1800-419-3500"
+      }
+    },
+    "store_locations": {
+      "key": "locations",
+      "description": "Physical addresses of offices and stores in cities like Bengaluru, Gurugram, and Mumbai.",
+      "value": [
+        {
+          "city": "Bengaluru",
+          "address": "Buildings Alyssa, Begonia & Clover, Embassy Tech Village, Outer Ring Road, Devarabeesanahalli Village, 560103"
+        },
+        {
+          "city": "Gurugram",
+          "address": "Plot No. 82A, Sector 18, Udyog Vihar, Phase IV, 122015"
+        },
+        {
+          "city": "Mumbai",
+          "address": "Fortune 2000, G Block BKC, Bandra Kurla Complex, Bandra East, 400051"
+        }
+      ]
+    },
+    "persona_context": {
+        "key": "persona",
+        "description": "The identity and inventory summary used to define the shop's voice.",
+        "value": "Fashion Hub"
+      }
+    
+  }
+}
