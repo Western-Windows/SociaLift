@@ -5,7 +5,7 @@ Filename: facebook_posting.py
 Version: 1.10
 Description:
 This script is designed to post content to Facebook pages using the Graph API,
-containg methods to post text, photos, and videos, also to schedule and get scheduled posts.
+containing methods to post text, photos, and videos, also to schedule and get scheduled posts.
 """
 
 import logging
