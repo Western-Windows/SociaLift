@@ -3,12 +3,12 @@ import os
 import sys
 from dotenv import load_dotenv, set_key
 
-
 """
 Filename: refresh_user_token.py
-Version: 1.0
+Version: 1.1
 Description:
 This script is designed to automatically renew Facebook user access tokens.
+Handles missing expiration data for permanent or already-extended tokens.
 """
 
 env_file = "Graph API/.env"
@@ -41,11 +41,16 @@ def auto_renew_token():
 
         if "access_token" in data:
             new_long_token = data["access_token"]
-            expires_seconds = data.get("expires_in", 0)
-            days_left = int(expires_seconds) / 86400
-
-            print(f"✅ Success! Token extended.")
-            print(f"   📅 New Validity: ~{days_left:.1f} days")
+            
+            # ✅ FIX: Handle missing expiration data
+            if "expires_in" in data:
+                expires_seconds = data["expires_in"]
+                days_left = int(expires_seconds) / 86400
+                print(f"✅ Success! Token extended.")
+                print(f"   📅 New Validity: ~{days_left:.1f} days")
+            else:
+                print(f"✅ Success! Token returned.")
+                print(f"   📅 Validity: Permanent or already maxed at 60 days (No expiration returned)")
 
             set_key(
                 dotenv_path=env_file, 
@@ -53,7 +58,7 @@ def auto_renew_token():
                 value_to_set=new_long_token, 
                 quote_mode="never" 
             )
-            print(f"   💾 Updated .env file with new token ")
+            print(f"   💾 Updated .env file with new token.")
 
         else:
             error = data.get("error", {})
