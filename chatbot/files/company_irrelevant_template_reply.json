@@ -1,0 +1,16 @@
+{
+  "route_id": 0,
+  "route_label": "irrelevant_query",
+  "company_data": {
+    "fallback_response": {
+      "key": "response_template",
+      "description": "The default response when a user asks something unrelated to fashion or the company.",
+      "value": "Sorry {{username}}, I cannot help you with your request. At Fashion Hub, we specialize in high-quality fashion products... we will connect you to a shop customer service representative."
+    },
+    "persona_context": {
+      "key": "persona",
+      "description": "The identity and inventory summary used to define the shop's voice.",
+      "value": "Fashion Hub"
+    }
+  }
+}
