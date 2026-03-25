@@ -12,11 +12,10 @@ This script is designed to scrape the followers' demographics data from Facebook
 DOWNLOAD_DIR = os.path.abspath("downloads")
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-# Must be updated with SociaLift's Facebook Page credentials
-
-EMAIL = "fcisblah@gmail.com"
-PASSWORD = "Fcis12345678!" 
-
+# Facebook Page credentials must be provided via environment variables for security.
+# Set FB_EMAIL and FB_PASSWORD in your environment before running this script.
+EMAIL = os.environ.get("FB_EMAIL")
+PASSWORD = os.environ.get("FB_PASSWORD")
 # Must be updated using the Facebook Page Credentials script to get the correct asset IDs for the demographics dashboard
 
 PAGES = {
