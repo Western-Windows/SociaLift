@@ -1,0 +1,26 @@
+#pip install -r requirements.txt
+
+requests==2.31.0
+python-dotenv==1.0.0
+facebook-business==18.0.0
+instagram-private-api==1.6.0
+pandas==2.1.4
+matplotlib==3.8.2
+seaborn==0.13.0
+streamlit==1.29.0
+plotly==5.17.0
+python-dateutil==2.8.2
+flask>=3.0.0
+pytrends>=4.9.2
+holidays>=0.40
+beautifulsoup4>=4.12.0
+tweepy>=4.14.0
+
+# Additional dependencies used by newly added scripts
+playwright>=1.40.0
+deep-translator>=1.11.4
+transformers>=4.36.0
+torch>=2.1.0
+
+# Note: after installing these requirements, run `playwright install`
+# to install the required browser binaries for Playwright.
