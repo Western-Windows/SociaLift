@@ -1,3 +1,5 @@
+import os
+
 from playwright.sync_api import sync_playwright
 import time
 
@@ -9,8 +11,8 @@ This script is designed to automate the process of accepting admin invites for F
 """
 
 # Must be updated with SociaLift's Facebook Page credentials
-EMAIL = "fcisblah@gmail.com"
-PASSWORD = "Fcis12345678!"
+EMAIL = os.environ.get("FB_EMAIL")
+PASSWORD = os.environ.get("FB_PASSWORD")
 
 
 def perform_login(page, location_name):

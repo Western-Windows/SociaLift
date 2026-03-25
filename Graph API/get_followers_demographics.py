@@ -16,7 +16,7 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 # Set FB_EMAIL and FB_PASSWORD in your environment before running this script.
 EMAIL = os.environ.get("FB_EMAIL")
 PASSWORD = os.environ.get("FB_PASSWORD")
-# Must be updated using the Facebook Page Credentials script to get the correct asset IDs for the demographics dashboard
+
 
 PAGES = {
     "Emergenhelp": "102446321938796", 
