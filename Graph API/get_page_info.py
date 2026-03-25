@@ -8,6 +8,7 @@ This script is designed to fetch comprehensive information about a Facebook Page
 It includes features to display and save detailed page information.
 """
 
+import os
 import requests
 import json
 import logging
@@ -82,6 +83,7 @@ class PageInfoManager:
 
         filename = "./Graph API/JSON/page_complete_info.json"
         try:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"\n" + "-"*50)

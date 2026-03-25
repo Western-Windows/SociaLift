@@ -8,6 +8,7 @@ This script fetches and processes Google Trends data for a specific country.
 It uses a predefined list of neutral seed terms to gather related rising trends, then applies classification to categorize them according to custom page categories.
 """
 
+import os
 import requests
 import json
 import logging
@@ -199,6 +200,7 @@ class ContentManager:
             return []
 
     def save(self, data):
+        os.makedirs("./Graph API/JSON", exist_ok=True)
         with open("./Graph API/JSON/top_trends.json", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         print("\n💾 Saved to ./Graph API/JSON/top_trends.json")

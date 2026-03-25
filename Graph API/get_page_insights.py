@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 import logging
@@ -164,6 +165,7 @@ class PageInsightsFetcher:
 
     def save_to_json(self, data, filename="./Graph API/JSON/monthly_detailed_insights.json"):
         try:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
             print(f"\n💾 Monthly data saved to: {filename}")

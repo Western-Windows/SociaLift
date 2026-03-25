@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import requests
 import json
 import logging
@@ -213,6 +214,9 @@ class FacebookAnalyticsManager:
         }
         
         try:
+            output_dir = os.path.dirname(filename)
+            if output_dir:
+                os.makedirs(output_dir, exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(output, f, ensure_ascii=False, indent=2)
             print(f"\n🎉 Success! Exported to {filename}")

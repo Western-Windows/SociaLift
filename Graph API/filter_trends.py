@@ -7,6 +7,7 @@ Description:
 This script is designed to filter google trends according to specific categories.
 """
 
+import os
 import json
 import sys
 import warnings
@@ -74,6 +75,7 @@ def filter_trends_with_ai():
     }
 
     output_filename = "./Graph API/JSON/filtered_google_trends.json"
+    os.makedirs(os.path.dirname(output_filename), exist_ok=True)
     with open(output_filename, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
     

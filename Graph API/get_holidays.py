@@ -8,6 +8,7 @@ This script is designed to fetch upcoming public holidays and regional trends.
 It uses the page location to determine the region with default region as Egypt.
 """
 
+import os
 import requests
 import json
 import logging
@@ -130,6 +131,7 @@ class RegionalManager:
 
     def save_to_json(self, data, filename="./Graph API/JSON/regional_events_holidays.json"):
         try:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"\n   💾 Data saved to: {filename}")

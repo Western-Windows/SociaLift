@@ -8,6 +8,7 @@ This script fetches comments from Facebook posts using the Graph API, with optio
 It retrieves both top-level comments and their replies, checks if the page has replied, and saves the results in a structured JSON format.
 """
 
+import os
 import requests
 import json
 import logging
@@ -85,6 +86,7 @@ class FacebookFetcher:
 
     def save_to_json(self, data, filename):
         try:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"   💾 Saved data to '{filename}'")
