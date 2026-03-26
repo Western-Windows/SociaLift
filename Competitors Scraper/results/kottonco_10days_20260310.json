@@ -1,0 +1,80 @@
+{
+  "fb_username_or_userid": "100064193133260",
+  "profile": [
+    "•اطبع التصميم المفضل لديك",
+    "Page",
+    " · Apparel & clothing",
+    "15 abdelfattah eltawil,flimng, Mostafa Kamil And Bolkeley, Egypt",
+    "012 21104494",
+    "marketingcottonclub@gmail.com",
+    "Closed now",
+    "Delivery · Takeout · Online booking…",
+    "Not yet rated (0 Reviews)",
+    "﻿",
+    "3,599 followers"
+  ],
+  "data": [
+    {
+      "post_id": "652996640183435",
+      "post_url": "https://www.facebook.com/652996640183435",
+      "username_or_userid": "100064193133260",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Cotton Club",
+        "short_name": "Cotton Club",
+        "id": "100064193133260"
+      },
+      "published_date": "2023-06-15 12:10:41",
+      "published_date2": "2023-06-15",
+      "time": 1686831041,
+      "reaction_count.count": 1,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 10,
+      "sub_reactions": {
+        "أدعمه": 1
+      },
+      "context": "يوجد لدينا مختلف التصميمات وطبعات مختلفه .متاح( طباعه سلك سكرين ..فينيل..برنت اند كت ) ..خامات ممتازة في الطباعة والتسليم في وقت قياسي",
+      "video_view_count": null
+    },
+    {
+      "post_id": "650261640456935",
+      "post_url": "https://www.facebook.com/650261640456935",
+      "username_or_userid": "100064193133260",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Cotton Club",
+        "short_name": "Cotton Club",
+        "id": "100064193133260"
+      },
+      "published_date": "2023-06-11 08:52:15",
+      "published_date2": "2023-06-11",
+      "time": 1686473535,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 7,
+      "sub_reactions": {},
+      "context": "يوجد لدينا مختلف التصميمات وطبعات مختلفه .متاح( طباعه سلك سكرين ..فينيل..برنت اند كت ) ..خامات جيدة في الطباعة والتسليم في وقت قياسي",
+      "video_view_count": null
+    },
+    {
+      "post_id": "646815530801546",
+      "post_url": "https://www.facebook.com/646815530801546",
+      "username_or_userid": "100064193133260",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Cotton Club",
+        "short_name": "Cotton Club",
+        "id": "100064193133260"
+      },
+      "published_date": "2023-06-06 08:19:00",
+      "published_date2": "2023-06-06",
+      "time": 1686039540,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {},
+      "context": "يوجد لدينا مختلف التصميمات وطبعات مختلفه .متاح( طباعه سلك سكرين ..فينيل..برنت اند كت ) ..خامات جيدة في الطباعة والتسليم في وقت قياسي",
+      "video_view_count": null
+    }
+  ]
+}

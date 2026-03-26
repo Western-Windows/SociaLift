@@ -1,0 +1,84 @@
+{
+  "fb_username_or_userid": "100064603785781",
+  "profile": [
+    " or see our site's store locator for locations in your area: https://",
+    "Page",
+    " · Product/service",
+    "H & M hennes & mauritz gbc ab",
+    "is responsible for this Page",
+    "customerservice.us@hm.com",
+    "hm.com/us",
+    "41,864,912 followers"
+  ],
+  "data": [
+    {
+      "post_id": "1310687551094692",
+      "post_url": "https://www.facebook.com/1310687551094692",
+      "username_or_userid": "100064603785781",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "H&M",
+        "short_name": "H&M",
+        "id": "100064603785781"
+      },
+      "published_date": "2026-02-12 22:00:00",
+      "published_date2": "2026-02-12",
+      "time": 1770933600,
+      "reaction_count.count": 7,
+      "comment_rendering_instance.comments.total_count": 12,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 7
+      },
+      "context": "Take a moment of relaxation: Enter for a chance to win complimentary session for you and a friend at Aire Ancient Baths. Not a member? Join today. https://hm.info/6185AtqwS",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1298324195664361",
+      "post_url": "https://www.facebook.com/1298324195664361",
+      "username_or_userid": "100064603785781",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "H&M",
+        "short_name": "H&M",
+        "id": "100064603785781"
+      },
+      "published_date": "2026-01-29 17:03:36",
+      "published_date2": "2026-01-29",
+      "time": 1769706216,
+      "reaction_count.count": 38,
+      "comment_rendering_instance.comments.total_count": 6,
+      "share_count.count": 7,
+      "sub_reactions": {
+        "أعجبني": 36,
+        "أحببته": 1,
+        "هاهاها": 1
+      },
+      "context": "The iconic e.l.f. H&M eau de parfum collection has arrived. Make it make scents. #HMBeauty #elfcosmetics",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1297731949056919",
+      "post_url": "https://www.facebook.com/1297731949056919",
+      "username_or_userid": "100064603785781",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "H&M",
+        "short_name": "H&M",
+        "id": "100064603785781"
+      },
+      "published_date": "2026-01-29 01:30:01",
+      "published_date2": "2026-01-29",
+      "time": 1769650201,
+      "reaction_count.count": 61,
+      "comment_rendering_instance.comments.total_count": 12,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 60,
+        "واااو": 1
+      },
+      "context": "Last chance! Enter for a chance to win a fragrance from e.l.f. and H&M. Not a Member? Join now. https://hm.info/6184Aqmja",
+      "video_view_count": null
+    }
+  ]
+}

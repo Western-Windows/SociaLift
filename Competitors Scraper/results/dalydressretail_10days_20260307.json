@@ -1,0 +1,83 @@
+{
+  "fb_username_or_userid": "100069087293727",
+  "profile": [
+    " · Retail company",
+    "Cairo, Egypt",
+    "dalydress_group",
+    "premoda.net",
+    "dalydress.com",
+    "Not yet rated (0 Reviews)",
+    "﻿"
+  ],
+  "data": [
+    {
+      "post_id": "800060328973536",
+      "post_url": "https://www.facebook.com/800060328973536",
+      "username_or_userid": "100069087293727",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Dalydress For Trading & Agencies",
+        "short_name": "Dalydress For Trading & Agencies",
+        "id": "100069087293727"
+      },
+      "published_date": "2024-07-17 10:16:05",
+      "published_date2": "2024-07-17",
+      "time": 1721211365,
+      "reaction_count.count": 1,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 1
+      },
+      "context": null,
+      "video_view_count": null
+    },
+    {
+      "post_id": "798292349150334",
+      "post_url": "https://www.facebook.com/798292349150334",
+      "username_or_userid": "100069087293727",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Dalydress For Trading & Agencies",
+        "short_name": "Dalydress For Trading & Agencies",
+        "id": "100069087293727"
+      },
+      "published_date": "2024-07-14 12:50:31",
+      "published_date2": "2024-07-14",
+      "time": 1720961431,
+      "reaction_count.count": 14,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أحببته": 12,
+        "أعجبني": 1,
+        "أدعمه": 1
+      },
+      "context": "An incredible day for the amazing women of Dalydress! Our DTA female employees came together for a day filled with fun, connection, and celebration of our collective achievements. A special highlight was the Group Therapy Session by Tadawy Foundation, where we focused on well-being and personal growth. Here's to stronger bonds and a brighter future together! 💪💖 #TeamBuilding #WomenEmpowerment #MentalHealth #DalydressWomen",
+      "video_view_count": null
+    },
+    {
+      "post_id": "790094603303442",
+      "post_url": "https://www.facebook.com/790094603303442",
+      "username_or_userid": "100069087293727",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Dalydress For Trading & Agencies",
+        "short_name": "Dalydress For Trading & Agencies",
+        "id": "100069087293727"
+      },
+      "published_date": "2024-07-01 09:32:05",
+      "published_date2": "2024-07-01",
+      "time": 1719826325,
+      "reaction_count.count": 5,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 3,
+        "أحببته": 2
+      },
+      "context": null,
+      "video_view_count": null
+    }
+  ]
+}

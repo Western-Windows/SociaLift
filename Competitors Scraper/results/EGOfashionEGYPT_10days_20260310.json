@@ -1,0 +1,82 @@
+{
+  "fb_username_or_userid": "100045214609655",
+  "profile": [
+    " · Fashion accessories",
+    "Cairo, Egypt",
+    "012 29933032",
+    "Dania.ouf@ego.fashion",
+    "ego_eg",
+    "egoegypt.com",
+    "Closing Soon",
+    "Delivery · In-store pickup · In-store shopping",
+    "Price Range · $$$"
+  ],
+  "data": [
+    {
+      "post_id": "1479852110198595",
+      "post_url": "https://www.facebook.com/1479852110198595",
+      "username_or_userid": "100045214609655",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "EGO-Your Fashion Destination",
+        "short_name": "EGO-Your Fashion Destination",
+        "id": "100045214609655"
+      },
+      "published_date": "2026-02-12 14:00:19",
+      "published_date2": "2026-02-12",
+      "time": 1770904819,
+      "reaction_count.count": 2,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 2
+      },
+      "context": "Love deserves luxury.\n\nCelebrate Valentine’s Day with up to 30% OFF on existing collection & up to 50% OFF previous collection! \n\nFall in love with EGO",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1472149107635562",
+      "post_url": "https://www.facebook.com/1472149107635562",
+      "username_or_userid": "100045214609655",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "EGO-Your Fashion Destination",
+        "short_name": "EGO-Your Fashion Destination",
+        "id": "100045214609655"
+      },
+      "published_date": "2026-02-03 18:00:04",
+      "published_date2": "2026-02-03",
+      "time": 1770141604,
+      "reaction_count.count": 3,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 3
+      },
+      "context": "The EGO Museum returns.\n\nAn annual moment where fashion becomes an experience.\n\n50% off storewide\n0% purchase fees\n5–7 Feb\n\nOnly at EGO Heliopolis & Galleria40\n\nAvailable on Valu installments starting 12 months.\n\nTerms & conditions apply.\n\nValu Galleria40",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1445332163650590",
+      "post_url": "https://www.facebook.com/1445332163650590",
+      "username_or_userid": "100045214609655",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "EGO-Your Fashion Destination",
+        "short_name": "EGO-Your Fashion Destination",
+        "id": "100045214609655"
+      },
+      "published_date": "2025-12-31 14:02:57",
+      "published_date2": "2025-12-31",
+      "time": 1767189777,
+      "reaction_count.count": 2,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أحببته": 2
+      },
+      "context": "The celebration continues.\nGold and diamonds, chosen by you. Gifted instantly.\n\nEGO Gifting Season\nExtended to January 8\n\nAvailable across all EGO and EGO mono-brand stores\n\nGifting partners: @swissgold.eg @diamond.zone",
+      "video_view_count": null
+    }
+  ]
+}

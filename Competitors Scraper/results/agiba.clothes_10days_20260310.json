@@ -1,0 +1,86 @@
+{
+  "fb_username_or_userid": "100063643581146",
+  "profile": [
+    " · Clothing (brand)",
+    "4ش الجيش ميدان العتبة, Cairo, Egypt",
+    "010 91040005",
+    "+20 10 91040005",
+    "agiba.clothes@gmail.com",
+    "facebook.com/agiba.clothes",
+    "Closed now",
+    "Delivery · In-store pickup · In-store shopping"
+  ],
+  "data": [
+    {
+      "post_id": "1508287087969396",
+      "post_url": "https://www.facebook.com/1508287087969396",
+      "username_or_userid": "100063643581146",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "عجيبة Agiba",
+        "short_name": "عجيبة Agiba",
+        "id": "100063643581146"
+      },
+      "published_date": "2026-03-02 13:51:00",
+      "published_date2": "2026-03-02",
+      "time": 1772459460,
+      "reaction_count.count": 39,
+      "comment_rendering_instance.comments.total_count": 20,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 33,
+        "أحببته": 5,
+        "أدعمه": 1
+      },
+      "context": "رقم الموديل : 1694\nالمقاســـات  : 44_58\nالعنوان : 4ش الجيش ميدان العتبة - القاهرة\nهـــاتـف : 01091040005\nلمتابعة الجديد \nقناة التيليجرام  https://t.me/agibaclothes\nرقم التسجيل الضريبى : 302-969-349",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1475372674594171",
+      "post_url": "https://www.facebook.com/1475372674594171",
+      "username_or_userid": "100063643581146",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "عجيبة Agiba",
+        "short_name": "عجيبة Agiba",
+        "id": "100063643581146"
+      },
+      "published_date": "2026-01-27 10:29:34",
+      "published_date2": "2026-01-27",
+      "time": 1769509774,
+      "reaction_count.count": 182,
+      "comment_rendering_instance.comments.total_count": 148,
+      "share_count.count": 5,
+      "sub_reactions": {
+        "أعجبني": 169,
+        "أحببته": 11,
+        "أدعمه": 2
+      },
+      "context": "رقم الموديل : 2079\nالمقاســـات  : 48_58\nالعنوان : 4ش الجيش ميدان العتبة - القاهرة\nهـــاتـف : 01091040005\nلمتابعة الجديد \nقناة التيليجرام  https://t.me/agibaclothes\nرقم التسجيل الضريبى : 302-969-349",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1460082339456538",
+      "post_url": "https://www.facebook.com/1460082339456538",
+      "username_or_userid": "100063643581146",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "عجيبة Agiba",
+        "short_name": "عجيبة Agiba",
+        "id": "100063643581146"
+      },
+      "published_date": "2026-01-10 11:17:39",
+      "published_date2": "2026-01-10",
+      "time": 1768043859,
+      "reaction_count.count": 11,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 10,
+        "أدعمه": 1
+      },
+      "context": "رقم الموديل : 1670\nالمقاســـات  : 40_54\nالعنوان : 4ش الجيش ميدان العتبة - القاهرة\nهـــاتـف : 01091040005\nلمتابعة الجديد \nقناة التيليجرام  https://t.me/agibaclothes\nرقم التسجيل الضريبى : 302-969-349",
+      "video_view_count": null
+    }
+  ]
+}

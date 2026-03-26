@@ -1,0 +1,81 @@
+{
+  "fb_username_or_userid": "100077279320671",
+  "profile": [
+    "Online Shopping",
+    "Page",
+    " · Clothing (brand)",
+    "Online Shopping, Cairo, Egypt",
+    "info@duocairo.com",
+    "duocairo",
+    "duocairo",
+    "duocairo.com",
+    "Always open",
+    "92% recommend (45 Reviews)",
+    "﻿",
+    "27,067 followers"
+  ],
+  "data": [
+    {
+      "post_id": "896325139620122",
+      "post_url": "https://www.facebook.com/896325139620122",
+      "username_or_userid": "100077279320671",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Duocairo",
+        "short_name": "Duocairo",
+        "id": "100077279320671"
+      },
+      "published_date": "2026-01-14 15:48:02",
+      "published_date2": "2026-01-14",
+      "time": 1768405682,
+      "reaction_count.count": 1,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 1
+      },
+      "context": "😌 CHILLIN’ — THE VIBE IS THE FIT\n\nNo stress. No rush. Just chill.\nThe Chillin Hoodie is made for off-days, slow mornings, and those “do nothing, feel everything” kind of moments.\n\n☁️ Buttery-soft feel\n🧵 Premium materials\n🫶 Designed for everyday comfort\n\nOrder yours Now\nwww.duocairo.com\n#duocairo #streetwear #fashion #clothingbrand",
+      "video_view_count": null
+    },
+    {
+      "post_id": "894980336421269",
+      "post_url": "https://www.facebook.com/894980336421269",
+      "username_or_userid": "100077279320671",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Duocairo",
+        "short_name": "Duocairo",
+        "id": "100077279320671"
+      },
+      "published_date": "2026-01-12 18:41:24",
+      "published_date2": "2026-01-12",
+      "time": 1768243284,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {},
+      "context": "Calligraffiti is where tradition breaks free.\nInk leaves the page, letters find the wall,\nand words become movement, culture, and voice.\nOld scripts. New streets. One expression.\n\n#duocairo #clothingbrand #streetwear",
+      "video_view_count": null
+    },
+    {
+      "post_id": "893607339891902",
+      "post_url": "https://www.facebook.com/893607339891902",
+      "username_or_userid": "100077279320671",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Duocairo",
+        "short_name": "Duocairo",
+        "id": "100077279320671"
+      },
+      "published_date": "2026-01-10 19:44:53",
+      "published_date2": "2026-01-10",
+      "time": 1768074293,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {},
+      "context": "Crafted from ultra-soft, high-quality fabric that feels as good as it looks.❤️\nThick, breathable, and built to last — this hoodie & pants set is all about comfort without compromise.\nOnce you wear it, you’ll feel the difference.\n\nShop now\n\n#duocairo #clothingbrand #streetwear",
+      "video_view_count": null
+    }
+  ]
+}

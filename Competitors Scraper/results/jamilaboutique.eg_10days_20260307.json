@@ -1,0 +1,78 @@
+{
+  "fb_username_or_userid": "100064056043766",
+  "profile": [
+    "Page",
+    " · Apparel & clothing",
+    "📍197 Abd El-Salam Aref, San Stifano, Qism El-Raml, Alexandria, Egypt",
+    "010 04522387",
+    "Info@jamila-boutique.com",
+    "Closed now",
+    "Not yet rated (0 Reviews)",
+    "﻿",
+    "4,726 followers"
+  ],
+  "data": [
+    {
+      "post_id": "1100808498731008",
+      "post_url": "https://www.facebook.com/1100808498731008",
+      "username_or_userid": "100064056043766",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Jamila Boutique",
+        "short_name": "Jamila Boutique",
+        "id": "100064056043766"
+      },
+      "published_date": "2025-04-26 11:59:41",
+      "published_date2": "2025-04-26",
+      "time": 1745668781,
+      "reaction_count.count": 2,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أحببته": 2
+      },
+      "context": "New Arrived\nOnline Available\n\n📱+20 1004522387\n\n📍197 abd el salam aref, louran - Alexandria \n \n#wintercollection #wear #clothes #jamila #Alexandria",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1066313242180534",
+      "post_url": "https://www.facebook.com/1066313242180534",
+      "username_or_userid": "100064056043766",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Jamila Boutique",
+        "short_name": "Jamila Boutique",
+        "id": "100064056043766"
+      },
+      "published_date": "2025-03-15 10:00:54",
+      "published_date2": "2025-03-15",
+      "time": 1742032854,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {},
+      "context": "Elegance never goes out of style.🤎✨.\n\n📱+20 1004522387\n\n📍197 abd el salam aref, louran - Alexandria \n  \n#wintercollection #wear #clothes #jamila #Alexandria",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1063919095753282",
+      "post_url": "https://www.facebook.com/1063919095753282",
+      "username_or_userid": "100064056043766",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Jamila Boutique",
+        "short_name": "Jamila Boutique",
+        "id": "100064056043766"
+      },
+      "published_date": "2025-03-12 10:00:21",
+      "published_date2": "2025-03-12",
+      "time": 1741773621,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {},
+      "context": "Your style, your statement🤎✨.\n\n📱+20 1004522387\n\n📍197 abd el salam aref, louran - Alexandria \n  \n#wintercollection #wear #clothes #jamila #Alexandria",
+      "video_view_count": null
+    }
+  ]
+}

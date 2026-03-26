@@ -1,0 +1,92 @@
+{
+  "fb_username_or_userid": "100071862165020",
+  "profile": [
+    "Page",
+    " · Clothing (brand)",
+    "mango.com",
+    "Not yet rated (2 Reviews)",
+    "﻿",
+    "37,689 followers"
+  ],
+  "data": [
+    {
+      "post_id": "172797575123932",
+      "post_url": "https://www.facebook.com/172797575123932",
+      "username_or_userid": "100071862165020",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Mango Stores Egypt",
+        "short_name": "Mango Stores Egypt",
+        "id": "100071862165020"
+      },
+      "published_date": "2022-05-26 13:02:51",
+      "published_date2": "2022-05-26",
+      "time": 1653570171,
+      "reaction_count.count": 725,
+      "comment_rendering_instance.comments.total_count": 18,
+      "share_count.count": 6,
+      "sub_reactions": {
+        "أعجبني": 670,
+        "أحببته": 48,
+        "هاهاها": 4,
+        "أدعمه": 3
+      },
+      "context": "Dare to dress differently, and impress everyone with your bold looks. \n\nرقم التسجيل الضريبي\n232-884-773\n\n#Mango\n#MangoCollection",
+      "video_view_count": null
+    },
+    {
+      "post_id": "172163568520666",
+      "post_url": "https://www.facebook.com/172163568520666",
+      "username_or_userid": "100071862165020",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Mango Stores Egypt",
+        "short_name": "Mango Stores Egypt",
+        "id": "100071862165020"
+      },
+      "published_date": "2022-05-23 12:58:30",
+      "published_date2": "2022-05-23",
+      "time": 1653310710,
+      "reaction_count.count": 1060,
+      "comment_rendering_instance.comments.total_count": 17,
+      "share_count.count": 11,
+      "sub_reactions": {
+        "أعجبني": 957,
+        "أحببته": 91,
+        "أدعمه": 6,
+        "هاهاها": 4,
+        "أحزنني": 1,
+        "أغضبني": 1
+      },
+      "context": "Don’t hold your little ones back. They are the future. The future is now. Have them pick out their favorite pieces from our collection. \n\nرقم التسجيل الضريبي\n232-884-773\n\n#Mango \n#MangoCollection",
+      "video_view_count": null
+    },
+    {
+      "post_id": "171068885296801",
+      "post_url": "https://www.facebook.com/171068885296801",
+      "username_or_userid": "100071862165020",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Mango Stores Egypt",
+        "short_name": "Mango Stores Egypt",
+        "id": "100071862165020"
+      },
+      "published_date": "2022-05-18 13:06:25",
+      "published_date2": "2022-05-18",
+      "time": 1652879185,
+      "reaction_count.count": 1710,
+      "comment_rendering_instance.comments.total_count": 8,
+      "share_count.count": 16,
+      "sub_reactions": {
+        "أعجبني": 1600,
+        "أحببته": 98,
+        "أدعمه": 5,
+        "هاهاها": 5,
+        "واااو": 1,
+        "أغضبني": 1
+      },
+      "context": "Who says you can’t mix tropical with sophisticated? Be the rule breaker and do it in style.\n\nرقم التسجيل الضريبي\n232-884-773\n\n#Mango \n#MangoCollection",
+      "video_view_count": null
+    }
+  ]
+}

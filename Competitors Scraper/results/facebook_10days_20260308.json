@@ -1,0 +1,179 @@
+{
+  "fb_username_or_userid": "facebook",
+  "profile": [
+    "Page",
+    " · Internet company",
+    "fb.me/HowToContactFB",
+    "155,324,836 followers"
+  ],
+  "data": [
+    {
+      "post_id": "1442778767894139",
+      "post_url": "https://www.facebook.com/1442778767894139",
+      "username_or_userid": "facebook",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Facebook",
+        "short_name": "Facebook",
+        "id": "100064860875397"
+      },
+      "published_date": "2026-03-06 17:01:43",
+      "published_date2": "2026-03-06",
+      "time": 1772816503,
+      "reaction_count.count": 15932,
+      "comment_rendering_instance.comments.total_count": 4036,
+      "share_count.count": 550,
+      "sub_reactions": {
+        "Like": 12578,
+        "Love": 2644,
+        "Care": 495,
+        "Wow": 131,
+        "Haha": 66,
+        "Angry": 10,
+        "Sad": 8
+      },
+      "context": "GOTCHA! 💥😏\n\nHere are some of our favorite moments from our Mascot Meet-and-Greet Prank with Duke Athletics and North Carolina Tar Heels!",
+      "video_view_count": NaN
+    },
+    {
+      "post_id": "1442657451239604",
+      "post_url": "https://www.facebook.com/1442657451239604",
+      "username_or_userid": "facebook",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Facebook",
+        "short_name": "Facebook",
+        "id": "100064860875397"
+      },
+      "published_date": "2026-03-06 14:00:32",
+      "published_date2": "2026-03-06",
+      "time": 1772805632,
+      "reaction_count.count": 4281,
+      "comment_rendering_instance.comments.total_count": 1351,
+      "share_count.count": 127,
+      "sub_reactions": {
+        "Like": 3447,
+        "Love": 649,
+        "Care": 123,
+        "Haha": 38,
+        "Wow": 18,
+        "Angry": 4,
+        "Sad": 2
+      },
+      "context": "No mascots were harmed during the making of this prank\n\nHeated rivals The University of North Carolina at Chapel Hill  and Duke University  got together for some chaotic fun. We dropped into UNC and Duke fandom Facebook Groups to see who wanted a pic with their beloved team’s mascot. \n\nThe catch… \n\nThe rival team’s mascot surprised them instead 😏🔥",
+      "video_view_count": 109669.0
+    },
+    {
+      "post_id": "1442045344634148",
+      "post_url": "https://www.facebook.com/1442045344634148",
+      "username_or_userid": "facebook",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Facebook",
+        "short_name": "Facebook",
+        "id": "100064860875397"
+      },
+      "published_date": "2026-03-05 20:04:34",
+      "published_date2": "2026-03-05",
+      "time": 1772741074,
+      "reaction_count.count": 16573,
+      "comment_rendering_instance.comments.total_count": 3554,
+      "share_count.count": 414,
+      "sub_reactions": {
+        "Like": 13392,
+        "Love": 2412,
+        "Care": 473,
+        "Haha": 171,
+        "Wow": 109,
+        "Sad": 10,
+        "Angry": 6
+      },
+      "context": "Who’s the day-one friend you know would go on this Marketplace pickup adventure with you?\n\nMade with Meta AI",
+      "video_view_count": NaN
+    },
+    {
+      "post_id": "1441936794645003",
+      "post_url": "https://www.facebook.com/1441936794645003",
+      "username_or_userid": "facebook",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Facebook",
+        "short_name": "Facebook",
+        "id": "100064860875397"
+      },
+      "published_date": "2026-03-05 17:00:00",
+      "published_date2": "2026-03-05",
+      "time": 1772730000,
+      "reaction_count.count": 15227,
+      "comment_rendering_instance.comments.total_count": 3614,
+      "share_count.count": 296,
+      "sub_reactions": {
+        "Like": 11596,
+        "Love": 1717,
+        "Haha": 1554,
+        "Care": 287,
+        "Wow": 51,
+        "Angry": 17,
+        "Sad": 5
+      },
+      "context": "Best leg-day exercise? Easy — carrying the whole group chat on your back 📱💪",
+      "video_view_count": NaN
+    },
+    {
+      "post_id": "1441087361396613",
+      "post_url": "https://www.facebook.com/1441087361396613",
+      "username_or_userid": "facebook",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Facebook",
+        "short_name": "Facebook",
+        "id": "100064860875397"
+      },
+      "published_date": "2026-03-04 17:00:01",
+      "published_date2": "2026-03-04",
+      "time": 1772643601,
+      "reaction_count.count": 218311,
+      "comment_rendering_instance.comments.total_count": 31948,
+      "share_count.count": 17073,
+      "sub_reactions": {
+        "Haha": 129908,
+        "Like": 80642,
+        "Love": 5325,
+        "Care": 1000,
+        "Wow": 776,
+        "Sad": 498,
+        "Angry": 162
+      },
+      "context": "Don’t give up until you’ve tried Facebook Dating 👀",
+      "video_view_count": NaN
+    },
+    {
+      "post_id": "1440204848151531",
+      "post_url": "https://www.facebook.com/1440204848151531",
+      "username_or_userid": "facebook",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Facebook",
+        "short_name": "Facebook",
+        "id": "100064860875397"
+      },
+      "published_date": "2026-03-03 20:06:29",
+      "published_date2": "2026-03-03",
+      "time": 1772568389,
+      "reaction_count.count": 16404,
+      "comment_rendering_instance.comments.total_count": 2843,
+      "share_count.count": 497,
+      "sub_reactions": {
+        "Like": 13612,
+        "Love": 2274,
+        "Care": 278,
+        "Wow": 179,
+        "Haha": 46,
+        "Angry": 8,
+        "Sad": 7
+      },
+      "context": "POV: You finally install that Facebook Marketplace find that you centered your whole bedroom renovation around.\n\nVideo by Arceri Interiors\nMusic by Velvet Vibes and Deepak Sharma",
+      "video_view_count": 1162211.0
+    }
+  ]
+}

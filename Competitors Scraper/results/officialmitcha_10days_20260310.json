@@ -1,0 +1,76 @@
+{
+  "fb_username_or_userid": "100064689099246",
+  "profile": [
+    "Page",
+    " · Design & fashion",
+    "CustomerCare@mitcha.com",
+    "MITCHA.com",
+    "165,162 followers"
+  ],
+  "data": [
+    {
+      "post_id": "1354710390028585",
+      "post_url": "https://www.facebook.com/1354710390028585",
+      "username_or_userid": "100064689099246",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "MITCHA",
+        "short_name": "MITCHA",
+        "id": "100064689099246"
+      },
+      "published_date": "2026-02-22 20:00:14",
+      "published_date2": "2026-02-22",
+      "time": 1771790414,
+      "reaction_count.count": 1,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 1
+      },
+      "context": "80% OFF SITEWIDE. Yes, you read that right. 🔥🛍️\nMITCHA is serving the biggest sale of the season — don’t blink or it’s gone.🌟",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1351179110381713",
+      "post_url": "https://www.facebook.com/1351179110381713",
+      "username_or_userid": "100064689099246",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "MITCHA",
+        "short_name": "MITCHA",
+        "id": "100064689099246"
+      },
+      "published_date": "2026-02-18 17:00:50",
+      "published_date2": "2026-02-18",
+      "time": 1771434050,
+      "reaction_count.count": 1,
+      "comment_rendering_instance.comments.total_count": 1,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أحببته": 1
+      },
+      "context": "Ramadan Kareem 🌙 May this month bring peace and blessings.",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1345253740974250",
+      "post_url": "https://www.facebook.com/1345253740974250",
+      "username_or_userid": "100064689099246",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "MITCHA",
+        "short_name": "MITCHA",
+        "id": "100064689099246"
+      },
+      "published_date": "2026-02-11 22:17:04",
+      "published_date2": "2026-02-11",
+      "time": 1770848224,
+      "reaction_count.count": 0,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {},
+      "context": "A collection made for Ramadan nights ✨ Now available online🌙",
+      "video_view_count": null
+    }
+  ]
+}

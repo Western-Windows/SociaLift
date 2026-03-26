@@ -1,0 +1,82 @@
+{
+  "fb_username_or_userid": "100063999581102",
+  "profile": [
+    " · Clothing shop",
+    "الجمهوريه, Cairo, Egypt",
+    "011 15985253",
+    "Bluewear.eg@gmail.com"
+  ],
+  "data": [
+    {
+      "post_id": "1391475419662431",
+      "post_url": "https://www.facebook.com/1391475419662431",
+      "username_or_userid": "100063999581102",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Bluewear",
+        "short_name": "Bluewear",
+        "id": "100063999581102"
+      },
+      "published_date": "2026-02-23 03:19:29",
+      "published_date2": "2026-02-23",
+      "time": 1771816769,
+      "reaction_count.count": 2,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 1,
+        "أحببته": 1
+      },
+      "context": "النص السوسته في حته تانيه خالص 🤣🤣",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1121505733326069",
+      "post_url": "https://www.facebook.com/1121505733326069",
+      "username_or_userid": "100063999581102",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Bluewear",
+        "short_name": "Bluewear",
+        "id": "100063999581102"
+      },
+      "published_date": "2025-04-05 14:40:03",
+      "published_date2": "2025-04-05",
+      "time": 1743864003,
+      "reaction_count.count": 11,
+      "comment_rendering_instance.comments.total_count": 16,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 9,
+        "أحببته": 1,
+        "أغضبني": 1
+      },
+      "context": "عندنا ايه جديد في ٢٠٢٥",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1120919386718037",
+      "post_url": "https://www.facebook.com/1120919386718037",
+      "username_or_userid": "100063999581102",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Bluewear",
+        "short_name": "Bluewear",
+        "id": "100063999581102"
+      },
+      "published_date": "2025-04-05 00:30:00",
+      "published_date2": "2025-04-05",
+      "time": 1743813000,
+      "reaction_count.count": 49,
+      "comment_rendering_instance.comments.total_count": 49,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 43,
+        "أحببته": 5,
+        "أغضبني": 1
+      },
+      "context": "البيع جمله فقط من اول قطعه \nابدا مشروعك في عالم الملابس  بأكبر كولكشن تيشرت ساده في مصر  قابل للطباعه جميع الخامات  (براسولا -سنجل ليكرا- بوليفار ) تلبيس عادي و اوفر سيز \nالفرع الاول \nفرع وسط البلد القاهره \n٨ شارع الجمهورية بجوار محطة مترو محمد نجيب \n01027163072\nفرع فيصل بجوار محطة مترو فيصل \n01095189687\nفرع قليوب \n011 01096953  \n\nاعمل فلو للقناة علشان تتابعنا\nhttps://t.me/bluewearharam",
+      "video_view_count": null
+    }
+  ]
+}

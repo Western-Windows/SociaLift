@@ -1,0 +1,90 @@
+{
+  "fb_username_or_userid": "100067103225715",
+  "profile": [
+    "Page",
+    " · Product/service",
+    "H & M hennes & mauritz gbc ab",
+    "is responsible for this Page",
+    "+965 1821 212",
+    "customerservice@alshaya.com",
+    "hyperurl.co/HMMENA",
+    "41,871,640 followers"
+  ],
+  "data": [
+    {
+      "post_id": "831512135762220",
+      "post_url": "https://www.facebook.com/831512135762220",
+      "username_or_userid": "100067103225715",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "H&M",
+        "short_name": "H&M",
+        "id": "100067103225715"
+      },
+      "published_date": "2024-09-02 09:00:00",
+      "published_date2": "2024-09-02",
+      "time": 1725267600,
+      "reaction_count.count": 226,
+      "comment_rendering_instance.comments.total_count": 157,
+      "share_count.count": 10,
+      "sub_reactions": {
+        "أعجبني": 204,
+        "أحببته": 16,
+        "أغضبني": 5,
+        "أدعمه": 1
+      },
+      "context": "Launching soon on 7 September.\nMeet our next designer at The Dubai mall 9:00 a.m.\nhttps://hm.info/6181f6tif\nقريباً بتاريخ 7 سبتمبر.\nتعرفوا على المصممة في دبي مول الساعة 9:00 صباحاً.\nhttps://hm.info/6182f6tiA",
+      "video_view_count": null
+    },
+    {
+      "post_id": "783517513895016",
+      "post_url": "https://www.facebook.com/783517513895016",
+      "username_or_userid": "100067103225715",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "H&M",
+        "short_name": "H&M",
+        "id": "100067103225715"
+      },
+      "published_date": "2024-06-14 15:00:04",
+      "published_date2": "2024-06-14",
+      "time": 1718377204,
+      "reaction_count.count": 145,
+      "comment_rendering_instance.comments.total_count": 71,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 140,
+        "أدعمه": 2,
+        "أغضبني": 2,
+        "أحببته": 1
+      },
+      "context": "Last call for pre-Eid savings🛎️\n50% off💕 Use code: EID50\nتسوق ووفر مع عروض ما قبل العيد🛎️\nخصم 50%💕 الكود: EID50",
+      "video_view_count": null
+    },
+    {
+      "post_id": "758087826437985",
+      "post_url": "https://www.facebook.com/758087826437985",
+      "username_or_userid": "100067103225715",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "H&M",
+        "short_name": "H&M",
+        "id": "100067103225715"
+      },
+      "published_date": "2024-05-02 12:00:01",
+      "published_date2": "2024-05-02",
+      "time": 1714651201,
+      "reaction_count.count": 96,
+      "comment_rendering_instance.comments.total_count": 47,
+      "share_count.count": 3,
+      "sub_reactions": {
+        "أعجبني": 88,
+        "أغضبني": 4,
+        "أحببته": 3,
+        "أدعمه": 1
+      },
+      "context": "New in!✨\nElevate your elegance with our party wear collection.\nhttps://hm.info/618542hCx\nوصلت حديثاً!✨\nتشكيلة أزياء الحفلات لتتألقي بأناقة راقية.\nhttps://hm.info/618642hCI",
+      "video_view_count": null
+    }
+  ]
+}
