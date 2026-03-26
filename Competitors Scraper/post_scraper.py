@@ -175,7 +175,7 @@ def dismiss_popup(scraper, target_page: str, label: str = "") -> None:
         time.sleep(2)
         tprint(f"{tag}✅ Pre-flight complete.")
     except Exception as e:
-            tprint(f"{tag}⚠️  Pre-load issue (usually fine): {e}")
+        tprint(f"{tag}⚠️  Pre-load issue (usually fine): {e}")
 
 
 # ──────────────────────────────────────────────
