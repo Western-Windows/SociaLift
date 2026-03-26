@@ -1,0 +1,90 @@
+{
+  "fb_username_or_userid": "100064799675568",
+  "profile": [
+    "TXN: 606-515-496",
+    "Page",
+    " · Brand",
+    "info@palmaegypt.com",
+    "getpalma.com",
+    "In-store pickup",
+    "Price Range · $$$",
+    "438,697 followers"
+  ],
+  "data": [
+    {
+      "post_id": "1207734801396498",
+      "post_url": "https://www.facebook.com/1207734801396498",
+      "username_or_userid": "100064799675568",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Palma",
+        "short_name": "Palma",
+        "id": "100064799675568"
+      },
+      "published_date": "2025-07-01 22:01:12",
+      "published_date2": "2025-07-01",
+      "time": 1751407272,
+      "reaction_count.count": 166,
+      "comment_rendering_instance.comments.total_count": 74,
+      "share_count.count": 9,
+      "sub_reactions": {
+        "أعجبني": 110,
+        "أحببته": 40,
+        "أغضبني": 13,
+        "أدعمه": 3
+      },
+      "context": "No more playing hide-and-seek with your jewelry. This Ethnica Jewelry Box keeps everything so perfectly in place, it's almost magic! 🪄💎\nShop now ➡➡getpalma.com/collections/jewellery-box",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1206330134870298",
+      "post_url": "https://www.facebook.com/1206330134870298",
+      "username_or_userid": "100064799675568",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Palma",
+        "short_name": "Palma",
+        "id": "100064799675568"
+      },
+      "published_date": "2025-06-30 11:12:25",
+      "published_date2": "2025-06-30",
+      "time": 1751281945,
+      "reaction_count.count": 87,
+      "comment_rendering_instance.comments.total_count": 20,
+      "share_count.count": 6,
+      "sub_reactions": {
+        "أعجبني": 61,
+        "أغضبني": 13,
+        "أحببته": 12,
+        "أدعمه": 1
+      },
+      "context": "A fresh take on a classic shape this mini dress combines a standout collar and soft puffed sleeves with an airy, easy-to-wear fit. Perfect for sunny days or casual layering.☀️👗\nShop now ➡➡getpalma.com/collections/dress",
+      "video_view_count": null
+    },
+    {
+      "post_id": "1205457424957569",
+      "post_url": "https://www.facebook.com/1205457424957569",
+      "username_or_userid": "100064799675568",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Palma",
+        "short_name": "Palma",
+        "id": "100064799675568"
+      },
+      "published_date": "2025-06-29 12:31:03",
+      "published_date2": "2025-06-29",
+      "time": 1751200263,
+      "reaction_count.count": 46,
+      "comment_rendering_instance.comments.total_count": 0,
+      "share_count.count": 1,
+      "sub_reactions": {
+        "أعجبني": 24,
+        "أغضبني": 18,
+        "أحببته": 2,
+        "أدعمه": 2
+      },
+      "context": null,
+      "video_view_count": null
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "pipeline_completed": true,
+  "elapsed_time_seconds": 6498.47,
+  "timestamp": "2026-03-10T22:27:52.555251",
+  "competitors": {
+    "total_found": 195,
+    "with_facebook_pages": 195,
+    "scraped": 139
+  },
+  "posts": {
+    "total_scraped": 1313,
+    "pages_with_posts": 120,
+    "average_per_page": 9.4
+  },
+  "output_directory": "d:\\SociaLift\\Competitors Scraper\\results"
+}

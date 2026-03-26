@@ -1,0 +1,86 @@
+{
+  "fb_username_or_userid": "100064421842909",
+  "profile": [
+    "🌎All The Way From USA 🇺🇸",
+    "👕Fashion brand",
+    "Page",
+    " · Men's clothes shop",
+    "Cairo, Egypt",
+    "+20 11 19719785",
+    "Not yet rated (2 Reviews)",
+    "﻿",
+    "22,374 followers"
+  ],
+  "data": [
+    {
+      "post_id": "869087098582010",
+      "post_url": "https://www.facebook.com/869087098582010",
+      "username_or_userid": "100064421842909",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Brands Club - Online Brands Clothes Store From USA in Egypt",
+        "short_name": "Brands Club - Online Brands Clothes Store From USA in Egypt",
+        "id": "100064421842909"
+      },
+      "published_date": "2024-07-05 20:40:47",
+      "published_date2": "2024-07-05",
+      "time": 1720212047,
+      "reaction_count.count": 18,
+      "comment_rendering_instance.comments.total_count": 8,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 16,
+        "أحببته": 1,
+        "أدعمه": 1
+      },
+      "context": "Small & Medium",
+      "video_view_count": null
+    },
+    {
+      "post_id": "868827015274685",
+      "post_url": "https://www.facebook.com/868827015274685",
+      "username_or_userid": "100064421842909",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Brands Club - Online Brands Clothes Store From USA in Egypt",
+        "short_name": "Brands Club - Online Brands Clothes Store From USA in Egypt",
+        "id": "100064421842909"
+      },
+      "published_date": "2024-07-05 12:51:55",
+      "published_date2": "2024-07-05",
+      "time": 1720183915,
+      "reaction_count.count": 14,
+      "comment_rendering_instance.comments.total_count": 6,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 12,
+        "أحببته": 2
+      },
+      "context": null,
+      "video_view_count": null
+    },
+    {
+      "post_id": "866235415533845",
+      "post_url": "https://www.facebook.com/866235415533845",
+      "username_or_userid": "100064421842909",
+      "owing_profile": {
+        "__typename": "User",
+        "name": "Brands Club - Online Brands Clothes Store From USA in Egypt",
+        "short_name": "Brands Club - Online Brands Clothes Store From USA in Egypt",
+        "id": "100064421842909"
+      },
+      "published_date": "2024-07-01 13:13:02",
+      "published_date2": "2024-07-01",
+      "time": 1719839582,
+      "reaction_count.count": 12,
+      "comment_rendering_instance.comments.total_count": 4,
+      "share_count.count": 0,
+      "sub_reactions": {
+        "أعجبني": 10,
+        "أحببته": 2
+      },
+      "context": null,
+      "video_view_count": null
+    }
+  ]
+}
