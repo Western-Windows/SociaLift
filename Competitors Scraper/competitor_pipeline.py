@@ -106,30 +106,32 @@ class CompetitorValidator:
                     line += f' | why="{why[:80]}"'
                 lines.append(line)
 
-            prompt = f"""You are a strict competitor validation filter.
+            prompt = f"""You are a competitor validation filter. Be CONSERVATIVE — only reject pages that are CLEARLY NOT competitors.
 
 BUSINESS WE ARE ANALYZING:
 - Description: {business_description}
 - Products/Services: {products}
 
-Below are Facebook pages discovered as POTENTIAL competitors.
-Your job: decide for each one whether it is a REAL competitor to the business above.
+RULES:
+1. MARK AS VALID (is_competitor: true) if:
+   • Same industry/category (e.g. both fashion, both restaurants, both furniture)
+   • Sells ANY overlapping product/service, OR could steal the same customer
+   • Is a brand, store, reseller, boutique, designer, or marketplace in the same space
+   • Even if bigger/smaller, online/offline, luxury/budget — still a competitor
 
-MARK AS VALID (is_competitor: true) if:
-- The page sells or offers products/services that overlap with what the business sells
-- It targets a similar audience
+2. MARK AS INVALID (is_competitor: false) ONLY if you are 100% sure:
+   • Pure news/media/magazine (e.g. Vogue Egypt, CairoScene)
+   • Event/festival (e.g. "Cairo Fashion Week 2024")
+   • Service with ZERO product overlap (e.g. architecture firm for a clothing brand)
+   • Personal blog/influencer with NO shop/products
 
-MARK AS INVALID (is_competitor: false) if:
-- It is a news, media, or entertainment page (e.g. CairoScene, fashion week event)
-- It is a personal profile, influencer, or stylist with no store
-- It is a service business with no product overlap (e.g. architecture firm, consultancy)
-- It is completely unrelated to the business above
+3. WHEN IN DOUBT → MARK AS VALID. It is better to keep a maybe-competitor than to delete a real one.
 
 PAGES TO VALIDATE:
 {chr(10).join(lines)}
 
 Return a JSON array — one entry per page, in the same order:
-[{{"index": 1, "username": "...", "is_competitor": true, "reason": "one sentence"}}]
+[{{"index": 1, "username": "...", "is_competitor": true, "reason": "one sentence", "confidence": "high/medium/low"}}]
 
 Return ONLY valid JSON."""
 

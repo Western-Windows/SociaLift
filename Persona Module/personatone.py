@@ -36,46 +36,32 @@ prompt = PromptTemplate(
 )
 
 def load_top_posts(json_path, top_n=10):
-    """Load top N posts from the cleaned JSON file. Returns empty string if no posts."""
+    """Load top N posts from the cleaned JSON file. Assumes data is already sorted."""
     try:
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return ""
 
-    if isinstance(data, list):
-        posts = data
-    elif isinstance(data, dict) and 'data' in data:
-        posts = data['data']
-    else:
+    posts = data.get('data', data) if isinstance(data, dict) else data
+    
+    if not posts or not isinstance(posts, list):
         return ""
-
-    if not posts:
-        return ""
-
-    normalized = []
-    for p in posts:
-        if isinstance(p, dict) and 'reaction_count' in p and 'context' in p:
-            rc = p.get('reaction_count', 0)
-            ctx = p.get('context', '')
-        else:
-            eng = p.get('engagement_stats', {}) if isinstance(p, dict) else {}
-            rc = eng.get('likes') or eng.get('like_count') or 0
-            ctx = p.get('message') or p.get('context') or ''
-
-        try:
-            rc = int(rc)
-        except Exception:
-            rc = 0
-
-        normalized.append({'reaction_count': rc, 'context': ctx})
-
-    top_posts = sorted(normalized, key=lambda x: x['reaction_count'], reverse=True)[:top_n]
 
     formatted_posts = []
-    for i, post in enumerate(top_posts, 1):
-        if post['context'].strip():
-            formatted_posts.append(f"Post {i} ({post['reaction_count']} reactions):\n{post['context']}")
+    valid_count = 0
+    
+    # Data is already sorted by sort_posts.py, so we just take the first top_n valid posts
+    for post in posts:
+        if valid_count >= top_n:
+            break
+            
+        rc = post.get('reaction_count', 0)
+        ctx = post.get('context', '').strip()
+        
+        if ctx:
+            formatted_posts.append(f"Post {valid_count + 1} ({rc} reactions):\n{ctx}")
+            valid_count += 1
 
     return "\n\n".join(formatted_posts)
 

@@ -1,7 +1,3 @@
-"""
-Competitor Scraper Module - Refactored for pipeline use
-"""
-
 import json
 import time
 import re

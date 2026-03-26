@@ -18,8 +18,8 @@ PATHS = {
     "persona": WORKSPACE / "Persona Module" / "final_persona.json",
     "competitors": WORKSPACE / "Competitors Scraper" / "final_posts.json", 
     "holidays": WORKSPACE / "regional_events_holidays.json",
-    "trends_google": WORKSPACE / "Graph API" / "trends_egypt_classified.json", 
-    "trends_x": WORKSPACE / "Graph API" / "trends_x.json"
+    "trends_google": WORKSPACE / "Graph API" / "filtered_trends_final.json", 
+    "trends_x": WORKSPACE / "Graph API" / "trends_egypt_classified.json"
 }
 
 # ==========================================
