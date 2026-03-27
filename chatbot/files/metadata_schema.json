@@ -5,6 +5,7 @@
     "SubCategory",
     "ProductType",
     "Colour",
-    "Size",
-    "BrandName"
+    "Usage",
+    "BrandName",
+    "Size"
 ]
