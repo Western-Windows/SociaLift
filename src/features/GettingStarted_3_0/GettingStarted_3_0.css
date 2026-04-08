@@ -1,0 +1,307 @@
+.getting-started-3-0 {
+	--gs-bg: #eeeaf3;
+	--gs-card-bg: #f2eff6;
+	--gs-primary: #07265c;
+	--gs-subtle: rgba(7, 38, 92, 0.75);
+	--gs-info: rgba(52, 123, 209, 0.75);
+	--gs-line: #e1e3e6;
+	--gs-white: #fff;
+	--gs-tag-bg: rgba(230, 135, 216, 0.3);
+	--gs-tag-text: #e687d8;
+	--gs-action: #a88bdf;
+	--gs-step-complete: #45c9c1;
+	--gs-step-current: #a88bdf;
+	--gs-step-idle: #f8f8f8;
+	--gs-desktop-width: 1910px;
+	--gs-desktop-height: 1080px;
+
+	min-height: max(100svh, var(--gs-desktop-height));
+	width: 100vw;
+	max-width: 100vw;
+	margin-left: calc(50% - 50vw);
+	background: var(--gs-bg);
+	color: var(--gs-primary);
+	font-family: Poppins, 'Segoe UI', Tahoma, sans-serif;
+	display: flex;
+	flex-direction: column;
+	overflow-x: hidden;
+}
+
+.gs-header {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.85rem 4.5rem;
+	background: linear-gradient(90deg, #8f8cda 0%, #ae83d8 45%, #6f7dcf 100%);
+	border-bottom: 1px solid #dad6e2;
+}
+
+.gs-back-button {
+	width: 2.6rem;
+	height: 2.6rem;
+	border-radius: 999px;
+	border: none;
+	background: #f8f8f8;
+	color: var(--gs-primary);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.35rem;
+	cursor: pointer;
+}
+
+.gs-header h1 {
+	margin: 0;
+	font-size: 2.35rem;
+	font-weight: 500;
+	line-height: 1.1;
+	color: var(--gs-primary);
+}
+
+.gs-main {
+	display: grid;
+	grid-template-columns: 330px minmax(900px, 1fr);
+	gap: 0;
+	padding: 0 2rem 2rem;
+	align-items: stretch;
+	width: min(var(--gs-desktop-width), 100vw);
+	margin: 0 auto;
+	box-sizing: border-box;
+	min-height: calc(var(--gs-desktop-height) - 145px);
+}
+
+.gs-steps {
+	padding: 2rem 1.25rem;
+}
+
+.gs-steps ol {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1.1rem;
+}
+
+.gs-steps li {
+	display: grid;
+	grid-template-columns: 1.65rem 1fr;
+	align-items: center;
+	column-gap: 0.75rem;
+}
+
+.gs-step-index {
+	width: 1.65rem;
+	height: 1.65rem;
+	border-radius: 999px;
+	background: var(--gs-step-idle);
+	border: 1px solid #ddd;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.82rem;
+	color: #111;
+}
+
+.gs-step-check {
+	background: var(--gs-step-complete);
+	border-color: transparent;
+	color: var(--gs-white);
+	font-size: 0.76rem;
+}
+
+.gs-steps .is-current .gs-step-index {
+	background: var(--gs-step-current);
+	border-color: transparent;
+	color: var(--gs-white);
+}
+
+.gs-step-label {
+	font-size: 1.26rem;
+	line-height: 1.3;
+	color: var(--gs-subtle);
+}
+
+.gs-step-badge {
+	display: inline-flex;
+	margin-top: 1.8rem;
+	padding: 0.35rem 0.85rem;
+	background: var(--gs-tag-bg);
+	color: var(--gs-tag-text);
+	border-radius: 6px;
+	font-size: 1.35rem;
+	font-weight: 600;
+}
+
+.gs-form-shell {
+	background: var(--gs-card-bg);
+	border: 1px solid #eff0f6;
+	border-radius: 10px;
+	margin-top: 0.85rem;
+	box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+	padding: 2.35rem 2.8rem 2rem;
+}
+
+.gs-form-shell h2 {
+	margin: 0;
+	font-size: 2.7rem;
+	line-height: 1.2;
+	color: var(--gs-primary);
+	font-weight: 400;
+}
+
+.gs-form-shell > p {
+	margin-top: 0.8rem;
+	margin-bottom: 2.1rem;
+	font-size: 1.6rem;
+	color: var(--gs-info);
+}
+
+.gs-form-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	row-gap: 1.1rem;
+}
+
+.gs-full-width {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.gs-full-width > span {
+	font-size: 1.95rem;
+	color: var(--gs-primary);
+}
+
+.gs-field-help {
+	font-size: 1.6rem;
+	color: var(--gs-info);
+	margin-bottom: 0.65rem;
+}
+
+.gs-full-width textarea {
+	width: 100%;
+	min-height: 28rem;
+	border: 1px solid var(--gs-line);
+	border-radius: 12px;
+	padding: 1.35rem 1.5rem;
+	resize: vertical;
+	font-size: 1.52rem;
+	line-height: 1.48;
+	font-family: inherit;
+	color: rgba(7, 38, 92, 0.68);
+	background: var(--gs-white);
+	box-sizing: border-box;
+	outline: none;
+}
+
+.gs-full-width textarea:focus-visible {
+	border-color: #8f8cda;
+	box-shadow: 0 0 0 3px rgba(143, 140, 218, 0.25);
+}
+
+.gs-continue-button {
+	justify-self: center;
+	margin-top: 0.45rem;
+	width: min(625px, 100%);
+	height: 3.15rem;
+	border: none;
+	border-radius: 6px;
+	background: var(--gs-action);
+	color: #fff;
+	font-size: 1.45rem;
+	font-family: inherit;
+	cursor: pointer;
+}
+
+@media (max-width: 1600px) {
+	.gs-header {
+		padding: 1.55rem 3.2rem;
+	}
+
+	.gs-header h1 {
+		font-size: 2.05rem;
+	}
+
+	.gs-main {
+		grid-template-columns: 260px minmax(780px, 1fr);
+		padding: 0 1.35rem 1.35rem;
+		min-height: 0;
+	}
+
+	.gs-step-label {
+		font-size: 1.05rem;
+	}
+
+	.gs-step-badge {
+		font-size: 1.03rem;
+		margin-top: 1.2rem;
+	}
+
+	.gs-form-shell {
+		padding: 1.8rem 2rem 1.6rem;
+	}
+
+	.gs-form-shell h2 {
+		font-size: 2.05rem;
+	}
+
+	.gs-form-shell > p,
+	.gs-field-help {
+		font-size: 1.13rem;
+	}
+
+	.gs-full-width > span {
+		font-size: 1.3rem;
+	}
+
+	.gs-full-width textarea {
+		min-height: 17rem;
+		font-size: 1.05rem;
+	}
+
+	.gs-continue-button {
+		width: min(540px, 100%);
+		height: 2.55rem;
+		font-size: 1.12rem;
+	}
+}
+
+@media (max-width: 1180px) {
+	.gs-main {
+		grid-template-columns: 200px minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 780px) {
+	.gs-header {
+		padding: 1rem;
+	}
+
+	.gs-header h1 {
+		font-size: 1.65rem;
+	}
+
+	.gs-main {
+		grid-template-columns: 1fr;
+		padding: 0.85rem;
+	}
+
+	.gs-steps {
+		padding: 0.5rem 0.2rem 0.9rem;
+	}
+
+	.gs-form-shell {
+		padding: 1.1rem;
+	}
+
+	.gs-form-shell h2 {
+		font-size: 1.6rem;
+	}
+
+	.gs-form-shell > p,
+	.gs-field-help {
+		font-size: 1rem;
+	}
+}
