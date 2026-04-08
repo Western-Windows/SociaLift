@@ -1,4 +1,441 @@
-.signup-container {
-/* Add your styles here */
-padding: 1rem;
+/* Viewport container to center the fixed-size window */
+.viewport-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url('../../assets/background login.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-srepeat;
+  background-attachment: fixed;
+  /* width: 100vw; */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--poppins);
 }
+
+/* Background image filling the area */
+.login-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Content wrapper */
+.login-content-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Signup Card styling */
+.signup-card {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  background: #F8F9FA;
+  padding: 48px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Back Arrow Button */
+.back-arrow {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+.back-arrow:hover {
+  background-color: #E5E7EB;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-wrapper {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.login-logo {
+  max-width: 100px;
+  height: auto;
+}
+
+.title {
+  font-size: 32px;
+  margin: 0 0 8px 0;
+  color: #07265C;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.link {
+  color: #07265C;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* Step Indicator (The Slider in the middle) */
+.step-indicator-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 40px;
+}
+
+.step-line {
+  position: absolute;
+  top: 15px;
+  left: 75px;
+  right: 75px;
+  height: 2px;
+  background: #E5E7EB;
+  z-index: 1;
+}
+
+.step-line-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #07265C;
+  transition: width 0.5s ease;
+}
+
+.step-line-active.step-1 {
+  width: 0%;
+}
+
+.step-line-active.step-2 {
+  width: 100%;
+}
+
+.step-points {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+}
+
+.step-point-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 150px;
+}
+
+.step-point {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #9CA3AF;
+  transition: all 0.3s ease;
+}
+
+.step-point.active {
+  background: #07265C;
+  border-color: #07265C;
+  color: white;
+}
+
+.step-label {
+  font-size: 15.6px;
+  color: #9CA3AF;
+  font-weight: 300;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.step-label.active {
+  color: #07265C;
+}
+
+/* Form Container and Sliding Animation */
+.form-container {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+}
+
+.steps-wrapper {
+  display: flex;
+  width: 200%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.steps-wrapper.step-1 {
+  transform: translateX(0%);
+}
+
+.steps-wrapper.step-2 {
+  transform: translateX(-50%);
+}
+
+.step-content {
+  width: 50%;
+  flex-shrink: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  pointer-events: none;
+}
+
+.step-content.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* Grid for Step 1 */
+.grid-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30.5px;
+}
+
+/* Cards for Step 2 */
+.access-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.access-card {
+  background: white;
+  border: 1px solid #07265C;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-icons {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+    gap: 28px;
+}
+
+.access-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 120%;
+  color: #07265C;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.access-card p {
+  font-size: 13px;
+  color: #4B5563;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Checkbox & Terms */
+.terms-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.terms-checkbox a {
+  color: #07265C;
+  text-decoration: underline;
+}
+
+/* Facebook Button */
+.fb-signup-btn {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #D1D5DB;
+  border-radius: 24px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fb-signup-btn:hover {
+  background: #F9FAFB;
+}
+
+/* Action Button at bottom */
+.action-button-wrapper {
+  display: flex;
+  justify-content: center;
+  /* margin-top: 24px; */
+}
+
+.action-button-wrapper .btn {
+  max-width: 400px;
+}
+
+/* Button Styles (from Login.css) */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 27.2px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: #AA3BFF;
+  color: white;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Custom Password Toggle */
+.password-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #6B7280;
+  cursor: pointer;
+  user-select: none;
+}
+
+.password-toggle:hover {
+  color: #07265C;
+}
+
+/* Reusing Input Styles */
+.input-group {
+  margin-bottom: 13.6px;
+}
+
+.input-label {
+  display: flex;
+  padding-bottom: 3.1px;
+  padding: 0 15px 2.95px 0;
+  align-items: center;
+  align-self: flex-start;
+  /* align-self: stretch; */
+  margin-bottom: 3px;
+  color: #07265C;
+  font-size: 13.6px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  color: #1a1a1a;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-bg);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-right-element {
+  position: absolute;
+  right: 14px;
+  cursor: pointer;
+}
+
+/* .input-group {
+  margin-bottom: 0;
+}
+
+.input-label {
+  font-size: 12px;
+  color: #07265C;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.input-field {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+  font-size: 14px;
+} */

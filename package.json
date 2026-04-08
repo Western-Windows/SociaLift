@@ -11,6 +11,9 @@
     "generate": "plop"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "lucide-react": "^1.7.0",
+    "phosphor-icons": "^1.4.2",
     "plop": "^4.0.5",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
