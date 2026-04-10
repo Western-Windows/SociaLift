@@ -1,14 +1,13 @@
 import './GettingStarted_3_3.css';
 
-// 1. Automatically scaffold the TypeScript interface
 export interface GettingStarted_3_3Props {
     // Define props here
 }
 
-// 2. Clean, compiler-friendly functional component
 export function GettingStarted_3_3({}: GettingStarted_3_3Props) {
     return (
-        <div className="getting-started-3-3" data-node-id="202:1986">
+        <div className="getting-started-container">
+            {/* HEADER */}
             <header className="gs-header">
                 <button aria-label="Go back" className="gs-back-button" type="button">
                     <span aria-hidden="true">&#8592;</span>
@@ -16,83 +15,97 @@ export function GettingStarted_3_3({}: GettingStarted_3_3Props) {
                 <h1>Getting Started</h1>
             </header>
 
-            <main className="gs-main">
-                <aside className="gs-steps" aria-label="Onboarding progress">
-                    <ol>
-                        <li className="is-complete">
-                            <span className="gs-step-index gs-step-check" aria-hidden="true">
-                                &#10003;
-                            </span>
-                            <span className="gs-step-label">Company Information</span>
-                        </li>
-                        <li className="is-complete">
-                            <span className="gs-step-index gs-step-check" aria-hidden="true">
-                                &#10003;
-                            </span>
-                            <span className="gs-step-label">Products Database</span>
-                        </li>
-                        <li className="is-complete">
-                            <span className="gs-step-index gs-step-check" aria-hidden="true">
-                                &#10003;
-                            </span>
-                            <span className="gs-step-label">Choose your Persona</span>
-                        </li>
-                    </ol>
-                    <span className="gs-step-badge">Almost there...</span>
+            <main className="gs-main-layout">
+                {/* SIDEBAR */}
+                <aside className="gs-sidebar">
+                    <div className="gs-step is-complete">
+                        <span className="gs-step-check">&#10003;</span>
+                        <span className="gs-step-text">Company Information</span>
+                    </div>
+
+                    <div className="gs-step-dots">
+                        <div className="gs-dot purple-dot"></div>
+                        <div className="gs-dot purple-dot"></div>
+                    </div>
+                    
+                    <div className="gs-step is-complete">
+                        <span className="gs-step-check">&#10003;</span>
+                        <span className="gs-step-text">Products Database</span>
+                    </div>
+
+                    
+                    <div className="gs-step is-complete">
+                        <span className="gs-step-check">&#10003;</span>
+                        <span className="gs-step-text">Choose your Persona</span>
+                    </div>
+
+                    <div className="gs-step-dots">
+                        <div className="gs-dot green-dot"></div>
+                        <div className="gs-dot green-dot"></div>
+                    </div>
+
+                    <div className="gs-badge">Almost there...</div>
                 </aside>
 
-                <section className="gs-form-shell" aria-labelledby="persona-title">
-                    <h2 id="persona-title">Persona Generation</h2>
-                    <p>SociaLift provides persona for posts generation.</p>
+                {/* MAIN CONTENT CARD */}
+                <section className="gs-form-card">
+                    <h2 className="gs-title">Persona Generation</h2>
+                    <p className="gs-subtitle">
+                        SociaLift provides persona for posts generation.
+                    </p>
 
                     <div className="gs-results">
-                        <p className="gs-result-item">
+                        <div className="gs-result-item">
                             <span className="gs-result-label">Final Persona:</span>
                             <span className="gs-result-value gs-highlight">
-                                The Trusted Curator (Classic &amp; Reliable)
+                                The Trusted Curator (Classic & Reliable)
                             </span>
-                        </p>
+                        </div>
 
-                        <p className="gs-result-item">
-                            <span className="gs-result-label">Persona&apos;s Tone:</span>
+                        <div className="gs-result-item">
+                            <span className="gs-result-label">Persona's Tone:</span>
                             <span className="gs-result-value gs-highlight">
                                 Authoritative, warm, and polished.
                             </span>
-                        </p>
+                        </div>
 
-                        <p className="gs-result-item gs-long-item">
+                        <div className="gs-result-item gs-long-item">
                             <span className="gs-result-label">
                                 Example Post Generated By This Persona:
                             </span>
                             <span className="gs-result-value gs-highlight">
                                 Quality you can trust for the people who matter most. From Nike
-                                active wear to Gini &amp; Jony play-ready outfits, we&apos;ve curated a
+                                active wear to Gini & Jony play-ready outfits, we've curated a
                                 complete wardrobe solution for your modern family since 1998.
                             </span>
-                        </p>
+                        </div>
                     </div>
 
-                    <button className="gs-done-button" type="button">
-                        Done!
+                    <div className="gs-button-row">
+                        <button className="gs-done-button" type="button">
+                            Done!
+                        </button>
+                    </div>
+                    
+                </section>
+
+                {/* OVERLAY & MODAL (Rendered inside main layout so it sits under the header) */}
+                <div className="gs-overlay" aria-hidden="true" />
+
+                <section className="gs-success-modal" aria-label="Success confirmation">
+                    <div className="gs-success-icon" aria-hidden="true">
+                        &#10003;
+                    </div>
+                    <h3>SUCCESS!</h3>
+                    <p>
+                        To view or modify your Information, Products Database, or Persona,
+                        please navigate to your User Profile.
+                    </p>
+                    <button className="gs-success-continue" type="button">
+                        Continue
                     </button>
                 </section>
             </main>
-
-            <div className="gs-overlay" aria-hidden="true" />
-
-            <section className="gs-success-modal" aria-label="Success confirmation">
-                <div className="gs-success-icon" aria-hidden="true">
-                    &#10003;
-                </div>
-                <h3>SUCCESS!</h3>
-                <p>
-                    To view or modify your Information, Products Database, or Persona,
-                    please navigate to your User Profile.
-                </p>
-                <button className="gs-success-continue" type="button">
-                    Continue
-                </button>
-            </section>
         </div>
     );
 }
