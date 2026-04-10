@@ -1,247 +1,274 @@
 .getting-started-1-0 {
-	--gs-bg: #eeeaf3;
-	--gs-card-bg: #f2eff6;
-	--gs-primary: #07265c;
-	--gs-subtle: rgba(7, 38, 92, 0.75);
-	--gs-info: rgba(52, 123, 209, 0.75);
-	--gs-line: #e1e3e6;
-	--gs-white: #fff;
-	--gs-tag-bg: rgba(230, 135, 216, 0.3);
-	--gs-tag-text: #e687d8;
-	--gs-action: #a88bdf;
-	--gs-step-active: #9c8bd9;
-	--gs-step-idle: #f8f8f8;
+    --gs-bg: #f9f6fc;
+    --gs-card-bg: #ffffff;
+    --gs-primary: #0f172a;
+    --gs-title: #1e1b4b;
+    --gs-subtle: #94a3b8;
+    --gs-info: #60a5fa;
+    --gs-line: #e2e8f0;
+    --gs-white: #fff;
+    --gs-tag-bg: #fdf4ff;
+    --gs-tag-text: #c026d3;
+    --gs-step-active: #a88be8;
+	--gs-actions: #a88be8;
+    --gs-step-idle: #f1f5f9;
+    --gs-step-dot: #cbd5e1;
 
-	min-height: 100svh;
-	background: var(--gs-bg);
-	color: var(--gs-primary);
-	font-family: Poppins, 'Segoe UI', Tahoma, sans-serif;
-	display: flex;
-	flex-direction: column;
+    min-height: 100svh;
+    background: var(--gs-bg);
+    color: var(--gs-primary);
+    font-family: Poppins, 'Segoe UI', Tahoma, sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 .gs-header {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	padding: 1.4rem 3rem;
-	background: linear-gradient(90deg, #8f8cda 0%, #ae83d8 45%, #6f7dcf 100%);
-	border-bottom: 1px solid #dad6e2;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem 3rem;
+    /* Updated gradient to match the vibrant second image */
+    background: linear-gradient(90deg, #efa7d8 0%, #b293e6 45%, #889be8 100%);
 }
 
 .gs-back-button {
-	width: 2rem;
-	height: 2rem;
-	border-radius: 999px;
-	border: none;
-	background: #f8f8f8;
-	color: var(--gs-primary);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 1.1rem;
-	cursor: pointer;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--gs-white);
+    color: var(--gs-title);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .gs-header h1 {
-	margin: 0;
-	font-size: 2.05rem;
-	font-weight: 500;
-	line-height: 1.1;
-	color: var(--gs-primary);
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--gs-title);
 }
 
 .gs-main {
-	display: grid;
-	grid-template-columns: 240px minmax(680px, 1fr);
-	gap: 0;
-	padding: 0 1.25rem 1.25rem;
-	align-items: stretch;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 2rem;
+    padding: 2.5rem 3rem;
+    align-items: flex-start;
 }
 
 .gs-steps {
-	padding: 1.5rem 1rem;
+    padding-top: 1rem;
 }
 
 .gs-steps ol {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 1.1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
 .gs-steps li {
-	display: grid;
-	grid-template-columns: 1.65rem 1fr;
-	align-items: center;
-	column-gap: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.gs-step-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-left: 0.65rem;
+    margin: -0.5rem 0;
+}
+
+.gs-step-dots .gs-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--gs-step-dot);
 }
 
 .gs-step-index {
-	width: 1.65rem;
-	height: 1.65rem;
-	border-radius: 999px;
-	background: var(--gs-step-idle);
-	border: 1px solid #ddd;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 0.82rem;
-	color: #111;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 999px;
+    background: var(--gs-step-idle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gs-subtle);
+    flex-shrink: 0;
 }
 
 .gs-steps .is-active .gs-step-index {
-	background: var(--gs-step-active);
-	border-color: transparent;
-	color: var(--gs-white);
+    background: var(--gs-step-active);
+    color: var(--gs-white);
 }
 
 .gs-step-label {
-	font-size: 1rem;
-	line-height: 1.3;
-	color: var(--gs-subtle);
+    font-size: 0.9rem;
+    line-height: 1.3;
+    color: var(--gs-subtle);
+    font-weight: 500;
 }
 
 .gs-steps .is-active .gs-step-label {
-	color: var(--gs-primary);
-	font-weight: 600;
+    color: var(--gs-title);
+    font-weight: 600;
 }
 
 .gs-step-badge {
-	display: inline-flex;
-	margin-top: 1.25rem;
-	padding: 0.24rem 0.62rem;
-	background: var(--gs-tag-bg);
-	color: var(--gs-tag-text);
-	border-radius: 6px;
-	font-size: 0.95rem;
-	font-weight: 600;
+    display: inline-flex;
+    margin-top: 2rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--gs-tag-bg);
+    color: var(--gs-tag-text);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .gs-form-shell {
-	background: var(--gs-card-bg);
-	border: 1px solid #eff0f6;
-	border-radius: 10px;
-	margin-top: 0.75rem;
-	box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
-	padding: 1.8rem 1.9rem 1.5rem;
+    background: var(--gs-card-bg);
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    padding: 2.5rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .gs-form-shell h2 {
-	margin: 0;
-	font-size: 2rem;
-	line-height: 1.2;
-	color: var(--gs-primary);
-	font-weight: 400;
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--gs-title);
+    font-weight: 500;
 }
 
 .gs-form-shell > p {
-	margin-top: 0.55rem;
-	margin-bottom: 1.35rem;
-	font-size: 1.13rem;
-	color: var(--gs-info);
-	max-width: 48rem;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    color: var(--gs-info);
 }
 
 .gs-form-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(260px, 500px));
-	column-gap: 2rem;
-	row-gap: 1.05rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+    row-gap: 1.5rem;
+    width: 100%;
 }
 
 .gs-form-grid label {
-	display: flex;
-	flex-direction: column;
-	gap: 0.48rem;
-	font-size: 1.2rem;
-	color: var(--gs-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--gs-title);
 }
 
 .gs-form-grid input {
-	height: 2.5rem;
-	border: 1px solid var(--gs-line);
-	border-radius: 8px;
-	padding: 0 1rem;
-	font-size: 1.03rem;
-	font-family: inherit;
-	color: var(--gs-primary);
-	background: var(--gs-white);
-	outline: none;
+    height: 2.75rem;
+    border: 1px solid var(--gs-line);
+    border-radius: 8px;
+    padding: 0 1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--gs-primary);
+    background: var(--gs-white);
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
 }
 
 .gs-form-grid input::placeholder {
-	color: var(--gs-subtle);
+    color: var(--gs-subtle);
 }
 
-.gs-form-grid input:focus-visible {
-	border-color: #8f8cda;
-	box-shadow: 0 0 0 3px rgba(143, 140, 218, 0.25);
+.gs-form-grid input:focus {
+    border-color: var(--gs-actions);
+    box-shadow: 0 0 0 3px rgba(168, 139, 232, 0.15);
 }
 
-.gs-full-width {
-	grid-column: 1 / 2;
+.gs-submit-row {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
 }
 
 .gs-continue-button {
-	grid-column: 1 / span 2;
-	justify-self: center;
-	margin-top: 2rem;
-	width: min(500px, 100%);
-	height: 2.5rem;
-	border: none;
-	border-radius: 6px;
-	background: var(--gs-action);
-	color: #fff;
-	font-size: 1.12rem;
-	font-family: inherit;
-	cursor: pointer;
+    width: 100%;
+    max-width: 400px;
+    height: 2.75rem;
+    border: none;
+    border-radius: 8px;
+    background: #a88be8 !important; /* Force the background color */
+    color: #ffffff !important; /* Force the text color */
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    opacity: 1 !important;
+    transition: filter 0.2s ease;
 }
 
-@media (max-width: 1180px) {
-	.gs-main {
-		grid-template-columns: 200px minmax(0, 1fr);
-	}
+.gs-continue-button:hover {
+    filter: brightness(0.9); /* Darkens the button slightly on hover */
+}
+/* Responsive Overrides */
+@media (max-width: 980px) {
+    .gs-main {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
 
-	.gs-form-grid {
-		grid-template-columns: 1fr;
-	}
+    .gs-steps {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 0;
+    }
 
-	.gs-full-width,
-	.gs-continue-button {
-		grid-column: 1;
-	}
+    .gs-steps ol {
+        flex-direction: row;
+    }
+
+    .gs-step-dots, .gs-step-label {
+        display: none; /* Hide dots and text on smaller screens to save space */
+    }
+
+    .gs-step-badge {
+        margin-top: 0;
+    }
 }
 
-@media (max-width: 780px) {
-	.gs-header {
-		padding: 1rem;
-	}
-
-	.gs-header h1 {
-		font-size: 1.65rem;
-	}
-
-	.gs-main {
-		grid-template-columns: 1fr;
-		padding: 0.85rem;
-	}
-
-	.gs-steps {
-		padding: 0.5rem 0.2rem 0.9rem;
-	}
-
-	.gs-form-shell {
-		padding: 1.1rem;
-	}
-
-	.gs-form-shell h2 {
-		font-size: 1.6rem;
-	}
-
-	.gs-form-shell > p {
-		font-size: 1rem;
-	}
+@media (max-width: 640px) {
+    .gs-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .gs-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .gs-form-shell {
+        padding: 1.5rem;
+    }
+}
+.gs-steps::before {
+    display: none;
 }

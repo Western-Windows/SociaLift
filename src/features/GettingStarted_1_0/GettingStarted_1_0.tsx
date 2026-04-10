@@ -1,11 +1,9 @@
 import './GettingStarted_1_0.css';
 
-// 1. Automatically scaffold the TypeScript interface
 export interface GettingStarted_1_0Props {
     // Define props here
 }
 
-// 2. Clean, compiler-friendly functional component
 export function GettingStarted_1_0({}: GettingStarted_1_0Props) {
     return (
         <div className="getting-started-1-0" data-node-id="162:2086">
@@ -23,6 +21,10 @@ export function GettingStarted_1_0({}: GettingStarted_1_0Props) {
                             <span className="gs-step-index">1</span>
                             <span className="gs-step-label">Company Information</span>
                         </li>
+                        <div className="gs-step-dots">
+                            <span className="gs-dot"></span>
+                            <span className="gs-dot"></span>
+                        </div>
                         <li>
                             <span className="gs-step-index">2</span>
                             <span className="gs-step-label">Products Database</span>
@@ -63,14 +65,17 @@ export function GettingStarted_1_0({}: GettingStarted_1_0Props) {
                             <input name="phoneNumber" placeholder="Phone Number" type="tel" />
                         </label>
 
-                        <label className="gs-full-width">
+                        {/* Email address now spans only one column natively in the grid */}
+                        <label>
                             <span>Email Address</span>
                             <input name="emailAddress" placeholder="Email Address" type="email" />
                         </label>
 
-                        <button className="gs-continue-button" type="button">
-                            Continue <span aria-hidden="true">&#8594;</span>
-                        </button>
+                        <div className="gs-submit-row">
+                            <button className="gs-continue-button" type="button">
+                                Continue <span aria-hidden="true">&#8594;</span>
+                            </button>
+                        </div>
                     </form>
                 </section>
             </main>
