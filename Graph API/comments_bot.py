@@ -85,6 +85,7 @@ def _log(msg: str):
 # ── Config ────────────────────────────────────────────────────────────────────
 VERIFY_TOKEN = os.environ.get("WEBHOOK_VERIFY_TOKEN", "")
 PAGE_ID = Config.FACEBOOK_PAGE_ID or ""
+PAGE_NAME = os.environ.get("FACEBOOK_PAGE_NAME", "Fashion Hub")
 
 # Path to pre-fetched test data (project root)
 _PROJECT_ROOT = Path(__file__).parent.parent
@@ -106,17 +107,28 @@ def _get_bot() -> FacebookBot:
 # CORE HANDLER
 # =============================================================================
 
-def handle_comment(comment_id: str, message: str, post_snippet: str = "") -> bool:
+def _strip_page_mention(message: str) -> str:
+    """Remove leading page name mention (e.g. 'Western Windows ') from comment text."""
+    if PAGE_NAME and message.lower().startswith(PAGE_NAME.lower()):
+        message = message[len(PAGE_NAME):].lstrip(" ,")
+    return message.strip()
+
+
+def handle_comment(comment_id: str, message: str, post_snippet: str = "",
+                   username: str = "") -> bool:
     """
     Process a single comment through the chatbot and reply.
     Returns True if reply was sent successfully.
     """
+    message = _strip_page_mention(message)
+
     _log(f"[COMMENTS BOT] 💬 Comment {comment_id}")
+    _log(f"[COMMENTS BOT]    From: {username or 'unknown'}")
     _log(f"[COMMENTS BOT]    Post: \"{post_snippet[:60]}\"")
     _log(f"[COMMENTS BOT]    Message: \"{message[:80]}\"")
 
     # Run chatbot pipeline — route=None lets the routing graph auto-decide
-    result = run_full_pipeline(message, route=None)
+    result = run_full_pipeline(message, route=None, username=username)
     response_text = result.get("response", "").strip()
 
     if not response_text:
@@ -195,12 +207,35 @@ def _process_feed_payload(payload: dict):
             comment_id = value.get("comment_id", "")
             message = value.get("message", "").strip()
             post_id = value.get("post_id", "")
+            parent_id = value.get("parent_id", "")
 
             if not comment_id or not message:
                 continue
 
-            _log(f"[COMMENTS BOT] 📨 New comment event | post={post_id}")
-            handle_comment(comment_id, message, post_snippet=f"Post {post_id}")
+            _log(f"[COMMENTS BOT] 🔍 parent_id={parent_id!r} post_id={post_id!r} tags={value.get('message_tags')!r}")
+
+            # Skip replies to other users' comments (parent_id is a comment, not the post)
+            # This catches user-to-user threads where the page shouldn't interfere.
+            is_reply_to_comment = parent_id and parent_id != post_id
+            if is_reply_to_comment:
+                _log(f"[COMMENTS BOT] ⏭ Skipping reply to another comment (parent={parent_id})")
+                continue
+
+            # Skip comments that tag other users but not the page.
+            # message_tags is a list of dicts: {id, name, type, offset, length}
+            # type "user" = another person, type "page" = a page (could be ours)
+            message_tags = value.get("message_tags") or []
+            if message_tags:
+                tagged_ids = {tag.get("id", "") for tag in message_tags}
+                mentions_page = PAGE_ID in tagged_ids
+                if not mentions_page:
+                    sender_name = value.get("from", {}).get("name", "someone")
+                    _log(f"[COMMENTS BOT] ⏭ Skipping user-to-user comment from {sender_name} (tags others, not page)")
+                    continue
+
+            sender_name = value.get("from", {}).get("name", "")
+            _log(f"[COMMENTS BOT] 📨 New comment event | post={post_id} | from={sender_name}")
+            handle_comment(comment_id, message, post_snippet=f"Post {post_id}", username=sender_name)
 
 
 # =============================================================================
@@ -260,9 +295,19 @@ def run_from_file(json_path: Path = None):
                 skipped += 1
                 continue
 
+            # Skip user-to-user comments (tags someone other than the page)
+            message_tags = comment.get("message_tags", [])
+            if message_tags:
+                tagged_ids = {tag.get("id", "") for tag in message_tags}
+                if PAGE_ID not in tagged_ids:
+                    _log(f"\n[COMMENTS BOT] ⏭ Skipping user-to-user comment: \"{message[:60]}\"")
+                    skipped += 1
+                    continue
+
+            username = comment.get("from", {}).get("name", "") or comment.get("user_name", "")
             total_comments += 1
             _log(f"\n[COMMENTS BOT] ── Comment {total_comments} ──────────────────────────")
-            success = handle_comment(comment_id, message, post_snippet=post_snippet)
+            success = handle_comment(comment_id, message, post_snippet=post_snippet, username=username)
             if success:
                 replied += 1
             else:
