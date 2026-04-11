@@ -1,8 +1,7 @@
-import React, { act, useState } from 'react';
+import { useState } from 'react';
 import './Signup.css';
 import { Input, Button } from '../../components/components';
 import logo from '../../assets/SociaLift logo 5.svg';
-import bgImage from '../../assets/background login.svg';
 import dashboard1 from '../../assets/dashboard 1.svg';
 import actionable1 from '../../assets/actionable 1.svg';
 import content1 from '../../assets/content 1.svg';

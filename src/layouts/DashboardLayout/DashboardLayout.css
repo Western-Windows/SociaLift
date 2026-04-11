@@ -1,0 +1,97 @@
+.layout-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-header {
+  position: relative;
+  width: 100%;
+  height: 108px;
+  /* Based exactly on Figma Main BG dimensions */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Update these two classes in your DashboardLayout.css */
+
+.nav-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  /* Changed from -1 to 0 so it doesn't hide behind the page background */
+  overflow: hidden;
+}
+
+.dashboard-nav {
+  position: relative;
+  /* Added position relative so z-index takes effect */
+  width: 100%;
+  max-width: 1600px;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.nav-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+
+.nav-logo img {
+  height: 40px;
+  object-fit: contain;
+}
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  /* Reduced slightly from 25px to fit better generically */
+  transition: all 0.3s ease;
+}
+
+.link-white {
+  color: #FFFFFF;
+}
+
+.nav-links a.active {
+  color: #07265C;
+  /* Dark blue active link according to design */
+  font-weight: 600;
+}
+
+.nav-user img {
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  background-color: #FFFFFF;
+  cursor: pointer;
+}
+
+.nav-user img:hover {
+  transform: scale(1.05);
+}
+
+.layout-content {
+  flex-grow: 1;
+}
