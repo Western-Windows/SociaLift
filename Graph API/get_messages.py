@@ -8,10 +8,14 @@ This script is designed to fetch messages from Facebook Messenger.
 It includes features to fetch full conversation history, unread messages.
 """
 
+import os
+from pathlib import Path
 import json
 import logging
 import sys
 import requests
+
+_JSON_DIR = Path(__file__).parent / "JSON"
 import time
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -132,6 +136,7 @@ class MessengerDataManager:
 
     def export_to_json(self, data, filename):
         try:
+            os.makedirs(os.path.dirname(os.path.abspath(filename)), exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"\n💾 Saved {len(data)} conversations to '{filename}'")
@@ -173,7 +178,7 @@ def main():
 
             unread_mode = (choice == "2")
             mode_name = "Unread" if unread_mode else "Full"
-            default_filename = "./Graph API/JSON/messenger_unread.json" if unread_mode else "./Graph API/JSON/messenger_full.json"
+            default_filename = str(_JSON_DIR / ("messenger_unread.json" if unread_mode else "messenger_full.json"))
 
             print(f"\n   [Settings for {mode_name} Export]")
             conv_limit = get_int_input("Conversations to check", 20)

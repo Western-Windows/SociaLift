@@ -87,11 +87,11 @@ def _log(msg: str):
 VERIFY_TOKEN = os.environ.get("WEBHOOK_VERIFY_TOKEN", "")
 PAGE_ID = Config.FACEBOOK_PAGE_ID or ""
 # Page display name used in messenger_full.json to identify page's own messages
-PAGE_NAME = os.environ.get("FACEBOOK_PAGE_NAME", "Emergenhelp")
+PAGE_NAME = os.environ.get("FACEBOOK_PAGE_NAME", "Western Windows")
 
 # Path to pre-fetched test data (project root)
 _PROJECT_ROOT = Path(__file__).parent.parent
-MESSENGER_JSON_PATH = _PROJECT_ROOT / "messenger_full.json"
+MESSENGER_JSON_PATH = Path(__file__).parent / "JSON" / "messenger_full.json"
 
 # ── Flask App ─────────────────────────────────────────────────────────────────
 app = Flask(__name__)
@@ -123,7 +123,7 @@ def handle_message(psid: str, user_name: str, message_text: str,
     _log(f"[MESSENGER BOT]    \"{message_text[:80]}\"")
 
     # Run chatbot pipeline — route=None lets the routing graph auto-decide
-    result = run_full_pipeline(message_text, chat_history=chat_history or [], route=None)
+    result = run_full_pipeline(message_text, chat_history=chat_history or [], route=None, username=user_name)
     response_text = result.get("response", "").strip()
 
     if not response_text:
@@ -275,13 +275,26 @@ def run_from_file(json_path: Path = None):
         conversations = json.load(f)
 
     unread = [c for c in conversations if c.get("status") == "unread"]
-    _log(f"[MESSENGER BOT] 📊 {len(conversations)} total conversations, {len(unread)} unread")
+
+    # Also include "read" conversations where the last message is from the user
+    # (page admin may have viewed it, clearing unread flag, but bot hasn't replied)
+    def _needs_reply(conv: dict) -> bool:
+        if conv.get("status") == "unread":
+            return True
+        msgs = sorted(conv.get("messages", []), key=lambda m: m.get("timestamp", ""))
+        if not msgs:
+            return False
+        last_sender = msgs[-1].get("sender_name", "")
+        return last_sender != PAGE_NAME
+
+    needs_reply = [c for c in conversations if _needs_reply(c)]
+    _log(f"[MESSENGER BOT] 📊 {len(conversations)} total conversations, {len(unread)} unread, {len(needs_reply)} need a reply")
 
     total = 0
     replied = 0
     skipped = 0
 
-    for conv in unread:
+    for conv in needs_reply:
         conv_id = conv.get("conversation_id", "")
         participants = conv.get("participants", [])
         messages = conv.get("messages", [])
@@ -306,6 +319,12 @@ def run_from_file(json_path: Path = None):
 
         # Build full chat history from all messages
         full_history = _build_chat_history(messages, PAGE_NAME)
+
+        # Skip if the bot already replied as the last message (avoid duplicate replies)
+        if full_history and full_history[-1]["role"] == "assistant":
+            _log(f"[MESSENGER BOT] ⏭ Conversation {conv_id} already has a bot reply as last message — skipping")
+            skipped += 1
+            continue
 
         # Find the latest user message (the one we should reply to)
         latest_user_msg = next(

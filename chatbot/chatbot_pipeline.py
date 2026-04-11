@@ -243,7 +243,7 @@ class QueryRoute(Enum):
 
 def load_routing_config():
     """Load configuration files needed for routing."""
-    config = {'company_info': {}, 'irrelevant_template': '', 'domain_vocab': {}}
+    config = {'company_info': {}, 'irrelevant_template': '', 'greeting_template': '', 'domain_vocab': {}}
 
     try:
         with open(BASE_DIR / "company_info.json", encoding="utf-8-sig") as f:
@@ -261,6 +261,17 @@ def load_routing_config():
             )
     except FileNotFoundError:
         _log("[PIPELINE] ⚠ company_irrelevant_template_reply.json not found")
+
+    try:
+        with open(BASE_DIR / "company_greeting_template_reply.json", encoding="utf-8-sig") as f:
+            greeting_data = json.load(f)
+            config['greeting_template'] = (
+                greeting_data.get("company_data", {})
+                .get("greeting_response", {})
+                .get("value", "")
+            )
+    except FileNotFoundError:
+        _log("[PIPELINE] ⚠ company_greeting_template_reply.json not found")
 
     try:
         with open(BASE_DIR / "domain_vocabulary.json", encoding="utf-8-sig") as f:
@@ -327,6 +338,23 @@ def split_query(user_query: str) -> List[str]:
     split_pattern = r"\b(?:and|also|plus|as well as|additionally)\b|\?+"
     parts = [part.strip(" ?") for part in re.split(split_pattern, user_query) if part.strip(" ?")]
     return parts if parts else [user_query.strip()]
+
+
+_GREETING_RE = re.compile(
+    r"^(hi|hey|hello|hiya|howdy|greetings|"
+    r"good\s+(morning|afternoon|evening|day)|"
+    r"how\s+are\s+you|what'?s\s+up|sup|yo|"
+    # Arabic
+    r"salaam|salam|مرحبا|أهلا|أهلاً|السلام\s+عليكم|"
+    # French
+    r"bonjour|bonsoir|salut|"
+    # Spanish / Portuguese
+    r"hola|ola|"
+    # Italian / Turkish / German / other
+    r"ciao|merhaba|hallo|guten\s+(morgen|tag|abend)|namaste"
+    r")\W*$",
+    re.IGNORECASE,
+)
 
 
 def determine_route(query: str) -> QueryRoute:
@@ -853,6 +881,8 @@ def classify_query(query: str, llm=None) -> Literal["keyword", "semantic", "hybr
 
 def query_router(query: str, k: int = 10, filters: dict = None) -> list:
     query_type = classify_query(query)
+    icons = {"keyword": "🔑", "semantic": "🧠", "hybrid": "🔀"}
+    _log(f"[PIPELINE]   🔍 Retrieval type: {icons.get(query_type, '❓')} {query_type.upper()}")
     if query_type == "keyword":
         return bm25_search(query, k=k, filters=filters)
     elif query_type == "semantic":
@@ -969,6 +999,7 @@ COMPANY_INFO = {
             ("Category", "Category", True),
             ("SubCategory", "Subcategory", True),
             ("Price", "Price", True),
+            ("ImageURL", "Image Link", True),
         ],
         "include_text": False,
     }
@@ -991,6 +1022,7 @@ PERSONA = {
         "Acknowledge when you don't have what they're looking for",
         "Keep responses concise - respect their time",
     ],
+    "use_emojis": True,
     "dont": [
         "Be overly salesy or pushy",
         "Use formal/corporate language",
@@ -1004,7 +1036,52 @@ def load_company_info(company_id: str = None) -> dict:
     return COMPANY_INFO
 
 
+_PERSONA_PATH = Path(__file__).parent.parent / "Persona Module" / "final_persona.json"
+
+_EMOJI_TONES = {"conversational", "expressive", "playful", "warm", "casual", "enthusiastic", "friendly"}
+
+
+def _persona_uses_emojis(emotional_tone: str) -> bool:
+    """Return True if the persona's tone suggests emoji use is appropriate."""
+    return any(t in emotional_tone.lower() for t in _EMOJI_TONES)
+
+
 def load_persona(persona_id: str = None) -> dict:
+    if _PERSONA_PATH.exists():
+        try:
+            with open(_PERSONA_PATH, encoding="utf-8") as _f:
+                _p = json.load(_f)
+            archetype = _p.get("archetype", "")
+            emotional_tone = _p.get("emotional_tone", "")
+            keywords = _p.get("keywords", [])
+            voice_description = _p.get("voice_description", "")
+            _log(f"[PIPELINE] 🎭 Persona loaded: {archetype} ({emotional_tone})")
+            return {
+                "brand_voice": voice_description,
+                "brand_values": keywords,
+                "use_emojis": _persona_uses_emojis(emotional_tone),
+                "target_audience": {
+                    "demographics": "general audience",
+                    "interests": keywords,
+                    "communication_preference": emotional_tone,
+                },
+                "tone": f"{emotional_tone} — {voice_description[:80]}",
+                "language_style": ", ".join(keywords),
+                "do": [
+                    f"Embody the '{archetype}' archetype in your responses",
+                    "Be genuinely helpful and recommend products that fit their needs",
+                    "Use language that matches the brand voice description",
+                    "Keep responses concise — respect their time",
+                    "Mention specific product details (color, style, price when relevant)",
+                ],
+                "dont": [
+                    "Be overly salesy or pushy",
+                    "Make up information about products",
+                    "Ignore the customer's specific requirements",
+                ],
+            }
+        except Exception as _e:
+            _log(f"[PIPELINE] ⚠ Could not load final_persona.json ({_e}) — using default persona")
     return PERSONA
 
 
@@ -1044,13 +1121,18 @@ PROMPT_VARIANTS = {
             "- Include specific details (name, color, price when relevant)",
             "- Mention product IDs only when a product name is unavailable",
             "- If no relevant products found, acknowledge honestly and suggest alternatives",
+            "- If a product has an Image Link, include it in your response so the customer can view it",
+            "- When mentioning multiple products, separate each one with a blank line for easy reading",
+            "- Answer ONLY the user's current question — do NOT bring up or reference previous topics from chat history unless the user explicitly asks about them",
         ]),
     },
     "company": {
         "knowledge_label": "Company Knowledge",
         "instructions": "\n".join([
-            "Answer the user's company-related question using ONLY the company knowledge.",
-            "- Be clear, concise, and policy-accurate",
+            "Answer the user's message using ONLY the company knowledge provided.",
+            "- If the user is greeting you (e.g. 'Hi', 'Hello'), respond with a warm welcome, "
+            "introduce the store briefly, and invite them to ask about products or anything else you can help with",
+            "- For company questions, be clear, concise, and policy-accurate",
             "- If details are missing, say what is unknown and suggest next steps",
             "- Do not invent policies, prices, delivery promises, or guarantees",
             "- Keep the response practical, friendly, and customer-friendly",
@@ -1109,6 +1191,13 @@ def format_context(docs: list, company_info: dict = None, max_docs: int = 5,
                 remaining.append(f"  {display_label}: {value}")
             if remaining:
                 item_info += "  Full Metadata:\n" + "\n".join(remaining) + "\n"
+
+        # Append product link if available and not already shown via display_fields
+        if not display_fields:
+            image_url = (metadata.get("ImageURL") or metadata.get("link")
+                         or metadata.get("permalink_url"))
+            if image_url:
+                item_info += f"  Link: {image_url}\n"
 
         if include_text and text:
             item_info += f"  Description: {text[:200]}...\n" if len(text) > 200 else f"  Description: {text}\n"
@@ -1179,6 +1268,8 @@ def build_company_route_prompt(query: str, company_context: str, chat_history: l
     company = company_info or load_company_info()
     persona_cfg = persona or load_persona()
     do_guidelines = "\n".join(f"- {g}" for g in persona_cfg.get("do", []))
+    if persona_cfg.get("use_emojis"):
+        do_guidelines += "\n- Use relevant emojis naturally (e.g., ✨ 😊) to make responses feel warm and engaging"
     dont_guidelines = "\n".join(f"- {g}" for g in persona_cfg.get("dont", []))
     target_aud = persona_cfg.get("target_audience", {})
     target_audience_str = (f"Demographics: {target_aud.get('demographics', 'general')}\n"
@@ -1210,6 +1301,8 @@ def generate_response(query: str, docs: list, chat_history: list = None,
     context = format_context(docs, company_info=company, include_all_metadata=True)
     history_str = format_chat_history(chat_history)
     do_guidelines = "\n".join(f"- {g}" for g in persona_cfg.get("do", []))
+    if persona_cfg.get("use_emojis"):
+        do_guidelines += "\n- Use relevant emojis naturally (e.g., ✨ 👗 👕 👟 😊) to make responses feel warm and engaging"
     dont_guidelines = "\n".join(f"- {g}" for g in persona_cfg.get("dont", []))
     target_aud = persona_cfg.get("target_audience", {})
     target_audience_str = (f"Demographics: {target_aud.get('demographics', 'general')}\n"
@@ -1366,7 +1459,85 @@ def _normalize_route(route_value: Any) -> str:
     return "2"
 
 
+_FOLLOWUP_RE = re.compile(
+    r'^(more|show more|more options?|what else|another|others?|other options?|'
+    r'give me more|any more|show me more|anything else|keep going|continue|next|'
+    r'tell me more|more products?|more items?|more choices?|yes please|ok|okay|sure|'
+    r'sounds good|great|go ahead|show me|i want more)\??\.?$',
+    re.IGNORECASE,
+)
+
+
+def _is_followup(query: str) -> bool:
+    stripped = query.strip()
+    # Greetings are never follow-ups — never contextualize them
+    if _GREETING_RE.match(stripped):
+        return False
+    # Only trigger on explicit follow-up phrases (e.g. "more", "show me more").
+    # Length-based rules are unreliable: short words like "slippers" or "bonjour"
+    # are not follow-ups and must not be contextualized.
+    return bool(_FOLLOWUP_RE.match(stripped))
+
+
+def contextualize_query(query: str, chat_history: list) -> str:
+    """
+    If the query looks like a follow-up, rewrite it as a self-contained question
+    using the recent chat history. Returns the original query if not needed.
+    """
+    if not chat_history or not _is_followup(query):
+        return query
+
+    history_str = format_chat_history(chat_history, max_turns=3)
+    prompt = (
+        f"Conversation so far:\n{history_str}\n\n"
+        f"User's latest message: \"{query}\"\n\n"
+        "Determine whether this message is a follow-up to the same topic in the conversation, "
+        "or a new question about a completely different topic.\n"
+        "- If it is a follow-up to the SAME topic, rewrite it as a complete, self-contained question "
+        "that captures what the user is asking using the conversation context.\n"
+        "- If it introduces a NEW topic or different product/category, return it EXACTLY as written.\n"
+        "Return ONLY the (possibly rewritten) question, nothing else."
+    )
+    try:
+        result = light_llm.invoke([HumanMessage(content=prompt)]).content.strip()
+        return result if result else query
+    except Exception:
+        return query
+
+
+def contextualize_node(state: dict) -> dict:
+    """Expand follow-up queries (e.g. 'more options') into full standalone questions."""
+    query = state.get("query", "")
+    chat_history = state.get("chat_history") or []
+    if not chat_history:
+        return {}
+    expanded = contextualize_query(query, chat_history)
+    if expanded != query:
+        _log(f"[PIPELINE] 🔗 Context: \"{query}\" → \"{expanded}\"")
+        return {"query": expanded}
+    return {}
+
+
 def pre_retrieval_router_node(state: dict) -> dict:
+    query = state.get("query", "")
+    if _GREETING_RE.match(query.strip()):
+        greeting_template = routing_config.get(
+            "greeting_template",
+            "Hi {{username}}! 👋 Welcome! How can I help you today? 😊"
+        )
+        username = state.get("username", "") or ""
+        first_name = username.split()[0] if username else "there"
+        greeting_text = greeting_template.replace("{{username}}", first_name)
+        _log("[PIPELINE] 🔀 Route: GREETING (0)")
+        return {
+            "route": "0",
+            "compressed_query": query,
+            "metadata_filters": {},
+            "ready_template_answer": greeting_text,
+            "routing_response": greeting_text,
+            "company_response": None,
+        }
+
     if state.get("route") is not None:
         normalized = _normalize_route(state.get("route"))
         route_names = {"0": "IRRELEVANT", "1": "COMPANY_RELATED", "2": "PRODUCT_QUERY"}
@@ -1386,6 +1557,10 @@ def pre_retrieval_router_node(state: dict) -> dict:
     normalized = _normalize_route(routing_state.get("route"))
     route_names = {"0": "IRRELEVANT", "1": "COMPANY_RELATED", "2": "PRODUCT_QUERY"}
     _log(f"[PIPELINE] 🔀 Route: {route_names.get(normalized, '?')} ({normalized})")
+    compressed = routing_state.get("compressed_query")
+    original = state.get("query", "")
+    if compressed and compressed != original:
+        _log(f"[PIPELINE] 🗜 Compressed: \"{original}\" → \"{compressed}\"")
     return {
         "route": normalized,
         "compressed_query": routing_state.get("compressed_query"),
@@ -1405,7 +1580,8 @@ def route_decision(state: dict) -> str:
 
 
 def irrelevant_template_node(state: dict) -> dict:
-    _log("[PIPELINE] 🚫 Irrelevant query → returning template response")
+    is_greeting = bool(_GREETING_RE.match(state.get("query", "").strip()))
+    _log(f"[PIPELINE] {'👋 Greeting' if is_greeting else '🚫 Irrelevant query'} → returning template response")
     fallback_from_route = route_0_irrelevant_query(
         state.get("query", ""), state.get("username", "Customer")
     ).get("response", "")
@@ -1550,6 +1726,7 @@ class OrchestrationState(TypedDict, total=False):
     generated_response: str
     generation_status: str
     sources: list
+    retry_count: int
 
 
 def generate_node(state: dict) -> dict:
@@ -1571,13 +1748,57 @@ def generate_node(state: dict) -> dict:
     }
 
 
+MAX_RETRIES = 2
+
+
+def validate_response(response: str, docs: list) -> tuple:
+    """Returns (is_valid, reason). Catches empty, too-short, or apologetic responses."""
+    if not response or len(response.strip()) < 20:
+        return False, "response_too_short"
+    apologetic_phrases = [
+        "i cannot help", "i can't help", "no relevant",
+        "i don't have information", "i'm sorry, i cannot", "sorry, i can't",
+    ]
+    if docs and any(phrase in response.lower() for phrase in apologetic_phrases):
+        return False, "apologetic_with_docs"
+    return True, "ok"
+
+
+def validate_node(state: dict) -> dict:
+    """Guardrail node — validates generated response and signals retry if needed."""
+    response = state.get("generated_response", "")
+    docs = state.get("retrieved_docs", [])
+    retry_count = state.get("retry_count", 0)
+    is_valid, reason = validate_response(response, docs)
+    if not is_valid:
+        _log(f"[PIPELINE] ⚠ Validation failed ({reason}) — retry {retry_count + 1}/{MAX_RETRIES}")
+    else:
+        _log(f"[PIPELINE] ✅ Response validated")
+    return {
+        "retry_count": retry_count + (0 if is_valid else 1),
+        "generation_status": "valid" if is_valid else f"invalid_{reason}",
+    }
+
+
+def validation_decision(state: dict) -> str:
+    """Route back to generate if response is invalid and retries remain."""
+    status = state.get("generation_status", "")
+    retry_count = state.get("retry_count", 0)
+    if status.startswith("invalid") and retry_count < MAX_RETRIES:
+        return "retry"
+    return "done"
+
+
 orchestration_builder = StateGraph(OrchestrationState)
+orchestration_builder.add_node("contextualize", contextualize_node)
 orchestration_builder.add_node("pre_router", pre_retrieval_router_node)
 orchestration_builder.add_node("irrelevant_template", irrelevant_template_node)
 orchestration_builder.add_node("company_answer", company_answer_node)
 orchestration_builder.add_node("product_retrieval", product_retrieval_node)
 orchestration_builder.add_node("generate", generate_node)
-orchestration_builder.add_edge(START, "pre_router")
+orchestration_builder.add_node("validate", validate_node)
+orchestration_builder.add_edge(START, "contextualize")
+orchestration_builder.add_edge("contextualize", "pre_router")
 orchestration_builder.add_conditional_edges("pre_router", route_decision, {
     "irrelevant": "irrelevant_template",
     "company": "company_answer",
@@ -1586,7 +1807,11 @@ orchestration_builder.add_conditional_edges("pre_router", route_decision, {
 orchestration_builder.add_edge("irrelevant_template", END)
 orchestration_builder.add_edge("company_answer", END)
 orchestration_builder.add_edge("product_retrieval", "generate")
-orchestration_builder.add_edge("generate", END)
+orchestration_builder.add_edge("generate", "validate")
+orchestration_builder.add_conditional_edges("validate", validation_decision, {
+    "retry": "generate",
+    "done": END,
+})
 assistant_graph = orchestration_builder.compile()
 
 
@@ -1605,8 +1830,6 @@ def product_query_node(state: dict) -> dict:
 
 
 _log("[PIPELINE] ✅ Chatbot pipeline ready!")
-_log("[PIPELINE]    run_full_pipeline(query, filters, chat_history) — full pipeline")
-_log("[PIPELINE]    retrieve_only(query, k, filters)               — retrieval only")
 
 
 # =============================================================================
@@ -1625,6 +1848,7 @@ def run_full_pipeline(
     route: str = "2",
     ready_template_answer: str = None,
     company_answer: str = None,
+    username: str = None,
 ) -> dict:
     """
     Run the full chatbot pipeline: routing → retrieval → reflection → generation.
@@ -1636,6 +1860,7 @@ def run_full_pipeline(
         route: Override route ("0"=irrelevant, "1"=company, "2"=product). Default "2".
         ready_template_answer: Pre-built template for route 0
         company_answer: Pre-built answer for route 1
+        username: Display name of the user (used in template responses)
 
     Returns:
         dict with keys: response, sources, retrieval_status, generation_status,
@@ -1651,6 +1876,7 @@ def run_full_pipeline(
         "chat_history": chat_history or [],
         "ready_template_answer": ready_template_answer,
         "company_answer": company_answer,
+        "username": username.split()[0] if username else "Customer",
     })
 
     return {

@@ -88,7 +88,7 @@ PAGE_ID = Config.FACEBOOK_PAGE_ID or ""
 
 # Path to pre-fetched test data (project root)
 _PROJECT_ROOT = Path(__file__).parent.parent
-COMMENTS_JSON_PATH = _PROJECT_ROOT / "comments_all.json"
+COMMENTS_JSON_PATH = Path(__file__).parent / "JSON" / "comments_all.json"
 
 # ── Flask App ─────────────────────────────────────────────────────────────────
 app = Flask(__name__)
