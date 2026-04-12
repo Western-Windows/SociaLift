@@ -13,7 +13,7 @@ import {
 } from "./index.ts";
 import { DynamicPersonaBuilderSection } from "./DynamicPersonaBuilderSection";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, type JSX } from "react";
 import { VideoModal } from "../../../components/VideoModal";
 export const LandingPage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -26,13 +26,11 @@ export const LandingPage = (): JSX.Element => {
 
   return (
     <div
-      className="flex min-h-screen w-full justify-center overflow-x-hidden"
-      style={{ background: "linear-gradient(90deg, #6271e1 0%, #a27bd6 100%)" }}
+      className="flex min-h-screen w-full justify-center overflow-x-hidden bg-gradient-to-r from-[#6271e1] to-[#a27bd6]"
     >
       <div
         id="top"
-        // The entire layout now uses the unified #eeeaf3 background with zero white blocks
-        className="relative h-[6731.4px] w-[1536px] shrink-0 overflow-hidden bg-[#eeeaf3]"
+        className="relative w-full max-w-[1920px] shrink-0 overflow-hidden bg-[#eeeaf3] px-4 py-6 sm:px-8"
         data-model-id="124:747"
       >
         <div id="hero">
