@@ -1,7 +1,5 @@
-import {createBrowserRouter} from 'react-router-dom'
-
-
 // ROUTING EXAMPLE (commented out for now, but can be used as a template for future routes)
+// import {createBrowserRouter} from 'react-router-dom'
 
 // import { ProtectedRoute } from './components/ProtectedRoute';
 // import { MainLayout } from './layouts/MainLayout';
