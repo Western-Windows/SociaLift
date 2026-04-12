@@ -1,0 +1,1 @@
+export { IntelligentCommentingSection } from "./IntelligentCommentingSection";
