@@ -1,11 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import './GettingStarted_3_2.css';
 
 export function GettingStarted_3_2() {
+    const navigate = useNavigate();
+
     return (
         <div className="getting-started-container">
             {/* HEADER */}
             <header className="gs-header">
-                <button aria-label="Go back" className="gs-back-button" type="button">
+                <button aria-label="Go back" className="gs-back-button" type="button" onClick={() => navigate(-1)}>
                     <span aria-hidden="true">&#8592;</span>
                 </button>
                 <h1>Getting Started</h1>
@@ -65,7 +68,7 @@ export function GettingStarted_3_2() {
                     </div>
 
                     <div className="gs-button-row">
-                        <button className="gs-done-button" type="button">
+                        <button className="gs-done-button" type="button" onClick={() => navigate('/getting-started/3-3')}>
                             Done!
                         </button>
                     </div>

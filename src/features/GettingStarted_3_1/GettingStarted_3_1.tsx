@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './GettingStarted_3_1.css';
 
 export interface GettingStarted_3_1Props {
@@ -6,15 +7,17 @@ export interface GettingStarted_3_1Props {
 }
 
 export function GettingStarted_3_1({}: GettingStarted_3_1Props) {
+    const navigate = useNavigate();
+
     // State to track which persona is selected (1, 2, or 3). 
-    // We set the default to '3' so it looks exactly like your target image on load!
-    const [selectedPersona, setSelectedPersona] = useState<number>(3); 
+    // Initialized to null so no button is selected by default.
+    const [selectedPersona, setSelectedPersona] = useState<number | null>(null); 
 
     return (
         <div className="getting-started-container">
             {/* HEADER */}
             <header className="gs-header">
-                <button aria-label="Go back" className="gs-back-button" type="button">
+                <button aria-label="Go back" className="gs-back-button" type="button" onClick={() => navigate(-1)}>
                     <span aria-hidden="true">&#8592;</span>
                 </button>
                 <h1>Getting Started</h1>
@@ -88,7 +91,13 @@ export function GettingStarted_3_1({}: GettingStarted_3_1Props) {
                     </div>
 
                     <div className="gs-button-row">
-                        <button className="gs-continue-button" type="button">
+                        <button 
+                            className="gs-continue-button" 
+                            type="button" 
+                            onClick={() => navigate('/getting-started/3-2')}
+                            disabled={selectedPersona === null} // Optional: Prevents clicking continue before selecting
+                            style={{ opacity: selectedPersona === null ? 0.5 : 1, cursor: selectedPersona === null ? 'not-allowed' : 'pointer' }}
+                        >
                             Continue &rarr;
                         </button>
                     </div>

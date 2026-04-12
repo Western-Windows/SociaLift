@@ -1,37 +1,38 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './GettingStarted_1_1.css';
 
-export interface GettingStarted_1_1Props {
-    // Define props here
-}
+export interface GettingStarted_1_1Props {}
 
 export function GettingStarted_1_1({}: GettingStarted_1_1Props) {
-    // Default text strings
+    const navigate = useNavigate();
+
     const defaultAboutUs = "e.g: Founded in 1998 by Adelia Malinin, Fashion Hub is a premier multi-brand retailer specializing in high-quality Apparel and Footwear. Our shop features leading brands like Gini and Jony, Catwalk, and Nike. We cater to all age groups and genders, offering everything from casual tops and dresses to athletic footwear and formal shoes, ensuring a complete wardrobe solution for the modern family.";
     const defaultTargetAudience = "Brand-loyal shoppers aged 25 to 55 who prioritize established labels like Nike, Catwalk, and Gini & Jony.";
 
-    // State for the text areas
-    const [aboutUs, setAboutUs] = useState(defaultAboutUs);
-    const [targetAudience, setTargetAudience] = useState(defaultTargetAudience);
+    const [aboutUs, setAboutUs] = useState('');
+    const [targetAudience, setTargetAudience] = useState('');
 
-    // Handlers to clear the text only if it hasn't been changed yet
-    const handleAboutUsFocus = () => {
-        if (aboutUs === defaultAboutUs) {
-            setAboutUs('');
-        }
-    };
-
-    const handleTargetAudienceFocus = () => {
-        if (targetAudience === defaultTargetAudience) {
-            setTargetAudience('');
-        }
-    };
+    const isFormValid = aboutUs.trim() !== '' && targetAudience.trim() !== '';
 
     return (
         <div className="getting-started-container">
-            {/* HEADER */}
+            {/* INJECTED STYLE: This forces the heights and cannot be overridden by external CSS frameworks */}
+            <style>{`
+                textarea#aboutUs {
+                    height: 160px !important;
+                    min-height: 160px !important;
+                    display: block !important;
+                }
+                textarea#targetAudience {
+                    height: 100px !important;
+                    min-height: 100px !important;
+                    display: block !important;
+                }
+            `}</style>
+
             <header className="gs-header">
-                <button aria-label="Go back" className="gs-back-button" type="button">
+                <button aria-label="Go back" className="gs-back-button" type="button" onClick={() => navigate(-1)}>
                     <span aria-hidden="true">&#8592;</span>
                 </button>
                 <h1>Getting Started</h1>
@@ -80,8 +81,7 @@ export function GettingStarted_1_1({}: GettingStarted_1_1Props) {
                                 className="gs-textarea"
                                 value={aboutUs}
                                 onChange={(e) => setAboutUs(e.target.value)}
-                                onFocus={handleAboutUsFocus}
-                                rows={5}
+                                placeholder={defaultAboutUs}
                             />
                         </div>
 
@@ -94,13 +94,18 @@ export function GettingStarted_1_1({}: GettingStarted_1_1Props) {
                                 className="gs-textarea"
                                 value={targetAudience}
                                 onChange={(e) => setTargetAudience(e.target.value)}
-                                onFocus={handleTargetAudienceFocus}
-                                rows={3}
+                                placeholder={defaultTargetAudience}
                             />
                         </div>
 
                         <div className="gs-button-row">
-                            <button className="gs-continue-button" type="button">
+                            <button 
+                                className="gs-continue-button" 
+                                type="button" 
+                                onClick={() => navigate('/getting-started/1-2')}
+                                disabled={!isFormValid}
+                                style={{ opacity: isFormValid ? 1 : 0.5, cursor: isFormValid ? 'pointer' : 'not-allowed' }}
+                            >
                                 Continue &rarr;
                             </button>
                         </div>

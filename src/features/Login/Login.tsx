@@ -1,4 +1,5 @@
 import React, { useState } from 'react'; 
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeSlash } from '@phosphor-icons/react/dist/ssr'; 
 import './Login.css'; 
 import { Input, Button, Divider } from '../../components/components';
@@ -6,18 +7,30 @@ import loginBg from '../../assets/Login Background.png';
 import logo from '../../assets/SociaLift logo 5.svg';
 
 export function Login() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  
+  // Track form inputs for validation
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // TODO: Implement actual sign-in logic
   const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Sign in clicked");
+    console.log("Sign in clicked with", { email, password });
+    
+    // Navigate to Home page
+    navigate('/home');
   };
 
-  // TODO: Implement Facebook OAuth logic
   const handleFacebookLogin = () => {
     console.log("Facebook login clicked");
+    
+    // Navigate to Home page
+    navigate('/home');
   };
+
+  // Validation: Both fields must have text
+  const isFormValid = email.trim() !== '' && password.trim() !== '';
 
   return (
     <div className="viewport-container">
@@ -51,14 +64,18 @@ export function Login() {
                 id="email" 
                 type="email" 
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               />
               
               <Input 
                 label="Password" 
                 id="password" 
                 type={showPassword ? "text" : "password"} 
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 rightElement={
-                  <div className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                  <div className="password-toggle" onClick={() => setShowPassword(!showPassword)} style={{ cursor: 'pointer' }}>
                     {showPassword ? <Eye size={16} /> : <EyeSlash size={16} />}
                     <span>
                       {showPassword ? "Hide" : "Show"}
@@ -73,7 +90,12 @@ export function Login() {
                 </a>
               </div>
 
-              <Button type="submit" variant="primary">
+              <Button 
+                type="submit" 
+                variant="primary"
+                disabled={!isFormValid}
+                style={{ opacity: isFormValid ? 1 : 0.5, cursor: isFormValid ? 'pointer' : 'not-allowed' }}
+              >
                 Sign in
               </Button>
             </form>
