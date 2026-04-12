@@ -1,21 +1,15 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-// 👇 THIS IS THE FIX: Pointing to the tailwind.css file in the root folder
-import '../tailwind.css'; 
-
-// Import your pages
-import { LandingPage } from "./features/LandingPage/sections/LandingPage";
-import { HomePage } from "./features/HomePage/sections/HomePage";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx';
+import { Dashboard } from './features/Dashboard/Dashboard.tsx';
+import { DashboardLayout } from './layouts/DashboardLayout/DashboardLayout.tsx';
+import { Signup } from './features/Signup/Signup.tsx';
+import {Login} from './features/Login/Login.tsx';
+import '../tailwind.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
+    <App />
   </StrictMode>,
-);
+)
