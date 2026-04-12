@@ -43,7 +43,7 @@ export const LandingPage = (): JSX.Element => {
         <button
           type="button"
           onClick={handleSignIn}
-          className="absolute right-[210px] top-[26px] z-10 h-[48px] w-[145px] cursor-pointer rounded-[8px] bg-transparent outline-none transition-colors hover:bg-white/2"
+          className="absolute right-[210px] top-[26px] z-10 h-[48px] w-[145px] cursor-pointer rounded-[8px] bg-transparent outline-none transition-colors hover:bg-white/[0.02]"
           aria-label="Sign in"
         />
         <button
