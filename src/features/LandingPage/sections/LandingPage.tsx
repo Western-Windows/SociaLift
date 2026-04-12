@@ -38,20 +38,8 @@ export const LandingPage = (): JSX.Element => {
         <div id="hero">
           <LandingHeroSection />
         </div>
-        <PrimaryNavSection />
+        <PrimaryNavSection onSignIn={handleSignIn} onSignUp={handleSignUp} />
 
-        <button
-          type="button"
-          onClick={handleSignIn}
-          className="absolute right-[210px] top-[26px] z-10 h-[48px] w-[145px] cursor-pointer rounded-[8px] bg-transparent outline-none transition-colors hover:bg-white/[0.02]"
-          aria-label="Sign in"
-        />
-        <button
-          type="button"
-          onClick={handleSignUp}
-          className="absolute right-[40px] top-[26px] z-10 h-[48px] w-[150px] cursor-pointer rounded-[8px] bg-transparent outline-none transition-colors hover:bg-white/20"
-          aria-label="Sign up"
-        />
         <button
           type="button"
           onClick={handleWatchVideo}
