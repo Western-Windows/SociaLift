@@ -11,16 +11,16 @@ import {
 import { DynamicPersonaBuilderSection } from "../../LandingPage/sections/DynamicPersonaBuilderSection/DynamicPersonaBuilderSection.tsx";
 import { HomeHeroSection } from "./../sections/HomeHeroSection.tsx";
 import { HomeNavSection } from "./../sections/HomeNavSection.tsx";
-import type { JSX } from "react";
 
 export const HomePage = (): JSX.Element => {
   return (
     <div
-      className="flex min-h-screen w-full justify-center overflow-x-hidden bg-gradient-to-r from-[#6271e1] to-[#a27bd6]"
+      className="flex min-h-screen w-full justify-center overflow-x-hidden"
+      style={{ background: "linear-gradient(90deg, #6271e1 0%, #a27bd6 100%)" }}
     >
       <div
         id="top"
-        className="relative w-full max-w-[1920px] shrink-0 overflow-hidden bg-[#eeeaf3] px-4 py-6 sm:px-8"
+        className="relative h-[6731.4px] w-[1536px] shrink-0 overflow-hidden bg-[#eeeaf3]"
       >
         <div id="hero">
           <HomeHeroSection />

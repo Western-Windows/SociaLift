@@ -13,7 +13,7 @@ import {
 } from "./index.ts";
 import { DynamicPersonaBuilderSection } from "./DynamicPersonaBuilderSection";
 import { useNavigate } from "react-router-dom";
-import { useState, type JSX } from "react";
+import { useState } from "react";
 import { VideoModal } from "../../../components/VideoModal";
 export const LandingPage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -26,18 +26,32 @@ export const LandingPage = (): JSX.Element => {
 
   return (
     <div
-      className="flex min-h-screen w-full justify-center overflow-x-hidden bg-gradient-to-r from-[#6271e1] to-[#a27bd6]"
+      className="flex min-h-screen w-full justify-center overflow-x-hidden"
+      style={{ background: "linear-gradient(90deg, #6271e1 0%, #a27bd6 100%)" }}
     >
       <div
         id="top"
-        className="relative w-full max-w-[1920px] shrink-0 overflow-hidden bg-[#eeeaf3] px-4 py-6 sm:px-8"
+        // The entire layout now uses the unified #eeeaf3 background with zero white blocks
+        className="relative h-[6731.4px] w-[1536px] shrink-0 overflow-hidden bg-[#eeeaf3]"
         data-model-id="124:747"
       >
         <div id="hero">
           <LandingHeroSection />
         </div>
-        <PrimaryNavSection onSignIn={handleSignIn} onSignUp={handleSignUp} />
+        <PrimaryNavSection />
 
+        <button
+          type="button"
+          onClick={handleSignIn}
+          className="absolute right-[210px] top-[26px] z-10 h-[48px] w-[145px] cursor-pointer rounded-[8px] bg-transparent outline-none transition-colors hover:bg-white/2"
+          aria-label="Sign in"
+        />
+        <button
+          type="button"
+          onClick={handleSignUp}
+          className="absolute right-[40px] top-[26px] z-10 h-[48px] w-[150px] cursor-pointer rounded-[8px] bg-transparent outline-none transition-colors hover:bg-white/20"
+          aria-label="Sign up"
+        />
         <button
           type="button"
           onClick={handleWatchVideo}
