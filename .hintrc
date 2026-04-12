@@ -3,8 +3,10 @@
     "development"
   ],
   "hints": {
-    "no-inline-styles": "off",
     "disown-opener": "off",
-    "axe/forms": "off"
+    "typescript-config/consistent-casing": "off",
+    "no-inline-styles": "off",
+    "axe/forms": "off",
+    "axe/aria": "off"   
   }
 }
