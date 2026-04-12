@@ -122,74 +122,148 @@ def sanitize_text(text):
     return str(text).lower().translate(str.maketrans('', '', string.punctuation))
 
 
+try:
+    from nltk.stem import WordNetLemmatizer
+    import nltk
+    nltk.download('wordnet', quiet=True)
+    _lemmatizer = WordNetLemmatizer()
+    USE_NLTK = True
+except ImportError:
+    _lemmatizer = None
+    USE_NLTK = False
+
+
+def clean_token(token: str) -> str:
+    """Normalize a single token: lowercase, strip, and lemmatize if NLTK is available."""
+    token = str(token).strip().lower()
+    if USE_NLTK and _lemmatizer and len(token) > 2:
+        return _lemmatizer.lemmatize(token)
+    return token
+
+
 class DomainVocabularyBuilder:
-    """Extract domain vocabulary from fashion dataset."""
+    """Enhanced and optimized builder for fashion domain vocabulary."""
 
     def __init__(self, fashion_df):
         self.fashion_df = fashion_df
         self.vocabulary = {
             'brands': set(), 'colors': set(), 'products': set(),
             'materials': set(), 'sizes': set(), 'styles': set(),
-            'gender': set(), 'all_tokens': set()
+            'gender': set(), 'categories': set(), 'all_tokens': set()
         }
+
+    def _clean_token(self, token):
+        return clean_token(token)
 
     def extract_from_structured_columns(self):
+        """Extracts using resilient substring matching for columns."""
+        print("Extracting from structured columns...")
+
         column_mapping = {
-            'color': 'colors', 'size': 'sizes', 'material': 'materials',
-            'style': 'styles', 'gender': 'gender', 'category': 'products', 'type': 'products'
+            'color': 'colors', 'colour': 'colors', 'size': 'sizes', 'material': 'materials',
+            'style': 'styles', 'usage': 'styles', 'gender': 'gender',
+            'category': 'categories', 'type': 'products'
         }
+
         for col in self.fashion_df.columns:
-            col_lower = col.lower()
-            for key, category in column_mapping.items():
+            col_lower = str(col).lower()
+            for key, vocab_key in column_mapping.items():
                 if key in col_lower:
                     tokens = {
-                        token.strip().lower()
-                        for val in self.fashion_df[col].dropna().astype(str)
-                        for token in val.split(',')
-                        if len(token.strip().lower()) > 1
+                        self._clean_token(t) for val in self.fashion_df[col].dropna()
+                        for t in str(val).split(',') if len(str(t).strip()) > 1
                     }
-                    self.vocabulary[category].update(tokens)
+                    self.vocabulary[vocab_key].update(tokens)
                     break
 
-    def extract_brands(self):
-        brands = {
-            brand.strip().lower()
-            for brand in self.fashion_df['BrandName'].dropna().astype(str)
-            if len(brand.strip().lower()) > 1
-        }
-        self.vocabulary['brands'].update(brands)
+        # Specific dynamic extraction for Brand columns
+        brand_cols = [c for c in self.fashion_df.columns if 'brand' in str(c).lower()]
+        for col in brand_cols:
+            brands = {str(b).strip() for b in self.fashion_df[col].dropna()}
+            self.vocabulary['brands'].update(brands)
 
     def extract_products_from_titles(self):
-        token_counter = Counter()
-        for title in self.fashion_df['ProductTitle'].dropna().astype(str):
-            for token in title.lower().split():
-                clean_token = token.strip(string.punctuation)
-                if len(clean_token) > 2:
-                    token_counter[clean_token] += 1
-        frequent_tokens = {token for token, count in token_counter.items() if count >= 2}
-        other_tokens = set()
-        for category in ['brands', 'colors', 'sizes', 'materials', 'styles', 'gender']:
-            other_tokens.update(self.vocabulary[category])
-        frequent_tokens -= other_tokens
-        self.vocabulary['products'].update(frequent_tokens)
+        """Advanced logic to find missing products focusing on head nouns."""
+        print("Mining titles for additional products...")
 
-    def add_common_fashion_descriptors(self, llm_client=None):
-        gender_terms = {'men', 'mens', "men's", 'women', 'womens', "women's", 'unisex',
-                        'boys', 'boy', "boy's", 'girls', 'girl', "girl's", 'kids', "kids'",
-                        'infant', 'baby', 'toddler', 'children', 'kidswear', 'son', 'daughter'}
-        self.vocabulary['gender'].update(gender_terms)
+        # ⚡ Optimization: Native C-speed set union
+        cats_to_exclude = ['brands', 'colors', 'gender', 'styles', 'materials', 'categories']
+        exclusions = set().union(*(self.vocabulary[cat] for cat in cats_to_exclude))
 
-    def build_vocabulary(self, llm_client=None):
+        noise = {'navy', 'golden', 'length', 'lifestyle', 'coloured', 'kids', 'men', 'women', 'canvas', 'leather', 'printed'}
+
+        # ⚡ Optimization: Pre-compile Regex
+        word_pattern = re.compile(r'\b\w+\b')
+        potential_products = []
+
+        for title in self.fashion_df['ProductTitle'].dropna():
+            words = word_pattern.findall(str(title).lower())
+            if not words: continue
+
+            # Logic: Check the last two words for product nouns
+            candidates = [words[-1]]
+            if len(words) > 1: candidates.append(words[-2])
+
+            for word in candidates:
+                word_clean = self._clean_token(word)
+                if len(word_clean) > 2 and word_clean not in exclusions and word_clean not in noise:
+                    potential_products.append(word_clean.capitalize())
+
+        # Keep words appearing at least 5 times (ensures they are generic types)
+        word_counts = Counter(potential_products)
+        common_nouns = {word for word, count in word_counts.items() if count >= 5}
+
+        self.vocabulary['products'].update(common_nouns)
+        print(f"  ✓ Added {len(common_nouns)} extra product terms from titles.")
+
+    def add_llm_descriptors(self, groq_client):
+        """Dynamic domain expansion via LLM, strictly enforcing JSON format."""
+        print("Calling LLM for domain expansion...")
+        prompt = """Generate a comprehensive list of generic fashion-related terms in JSON format.
+Include these 4 categories: gender, styles, materials, and colors.
+Return ONLY a valid JSON object with these 4 keys, containing arrays of lowercase strings."""
+
+        try:
+            response = groq_client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.4,
+                # ⚡ Optimization: Strict JSON Mode prevents text parsing errors
+                response_format={"type": "json_object"}
+            )
+
+            llm_output = response.choices[0].message.content
+            llm_vocab = json.loads(llm_output)
+
+            for category in ['gender', 'colors', 'styles', 'materials']:
+                if category in llm_vocab and isinstance(llm_vocab[category], list):
+                    clean_terms = {self._clean_token(t) for t in llm_vocab[category]}
+                    self.vocabulary[category].update(clean_terms)
+
+            print("  ✓ LLM descriptors successfully integrated.")
+
+        except Exception as e:
+            print(f"  ⚠️ LLM domain expansion failed: {e}. Relying solely on CSV data.")
+
+    def build_and_save(self, groq_client=None, filename="domain_vocabulary.json"):
         self.extract_from_structured_columns()
-        self.extract_brands()
         self.extract_products_from_titles()
-        self.add_common_fashion_descriptors(llm_client)
+        if groq_client:
+            self.add_llm_descriptors(groq_client)
 
-        for category, tokens in self.vocabulary.items():
-            if category != 'all_tokens' and isinstance(tokens, set):
-                self.vocabulary['all_tokens'].update(tokens)
+        # Consolidate 'all_tokens' for your router into purely lowercase generic terms
+        for cat, terms in self.vocabulary.items():
+            if cat != 'all_tokens':
+                self.vocabulary['all_tokens'].update({str(t).strip().lower() for t in terms})
 
-        return self.vocabulary
+        # Convert sets to sorted lists for clean JSON rendering
+        final_vocab = {k: sorted(list(v)) for k, v in self.vocabulary.items()}
+
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(final_vocab, f, indent=4, ensure_ascii=False)
+        print(f"✅ Domain successfully saved to {filename}")
+
+        return final_vocab
 
 
 def smart_compress_query(query, domain_vocab):
@@ -208,24 +282,25 @@ def smart_compress_query(query, domain_vocab):
     tokens = query.split()
 
     relevant_tokens = []
-    structural_words = {'with', 'in', 'for', 'and', 'or', 'size', 'color', 'type', 'my', 'from'}
+    structural_words = {'in', 'and', 'or', 'size', 'color', 'type'}
     possessive_words = {'my', 'your', 'his', 'her', 'their', 'our'}
     gender_terms = set(domain_vocab.get('gender', []))
     all_tokens = domain_vocab.get('all_tokens', [])
     all_tokens = set(str(t).lower().strip() for t in all_tokens if str(t).strip())
 
     for i, token in enumerate(tokens):
-        clean_token = token.strip()
-        if clean_token in all_tokens:
-            relevant_tokens.append(clean_token)
-        elif clean_token in possessive_words:
+        raw = token.strip()
+        normalized = clean_token(raw)
+        if normalized in all_tokens:
+            relevant_tokens.append(raw)
+        elif raw in possessive_words:
             next_token = tokens[i + 1].strip() if i + 1 < len(tokens) else ''
             if next_token in gender_terms:
-                relevant_tokens.append(clean_token)
-        elif clean_token in structural_words and relevant_tokens:
-            relevant_tokens.append(clean_token)
-        elif clean_token.isdigit():
-            relevant_tokens.append(clean_token)
+                relevant_tokens.append(raw)
+        elif raw in structural_words and relevant_tokens:
+            relevant_tokens.append(raw)
+        elif raw.isdigit():
+            relevant_tokens.append(raw)
 
     compressed = ' '.join(relevant_tokens)
     return re.sub(r'\s+', ' ', compressed).strip()
@@ -382,14 +457,16 @@ def route_0_irrelevant_query(query: str, username: str = "Customer") -> Dict[str
 
 def route_1_company_query(query: str) -> Dict[str, Any]:
     company_data = routing_config['company_info'].get("company_data", {})
-    query_lower = query.lower()
+    # Lemmatize query tokens so "location" matches "locations", "address" matches "addresses", etc.
+    query_tokens = {clean_token(w) for w in query.lower().split()}
     matched_metadata = {}
     for key, metadata in company_data.items():
         key_text = metadata.get("key", "").lower()
         description = metadata.get("description", "").lower()
-        if any(word in query_lower for word in key.split('_')) or \
-           any(word in query_lower for word in key_text.split()) or \
-           any(word in query_lower for word in description.split()[:5]):
+        key_words = {clean_token(w) for w in key.split('_')}
+        key_text_words = {clean_token(w) for w in key_text.split()}
+        desc_words = {clean_token(w) for w in description.split()[:5]}
+        if key_words & query_tokens or key_text_words & query_tokens or desc_words & query_tokens:
             matched_metadata[key] = metadata.get("value", "")
     if not matched_metadata:
         matched_metadata = {k: v.get("value", "") for k, v in company_data.items()}
@@ -1491,12 +1568,15 @@ def contextualize_query(query: str, chat_history: list) -> str:
     prompt = (
         f"Conversation so far:\n{history_str}\n\n"
         f"User's latest message: \"{query}\"\n\n"
-        "Determine whether this message is a follow-up to the same topic in the conversation, "
-        "or a new question about a completely different topic.\n"
-        "- If it is a follow-up to the SAME topic, rewrite it as a complete, self-contained question "
-        "that captures what the user is asking using the conversation context.\n"
-        "- If it introduces a NEW topic or different product/category, return it EXACTLY as written.\n"
-        "Return ONLY the (possibly rewritten) question, nothing else."
+        "Rewrite the user's message as a complete, self-contained request using the conversation context.\n"
+        "Rules:\n"
+        "- If the message is an affirmative (yes / sure / ok / okay / go ahead / sounds good / great), "
+        "rephrase it as the action the bot's last question was offering. "
+        "Example: bot asked 'Would you like me to find alternatives?' + user says 'sure' → "
+        "'Please find alternatives for [product from conversation]'.\n"
+        "- If it continues the same topic, rewrite as a complete standalone request.\n"
+        "- If it introduces a NEW topic or different product, return it EXACTLY as written.\n"
+        "Return ONLY the rewritten request, nothing else."
     )
     try:
         result = light_llm.invoke([HumanMessage(content=prompt)]).content.strip()
@@ -1849,6 +1929,7 @@ def run_full_pipeline(
     ready_template_answer: str = None,
     company_answer: str = None,
     username: str = None,
+    _is_subquery: bool = False,
 ) -> dict:
     """
     Run the full chatbot pipeline: routing → retrieval → reflection → generation.
@@ -1868,6 +1949,34 @@ def run_full_pipeline(
     """
     _log(f'[PIPELINE] {"=" * 60}')
     _log(f'[PIPELINE] 🚀 Query: "{query[:100]}"')
+
+    # Multi-intent detection: split into sub-queries and process each independently
+    if not _is_subquery:
+        parts = split_query(query)
+        if len(parts) > 1:
+            _log(f'[PIPELINE] ✂️  Multi-intent query — {len(parts)} parts detected')
+            responses = []
+            for i, part in enumerate(parts, 1):
+                _log(f'[PIPELINE] ├─ Sub-query {i}/{len(parts)}: "{part}"')
+                sub = run_full_pipeline(
+                    query=part,
+                    metadata_filters=metadata_filters,
+                    chat_history=chat_history,
+                    route=None,
+                    username=username,
+                    _is_subquery=True,
+                )
+                if sub.get("response"):
+                    responses.append(sub["response"])
+            return {
+                "response": "\n\n".join(responses),
+                "sources": [],
+                "retrieval_status": "multi",
+                "generation_status": "success",
+                "retrieved_docs": [],
+                "relevance_reason": "",
+                "route": "multi",
+            }
 
     result = assistant_graph.invoke({
         "query": query,

@@ -209,9 +209,11 @@ def _process_messenger_payload(payload: dict):
             # Retrieve or initialize chat history for this user
             history = _chat_histories.get(sender_id, [])
 
-            _log(f"\n[MESSENGER BOT] 📨 New message from PSID {sender_id}")
+            # Fetch user's real name from the Graph API
+            user_name = _get_messenger().get_user_name(sender_id) or ""
+            _log(f"\n[MESSENGER BOT] 📨 New message from {user_name or sender_id}")
 
-            success = handle_message(sender_id, f"User ({sender_id})", message_text,
+            success = handle_message(sender_id, user_name, message_text,
                                      chat_history=history)
 
             if success:

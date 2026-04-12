@@ -73,6 +73,20 @@ class FacebookMessenger:
             self._handle_error(e)
             return False
 
+    def get_user_name(self, psid: str) -> Optional[str]:
+        """
+        Fetch the display name of a Messenger user by PSID via the Graph API.
+        Returns the first name string, or None if unavailable.
+        """
+        try:
+            url = f"{self.base_url}/{psid}"
+            params = {"fields": "name", "access_token": self.access_token}
+            response = self.session.get(url, params=params, timeout=5)
+            response.raise_for_status()
+            return response.json().get("name") or None
+        except Exception:
+            return None
+
     def _send_action(self, psid: str, action: str):
         """Helper to send sender actions like typing_on/off."""
         url = f"{self.base_url}/me/messages"

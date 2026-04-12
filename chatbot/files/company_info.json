@@ -43,12 +43,7 @@
           "address": "Fortune 2000, G Block BKC, Bandra Kurla Complex, Bandra East, 400051"
         }
       ]
-    },
-    "persona_context": {
-        "key": "persona",
-        "description": "The identity and inventory summary used to define the shop's voice.",
-        "value": "Fashion Hub"
-      }
-    
+    }
+
   }
 }
