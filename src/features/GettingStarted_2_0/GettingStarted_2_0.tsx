@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, type ChangeEvent } from 'react';
 import './GettingStarted_2_0.css';
 
 export interface GettingStarted_2_0Props {
@@ -18,7 +18,7 @@ export function GettingStarted_2_0({}: GettingStarted_2_0Props) {
     };
 
     // Captures the file when the user selects it from their computer
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
             setSelectedFile(file);
