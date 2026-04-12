@@ -1,0 +1,206 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,700|Inter:400,500,600,800|Open+Sans:400|Roboto:700,900|Manrope:400,500,800");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  button,
+  input,
+  select,
+  textarea {
+    @apply appearance-none bg-transparent border-0 outline-none;
+  }
+}
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+}
+
+@font-face {
+  font-family: "SF Pro Text-Medium";
+  src: url("/sf-pro-text-medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro Text-Regular";
+  src: url("/medical-care-rafiki.svg");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro Display-Bold";
+  src: url("/fontsfree-net-sfprodisplay-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Arial-Bold";
+  src: url("/ariblk.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Helvetica-Regular";
+  src: url("/helvetica-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --backgroundnav-bar-background: rgba(255, 255, 255, 1);
+  --black: rgba(18, 20, 29, 1);
+  --blue: rgba(154, 188, 255, 1);
+  --bronze: rgba(204, 116, 41, 1);
+  --facebookcolor-1: rgba(154, 188, 255, 1);
+  --facebookcolor-3: rgba(216, 220, 228, 1);
+  --facebookcolor-4: rgba(200, 206, 220, 1);
+  --facebookcolor-5: rgba(240, 242, 247, 1);
+  --facebookcolor-6: rgba(247, 248, 250, 1);
+  --facebookcolor-7: rgba(5, 5, 5, 1);
+  --facebookcolor-8: rgba(172, 176, 184, 1);
+  --facebookfacebook-blue: rgba(24, 119, 242, 1);
+  --facebookneutral-100: rgba(255, 255, 255, 1);
+  --gray-700: rgba(63, 63, 70, 1);
+  --green: rgba(41, 204, 57, 1);
+  --green-5: rgba(41, 204, 57, 0.05);
+  --grey-blue-10: rgba(13, 17, 26, 1);
+  --grey-blue-50: rgba(77, 94, 128, 1);
+  --grey-blue-60: rgba(107, 122, 153, 1);
+  --grey-blue-80: rgba(173, 184, 204, 1);
+  --grey-blue-85: rgba(195, 202, 217, 1);
+  --grey-blue-97: rgba(245, 246, 247, 1);
+  --icon-05: rgba(20, 176, 130, 1);
+  --iconprimary-icon: rgba(5, 5, 5, 1);
+  --iconsecondary-icon: rgba(101, 103, 107, 1);
+  --internal-fds-componentsmedia-inner-border: rgba(0, 0, 0, 0.1);
+  --orange: rgba(255, 102, 51, 1);
+  --orange-5: rgba(255, 102, 51, 0.05);
+  --persistentalways-white: rgba(255, 255, 255, 1);
+  --primari: rgba(74, 58, 255, 1);
+  --purple: rgba(136, 51, 255, 1);
+  --purple-5: rgba(136, 51, 255, 0.05);
+  --red: rgba(251, 72, 101, 1);
+  --red-30: rgba(230, 46, 46, 0.3);
+  --teal-blue: rgba(51, 191, 255, 1);
+  --teal-blue-5: rgba(51, 191, 255, 0.05);
+  --textprimary-text: rgba(5, 5, 5, 1);
+  --textsecondary-text: rgba(101, 103, 107, 1);
+  --tiffany: rgba(46, 230, 202, 1);
+  --tiffany-5: rgba(46, 230, 202, 0.05);
+  --white: rgba(255, 255, 255, 1);
+  --x-01: rgba(255, 255, 255, 1);
+  --yellow: rgba(255, 203, 51, 1);
+  --yellow-5: rgba(255, 203, 51, 0.05);
+  --animate-spin: spin 1s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-fade-up {
+  animation: fade-up 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-marquee {
+  animation: marquee var(--duration) infinite linear;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration) linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 8s infinite;
+}
+
+.animate-spin {
+  animation: var(--animate-spin);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes image-glow {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
+  }
+
+  10% {
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  90%,
+  to {
+    background-position: calc(-100% - var(--shimmer-width)) 0;
+  }
+
+  30%,
+  60% {
+    background-position: calc(100% + var(--shimmer-width)) 0;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}
