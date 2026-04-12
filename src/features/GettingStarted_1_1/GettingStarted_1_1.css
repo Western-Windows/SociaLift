@@ -189,13 +189,13 @@
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
-    align-items: center !important;
+    align-items: stretch !important; 
 }
 
 .gs-input-group {
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
+    align-items: stretch !important; 
     width: 100% !important;
 }
 
@@ -209,6 +209,8 @@
 
 .gs-textarea {
     width: 100% !important;
+    flex-shrink: 0 !important; 
+    display: block !important;
     border: 1px solid #e1e3e6 !important;
     border-radius: 8px !important;
     padding: 1.25rem !important;
@@ -226,6 +228,17 @@
 .gs-textarea:focus {
     border-color: #8f8cda !important;
     box-shadow: 0 0 0 3px rgba(143, 140, 218, 0.25) !important;
+}
+
+/* --- Hard-Lock Textarea Heights --- */
+#aboutUs.gs-textarea {
+    height: 160px !important;
+    min-height: 160px !important;
+}
+
+#targetAudience.gs-textarea {
+    height: 100px !important;
+    min-height: 100px !important;
 }
 
 /* --- Continue Button --- */
@@ -289,4 +302,32 @@
     .gs-continue-button {
         width: 100% !important;
     }
+}
+/* Prevent shrinking */
+.gs-form-wrapper,
+.gs-input-group {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+}
+
+/* Force textarea to always fill full width */
+.gs-textarea {
+    width: 100% !important;
+    min-width: 100% !important;
+    flex: 1 1 auto !important;
+}
+
+/* VERY IMPORTANT: prevent parent from centering/shrinking children */
+.gs-form-card form {
+    width: 100% !important;
+}
+
+/* Optional safety (recommended) */
+.gs-form-card {
+    display: flex !important;
+    flex-direction: column !important;
+}
+textarea {
+    width: 100% !important;
+    max-width: 100% !important;
 }

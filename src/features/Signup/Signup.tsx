@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import { Input, Button } from '../../components/components';
 import logo from '../../assets/SociaLift logo 5.svg';
@@ -10,6 +11,7 @@ import messenger1 from '../../assets/messenger 1.svg';
 import socialmedia1 from '../../assets/social-media-marketing 1.svg';
 
 export function Signup() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,6 +27,8 @@ export function Signup() {
     else {
       // Handle Final Submit
       console.log('Form Submitted', formData);
+      // Navigate to Getting Started Step 1
+      navigate('/getting-started/1-0');
     }
   };
 
@@ -34,8 +38,20 @@ export function Signup() {
 
   const togglePassword = () => setShowPassword(!showPassword);
 
+  // Validation Logic
+  const isStep1Valid = 
+    formData.username.trim() !== '' && 
+    formData.email.trim() !== '' && 
+    formData.password.trim() !== '' && 
+    formData.confirmPassword.trim() !== '' &&
+    formData.password === formData.confirmPassword; // Ensures passwords match
+
+  const isStep2Valid = formData.agreeToTerms;
+
+  const canProceed = step === 1 ? isStep1Valid : isStep2Valid;
+
   const PasswordToggle = (
-    <div className="password-toggle" onClick={togglePassword}>
+    <div className="password-toggle" onClick={togglePassword} style={{ cursor: 'pointer' }}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
         <circle cx="12" cy="12" r="3"></circle>
@@ -46,7 +62,6 @@ export function Signup() {
 
   return (
     <div className="viewport-container">
-      {/* <img src={bgImage} alt="Background" className="login-bg" /> */}
       <div className="login-content-wrapper">
         <div className="signup-card">
           {/* Back Button */}
@@ -96,14 +111,14 @@ export function Signup() {
                     label="Username"
                     placeholder="Enter username"
                     value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, username: e.target.value })}
                   />
                   <Input
                     label="Email address"
                     placeholder="Enter email address"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
                   />
                   <Input
                     label="Password"
@@ -111,7 +126,7 @@ export function Signup() {
                     type={showPassword ? 'text' : 'password'}
                     rightElement={PasswordToggle}
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
                   />
                   <Input
                     label="Confirm password"
@@ -119,7 +134,7 @@ export function Signup() {
                     type={showPassword ? 'text' : 'password'}
                     rightElement={PasswordToggle}
                     value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   />
                 </div>
               </div>
@@ -129,24 +144,24 @@ export function Signup() {
                 <div className="access-cards">
                   <div className="access-card">
                     <div className="card-icons">
-                      <img src = {dashboard1} alt="Dashboard Image" className="card-logo" />
-                      <img src = {actionable1} alt="Actionable Image" className="card-logo" />
+                      <img src={dashboard1} alt="Dashboard Image" className="card-logo" />
+                      <img src={actionable1} alt="Actionable Image" className="card-logo" />
                     </div>
                     <h3>PAGE INSIGHTS & ANALYTICS DATA</h3>
                     <p>We will only analyze data from your page and performance. (no personal data collected)</p>
                   </div>
                   <div className="access-card">
                     <div className="card-icons">
-                      <img src = {content1} alt="Content Image" className="card-logo" />
-                      <img src = {socialmedia1} alt="Social Media Image" className="card-logo" />
+                      <img src={content1} alt="Content Image" className="card-logo" />
+                      <img src={socialmedia1} alt="Social Media Image" className="card-logo" />
                     </div>
                     <h3>CONTENT PUBLISHING & MODERATION</h3>
                     <p>Permits SociaLift to schedule and publish new posts, and read/post comments on your page.</p>
                   </div>
                   <div className="access-card">
                     <div className="card-icons">
-                      <img src = {messenger1} alt="Messenger Image" className="card-logo" />
-                      <img src = {interface1} alt="Interface Image" className="card-logo" />
+                      <img src={messenger1} alt="Messenger Image" className="card-logo" />
+                      <img src={interface1} alt="Interface Image" className="card-logo" />
                     </div>
                     <h3>DIRECT MESSAGING INTEGRATION</h3>
                     <p>Enables us to receive user messages and send replies on your behalf from your page.</p>
@@ -173,8 +188,12 @@ export function Signup() {
 
           {/* Primary Action Button */}
           <div className="action-button-wrapper">
-             <Button onClick={handleNext}>
-                Next
+             <Button 
+               onClick={handleNext} 
+               disabled={!canProceed}
+               style={{ opacity: canProceed ? 1 : 0.5, cursor: canProceed ? 'pointer' : 'not-allowed' }}
+             >
+                {step === 1 ? 'Next' : 'Create Account'}
              </Button>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import './GettingStarted_3_3.css';
 
 export interface GettingStarted_3_3Props {
@@ -5,11 +6,13 @@ export interface GettingStarted_3_3Props {
 }
 
 export function GettingStarted_3_3({}: GettingStarted_3_3Props) {
+    const navigate = useNavigate();
+
     return (
         <div className="getting-started-container">
             {/* HEADER */}
             <header className="gs-header">
-                <button aria-label="Go back" className="gs-back-button" type="button">
+                <button aria-label="Go back" className="gs-back-button" type="button" onClick={() => navigate(-1)}>
                     <span aria-hidden="true">&#8592;</span>
                 </button>
                 <h1>Getting Started</h1>
@@ -101,7 +104,7 @@ export function GettingStarted_3_3({}: GettingStarted_3_3Props) {
                         To view or modify your Information, Products Database, or Persona,
                         please navigate to your User Profile.
                     </p>
-                    <button className="gs-success-continue" type="button">
+                    <button className="gs-success-continue" type="button" onClick={() => navigate('/home')}>
                         Continue
                     </button>
                 </section>
