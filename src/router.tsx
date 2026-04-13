@@ -1,25 +1,22 @@
-import {createBrowserRouter} from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
+import { LandingPage } from './features/LandingPage/sections/LandingPage.tsx'
+import { HomePage } from './features/HomePage/sections/HomePage.tsx'
+import { Dashboard } from './features/Dashboard/Dashboard.tsx'
+import { PostGeneration } from './features/PostGeneration/index.ts'
+import { DashboardLayout } from './layouts/DashboardLayout/DashboardLayout.tsx'
+import { GettingStarted } from './features/GettingStarted/GettingStarted.tsx'
+import { Login } from './features/Login/Login.tsx'
+import { Signup } from './features/Signup/Signup.tsx'
 
-
-// ROUTING EXAMPLE (commented out for now, but can be used as a template for future routes)
-
-// import { ProtectedRoute } from './components/ProtectedRoute';
-// import { MainLayout } from './layouts/MainLayout';
-// import { DashboardPage } from './pages/DashboardPage';
-
-// export const router = createBrowserRouter([
-//     {
-//         // 1. The router hits the ProtectedRoute guard first
-//         element: <ProtectedRoute />,
-//         children: [
-//             {
-//                 // 2. If the user passes the guard, render the Layout
-//                 element: <MainLayout />,
-//                 children: [
-//                     // 3. The specific page is injected into the layout
-//                     { path: '/dashboard', element: <DashboardPage /> }
-//                 ]
-//             }
-//         ]
-//     }
-// ]);
+export const router = createBrowserRouter([
+  { path: '/', element: <LandingPage /> },
+  { path: '/landing', element: <LandingPage /> },
+  { path: '/home', element: <DashboardLayout><HomePage /> </DashboardLayout> },
+  { path: '/getting-started', element: <GettingStarted /> },
+  { path: '/dashboard', element: <DashboardLayout><Dashboard /> </DashboardLayout> },
+  { path: '/post-gen', element: <DashboardLayout><PostGeneration /></DashboardLayout> },
+  { path: '/signin', element: <Login /> },
+  { path: '/login', element: <Login /> },
+  { path: '/signup', element: <Signup /> },
+  { path: '*', element: <LandingPage /> }
+])

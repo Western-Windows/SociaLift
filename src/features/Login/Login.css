@@ -1,4 +1,225 @@
-.login-container {
-/* Add your styles here */
-padding: 1rem;
+/* Viewport container to center the fixed-size window */
+.viewport-container {
+  /* position: relative; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  /* width: 100vw; */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--poppins);
+}
+
+/* Window container - now fills viewport */
+.login-window {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background-color: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Background image filling the entire area */
+.login-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Content wrapper to place the card over the background */
+.login-content-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+}
+
+/* Login Card styling */
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.95); /* Slightly transparent if needed */
+  padding: 48px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-wrapper {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.login-logo {
+  max-width: 180px;
+  height: auto;
+}
+
+.title {
+  font-size: 32px;
+  margin: 0 0 8px 0;
+  color: #07265C;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+.link {
+  color: #07265C;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Input Styles */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-label {
+  display: flex;
+  padding: 0 312px 2.95px 0;
+  align-items: center;
+  align-self: stretch;
+  margin-bottom: 3px;
+  color: #07265C;
+  font-size: 13.6px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  color: #1a1a1a;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-bg);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-right-element {
+  position: absolute;
+  right: 14px;
+  cursor: pointer;
+}
+
+.password-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+  user-select: none;
+  font-weight: 500;
+}
+
+/* Button Styles */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 27.2px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid var(--border);
+  color: #1a1a1a;
+}
+
+.btn-outline:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+/* Divider Styles */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+  color: #888;
+  font-size: 14px;
+}
+
+.divider hr {
+  flex: 1;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.divider-text {
+  margin: 0 16px;
+}
+
+.forgot-password-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+  margin-top: -12px;
+}
+
+.facebook-icon {
+  color: #1877F2;
 }

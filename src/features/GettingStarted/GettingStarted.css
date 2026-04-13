@@ -1,0 +1,684 @@
+/* =========================================================
+   1. BASE & LAYOUT
+   ========================================================= */
+.getting-started-container {
+    background-color: #eeeaf3 !important;
+    min-height: 100vh !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+}
+
+.getting-started-container *,
+.getting-started-container *::before,
+.getting-started-container *::after {
+    box-sizing: inherit !important;
+}
+
+.gs-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1.25rem !important;
+    padding: 1.4rem 4rem !important;
+    width: 100% !important;
+    background: linear-gradient(90deg, #8f8cda 0%, #ae83d8 45%, #6f7dcf 100%) !important;
+    border-bottom: 1px solid #dad6e2 !important;
+    z-index: 10 !important;
+}
+
+.gs-back-button {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    border-radius: 999px !important;
+    border: none !important;
+    background: #f8f8f8 !important;
+    color: #07265c !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.25rem !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.gs-header h1 {
+    margin: 0 !important;
+    font-size: 1.6rem !important;
+    font-weight: 500 !important;
+    color: #07265c !important;
+}
+
+.gs-main-layout {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding: 3rem 4rem !important;
+    gap: 3rem !important;
+    align-items: flex-start !important;
+    background: transparent !important;
+    flex-grow: 1 !important;
+}
+
+/* =========================================================
+   2. ANIMATED SIDEBAR
+   ========================================================= */
+.gs-sidebar {
+    width: 220px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    flex-shrink: 0 !important;
+    padding-top: 2rem !important;
+}
+
+.gs-step, .gs-dot, .gs-step-num, .gs-step-check {
+    transition: all 0.4s ease-in-out !important;
+}
+
+.gs-step {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 1rem !important;
+    width: 100% !important;
+    margin-bottom: 1.25rem !important;
+}
+
+.gs-step-num, .gs-step-check {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 700 !important;
+    flex-shrink: 0 !important;
+}
+
+.gs-step-num {
+    font-size: 12px !important;
+    background-color: #f8f8f8 !important;
+    border: 1px solid #ddd !important;
+    color: #111 !important;
+}
+
+.gs-step.is-active .gs-step-num {
+    background-color: #a88bdf !important;
+    border-color: #a88bdf !important;
+    color: #ffffff !important;
+}
+
+.gs-step.is-complete .gs-step-check {
+    background-color: #45c9c1 !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+}
+
+.gs-step-text {
+    font-size: 14px !important;
+    color: rgba(7, 38, 92, 0.75) !important;
+    white-space: nowrap !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+}
+
+.gs-step.is-active .gs-step-text,
+.gs-step.is-complete .gs-step-text {
+    color: #07265c !important;
+}
+
+.gs-step-dots {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin: -4px 0 16px 11px !important;
+}
+
+.gs-dot {
+    width: 5px !important;
+    height: 5px !important;
+    border-radius: 50% !important;
+    background-color: #cbd5e1 !important; /* Gray Default */
+}
+
+.dot-active { background-color: #a88bdf !important; }
+.dot-complete { background-color: #45c9c1 !important; }
+
+.gs-badge {
+    margin-top: 1rem !important;
+    background: rgba(230, 135, 216, 0.3) !important;
+    color: #e687d8 !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    display: inline-block !important;
+}
+
+.gs-badge.is-almost {
+    background-color: rgba(52, 123, 209, 0.3) !important; 
+    color: #347bd1 !important; 
+}
+
+/* =========================================================
+   3. FORM CARD & TYPOGRAPHY
+   ========================================================= */
+.gs-form-card {
+    flex-grow: 1 !important;
+    background-color: #f2eff6 !important;
+    border-radius: 12px !important;
+    border: 1px solid #eff0f6 !important;
+    padding: 3rem !important;
+    width: 100% !important;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05) !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.gs-title {
+    font-size: 24px !important;
+    color: #07265c !important;
+    margin: 0 0 10px 0 !important;
+    text-align: left !important;
+    font-weight: 500 !important;
+}
+
+.gs-subtitle {
+    font-size: 14px !important;
+    color: rgba(52, 123, 209, 0.75) !important;
+    margin: 0 0 2.5rem 0 !important;
+    text-align: left !important;
+}
+
+.gs-label-title {
+    font-size: 18px !important;
+    color: #07265c !important;
+    margin-bottom: 0.75rem !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+}
+
+.gs-label-help {
+    font-size: 14px !important;
+    color: rgba(52, 123, 209, 0.75) !important;
+    margin-bottom: 1rem !important;
+    text-align: left !important;
+}
+
+/* =========================================================
+   4. SHARED INPUTS & BUTTONS
+   ========================================================= */
+.gs-form-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+}
+
+.gs-form-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: 2.5rem !important;
+    row-gap: 1.5rem !important;
+    width: 100% !important;
+}
+
+.gs-input-group {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+}
+
+.gs-input-group label {
+    font-size: 14px !important;
+    color: #07265c !important;
+    margin-bottom: 8px !important;
+    font-weight: 500 !important;
+}
+
+.gs-input-group input {
+    width: 100% !important;
+    height: 42px !important;
+    border: 1px solid #e1e3e6 !important;
+    border-radius: 6px !important;
+    padding: 0 14px !important;
+    font-size: 14px !important;
+    font-family: inherit !important;
+    background-color: #ffffff !important;
+    color: rgba(7, 38, 92, 0.8) !important;
+    outline: none !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.gs-input-group input:focus, .gs-textarea:focus, .gs-input-with-addon input:focus {
+    border-color: #8f8cda !important;
+    box-shadow: 0 0 0 3px rgba(143, 140, 218, 0.25) !important;
+}
+
+.gs-button-row {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-top: 3.5rem !important;
+}
+
+.gs-continue-button {
+    background-color: #a88bdf !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    height: 44px !important;
+    width: 50% !important;
+    min-width: 250px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: filter 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.gs-continue-button:hover { filter: brightness(0.9) !important; }
+
+/* =========================================================
+   5. SPECIFIC: TEXTAREAS (Differentiated by ID)
+   ========================================================= */
+.gs-textarea {
+    width: 100% !important;
+    border: 1px solid #e1e3e6 !important;
+    border-radius: 8px !important;
+    padding: 1.25rem !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    font-family: inherit !important;
+    color: rgba(7, 38, 92, 0.8) !important;
+    background: #ffffff !important;
+    outline: none !important;
+    resize: vertical !important;
+}
+
+/* Step 1 Heights */
+#aboutUs.gs-textarea { min-height: 160px !important; }
+#targetAudience.gs-textarea { min-height: 100px !important; }
+
+/* Step 4 Heights */
+#samplePost.gs-textarea { min-height: 250px !important; }
+
+/* =========================================================
+   6. SPECIFIC: DYNAMIC LISTS (Step 2)
+   ========================================================= */
+.gs-field-column {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.gs-col-title {
+    font-size: 18px !important;
+    color: #07265c !important;
+    margin-bottom: 1rem !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+}
+
+.gs-dynamic-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+}
+
+.gs-input-with-addon {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+}
+
+.gs-input-with-addon input {
+    flex-grow: 1 !important;
+    height: 42px !important;
+    border: 1px solid #e1e3e6 !important;
+    border-radius: 6px !important;
+    padding: 0 14px !important;
+    outline: none !important;
+}
+
+.gs-add-button {
+    width: 38px !important;
+    height: 38px !important;
+    border: 1px solid #e1e3e6 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    color: #64748b !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 22px !important;
+    font-weight: 300 !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    padding-bottom: 4px !important;
+}
+
+.gs-add-button:hover { background: #f1f5f9 !important; }
+.gs-add-button-placeholder { width: 38px !important; flex-shrink: 0 !important; }
+
+/* =========================================================
+   7. SPECIFIC: FILE UPLOAD (Step 3)
+   ========================================================= */
+.gs-upload-container {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+.gs-upload-surface {
+    width: 100% !important;
+    max-width: 766px !important;
+    min-height: 350px !important;
+    border: 1px solid #d6d8de !important;
+    border-radius: 16px !important;
+    background: #f8f8f8 !important;
+    padding: 14px !important;
+}
+
+.gs-upload-dashed {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 320px !important;
+    border: 2px dashed #ccd0d8 !important;
+    border-radius: 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1.5rem !important;
+    color: rgba(7, 38, 92, 0.7) !important;
+    text-align: center !important;
+    padding: 2rem !important;
+}
+
+.gs-upload-icon {
+    position: relative !important;
+    width: 36px !important;
+    height: 36px !important;
+}
+
+.gs-upload-arrow {
+    position: absolute !important;
+    left: 50% !important;
+    top: 2px !important;
+    width: 14px !important;
+    height: 14px !important;
+    border-top: 4px solid #9299a8 !important;
+    border-left: 4px solid #9299a8 !important;
+    transform: translateX(-50%) rotate(45deg) !important;
+}
+
+.gs-upload-icon::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 9px !important;
+    width: 4px !important;
+    height: 16px !important;
+    background: #9299a8 !important;
+    transform: translateX(-50%) !important;
+}
+
+.gs-upload-icon::after {
+    content: '' !important;
+    position: absolute !important;
+    left: 50% !important;
+    bottom: 3px !important;
+    width: 24px !important;
+    height: 12px !important;
+    border: 4px solid #9299a8 !important;
+    border-top: none !important;
+    border-radius: 0 0 6px 6px !important;
+    transform: translateX(-50%) !important;
+}
+
+.gs-browse-button {
+    border: none !important;
+    background: #a88bdf !important;
+    color: #fff !important;
+    border-radius: 9px !important;
+    padding: 0.8rem 1.8rem !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+}
+
+.gs-file-selected {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1rem !important;
+}
+
+.gs-file-name {
+    font-size: 1.2rem !important;
+    color: #07265c !important;
+    font-weight: 500 !important;
+    background: #e2e8f0 !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px !important;
+}
+
+.gs-change-file-btn {
+    background: transparent !important;
+    border: 1px solid #a88bdf !important;
+    color: #a88bdf !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+}
+
+/* =========================================================
+   8. SPECIFIC: CHOICES (Step 5)
+   ========================================================= */
+.gs-choices-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    width: 100% !important;
+}
+
+.gs-choices-title {
+    font-size: 16px !important;
+    color: #07265c !important;
+    margin: 0 !important;
+    text-align: left !important;
+    font-weight: 500 !important;
+}
+
+.gs-choices-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+}
+
+.gs-choice {
+    width: 100% !important;
+    max-width: 980px !important;
+    min-height: 80px !important;
+    border: 2px solid #e1e3e6 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    color: #07265c !important;
+    text-align: left !important;
+    padding: 0 1.5rem !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.gs-choice:hover {
+    background: rgba(69, 201, 193, 0.15) !important;
+    border-color: #79d5d1 !important;
+}
+
+.gs-choice.is-selected {
+    background: rgba(69, 201, 193, 0.8) !important;
+    border-color: rgba(69, 201, 193, 0.8) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* =========================================================
+   9. SPECIFIC: RESULTS (Step 6)
+   ========================================================= */
+.gs-results {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    width: 100% !important;
+}
+
+.gs-result-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.35rem !important;
+    width: 100% !important;
+}
+
+.gs-result-label {
+    font-size: 16px !important;
+    color: #07265c !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+}
+
+.gs-result-value {
+    font-size: 15px !important;
+    color: #a88bdf !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    line-height: 1.6 !important;
+}
+
+.gs-long-item .gs-result-value {
+    max-width: 58rem !important;
+}
+
+/* =========================================================
+   10. MODAL & OVERLAY
+   ========================================================= */
+.gs-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    z-index: 4 !important;
+}
+
+.gs-success-modal {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: min(560px, calc(100vw - 2rem)) !important;
+    min-height: 360px !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
+    z-index: 5 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 3rem 2.5rem !important;
+}
+
+.gs-success-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: #45c9c1 !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    margin-bottom: 1rem !important;
+}
+
+.gs-success-modal h3 {
+    margin: 0 0 1rem 0 !important;
+    font-size: 26px !important;
+    color: #45c9c1 !important;
+    font-weight: 600 !important;
+}
+
+.gs-success-modal p {
+    margin: 0 0 2rem 0 !important;
+    max-width: 400px !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+    color: #07265c !important;
+    font-weight: 500 !important;
+}
+
+.gs-success-continue {
+    width: 220px !important;
+    height: 42px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    background: #45c9c1 !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: filter 0.2s ease !important;
+}
+
+.gs-success-continue:hover { filter: brightness(0.9) !important; }
+
+/* =========================================================
+   11. ANIMATIONS
+   ========================================================= */
+@keyframes slideUpFade {
+    0% { opacity: 0; transform: translateY(40px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.form-step-animated {
+    animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-fill-mode: both;
+    width: 100%;
+}
+
+/* =========================================================
+   12. RESPONSIVE FALLBACKS
+   ========================================================= */
+@media (max-width: 850px) {
+    .gs-header { padding: 1.5rem 2rem !important; }
+    .gs-main-layout { flex-direction: column !important; padding: 2rem !important; }
+    .gs-sidebar { width: 100% !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 1rem !important; padding-top: 0 !important; }
+    .gs-step { margin-bottom: 0 !important; width: auto !important; }
+    .gs-step-dots { display: none !important; }
+    .gs-form-grid { grid-template-columns: 1fr !important; row-gap: 2rem !important; }
+    .gs-continue-button { width: 100% !important; }
+    .gs-upload-surface { min-height: 250px !important; }
+    .gs-upload-dashed { min-height: 220px !important; }
+}
