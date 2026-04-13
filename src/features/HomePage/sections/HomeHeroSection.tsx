@@ -1,4 +1,5 @@
 import { ActionCard } from "../../../components/ActionCard.tsx";
+
 export const HomeHeroSection = (): JSX.Element => {
   const cards = [
     {
@@ -23,12 +24,11 @@ export const HomeHeroSection = (): JSX.Element => {
 
   return (
     <div className="absolute top-0 left-0 w-[1536px] h-[1190px]">
-      {/* Background vectors */}
-      <img
-        className="absolute top-0 left-0 w-[1536px] h-[1190px] aspect-[1.9] object-cover"
-        alt="Main BG"
-        src="https://c.animaapp.com/hFv7aPLp/img/main-bg.png"
-      />
+      {/* REMOVED the solid blue main-bg.png image from here 
+        so the gradient underneath can shine through!
+      */}
+
+      {/* Background vectors (The white curves are kept!) */}
       <img
         className="absolute top-0 left-0 w-44 h-[885px]"
         alt="Vector"
@@ -56,33 +56,26 @@ export const HomeHeroSection = (): JSX.Element => {
       {/* Let's Get Started Section */}
       <div className="absolute top-[520px] w-full flex justify-center items-center">
         <div className="relative inline-flex items-center">
-          
-          {/* Left Decorative Dashes */}
           <img
             className="absolute right-[96%] top-[40px] w-[70px] object-contain mr-[20px] -scale-x-100 rotate-[260deg]"
             alt="Decorative dashes left"
             src="https://c.animaapp.com/hFv7aPLp/img/shape-2@2x.png"
           />
-          
-          {/* UPDATED HEADING */}
           <h2 className="[font-family:'Poppins',Helvetica] font-semibold text-[#0f2f65] text-[64px] text-center tracking-[-1.92px] leading-[68px] whitespace-nowrap">
             Lets get you started!
           </h2>
-
-          {/* Right Decorative Dashes */}
           <img
             className="absolute left-[100%] top-[-30px] w-[70px] object-contain ml-[15px]"
             alt="Decorative dashes right"
             src="https://c.animaapp.com/hFv7aPLp/img/shape-2@2x.png"
           />
-
         </div>
       </div>
 
       {/* The 3 Action Cards Wrapper */}
       <div className="absolute top-[680px] w-full flex justify-center gap-[30px]">
         {cards.map((card, idx) => (
-          <ActionCard 
+          <ActionCard
             key={idx}
             step={card.step}
             title={card.title}
