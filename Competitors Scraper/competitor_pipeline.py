@@ -4,6 +4,7 @@ import sys
 import json
 import time
 import threading
+import getpass
 from datetime import datetime
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -428,8 +429,8 @@ def main():
     """)
 
     openai_key  = os.environ.get("OPENAI_API_KEY", "") or input("\n🔑 OpenAI API key: ").strip()
-    fb_email    = "fcisblah@gmail.com"
-    fb_password = "Fcis12345678!"
+    fb_email    = os.environ.get("FB_EMAIL", "").strip() or input("\n📧 Facebook email: ").strip()
+    fb_password = os.environ.get("FB_PASSWORD", "") or getpass.getpass("\n🔒 Facebook password: ")
     output_dir  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
     print(f"\n{'─'*60}")
