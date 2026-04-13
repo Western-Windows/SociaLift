@@ -64,9 +64,9 @@ export const LandingPage = (): JSX.Element => {
         </div>
 
         <VisualSchedulingFeatureSection />
-        
+
         <DynamicPersonaBuilderSection />
-        
+
         <ProductFeatureOverviewSection />
         <DashboardPreviewSection />
 
@@ -74,11 +74,11 @@ export const LandingPage = (): JSX.Element => {
           <AnalyticsSection />
           <IntelligentCommentingSection />
         </div>
-<VideoModal
-isOpen={isVideoOpen}
-onClose={() => setIsVideoOpen(false)}
-videoUrl="https://www.youtube.com/embed/EEvopkbc4FE"
-/>
+        <VideoModal
+          isOpen={isVideoOpen}
+          onClose={() => setIsVideoOpen(false)}
+          videoUrl="https://www.youtube.com/embed/EEvopkbc4FE"
+        />
         <MessengerAutomationFeatureSection />
         <FooterSection />
       </div>

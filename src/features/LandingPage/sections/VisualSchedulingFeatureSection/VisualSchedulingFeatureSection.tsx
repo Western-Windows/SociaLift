@@ -30,7 +30,7 @@ export const VisualSchedulingFeatureSection = (): JSX.Element => {
   ];
 
   const calendarHours = ["09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
-  
+
   const calendarDays = [
     { label: "Monday 12", left: "0", width: "6.37%" },
     { label: "Tuesday 13", left: "15.54%", width: "6.66%" },
@@ -91,7 +91,7 @@ export const VisualSchedulingFeatureSection = (): JSX.Element => {
       <div className="absolute top-[1795px] left-[862px] w-[587px] h-[728px] flex">
         <div className="w-[587.2px] flex">
           <div className="w-[587.2px] h-[727.98px] relative">
-            
+
             {/* ---> THE VECTOR BACKGROUND: REDUCED SIZE AND ADJUSTED POSITION <--- */}
             <img
               className="absolute top-[115px] left-[130px] w-[550px] h-[550px] object-contain pointer-events-none"
@@ -198,8 +198,8 @@ export const VisualSchedulingFeatureSection = (): JSX.Element => {
                     </div>
                   </div>
                 </div>
-                
-                 <div className="absolute w-[13.49%] top-px left-0 h-[47px]">
+
+                <div className="absolute w-[13.49%] top-px left-0 h-[47px]">
                   <div className="absolute w-[calc(100%_+_2px)] -top-px -left-px h-6 bg-green-5 rounded-[1.8px] border-[0.72px] border-solid border-[#28cc38]" />
                   <div className="absolute top-[13px] left-[3px] [font-family:'Roboto',Helvetica] font-bold text-grey-blue-50 text-[3.6px] tracking-[0] leading-[7.2px] whitespace-nowrap">
                     Post 1

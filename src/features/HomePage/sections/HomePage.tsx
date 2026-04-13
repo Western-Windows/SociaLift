@@ -10,7 +10,7 @@ import {
 } from "../../LandingPage/sections/index.ts";
 import { DynamicPersonaBuilderSection } from "../../LandingPage/sections/DynamicPersonaBuilderSection/DynamicPersonaBuilderSection.tsx";
 import { HomeHeroSection } from "./../sections/HomeHeroSection.tsx";
-import { HomeNavSection } from "./../sections/HomeNavSection.tsx";
+// import { HomeNavSection } from "./../sections/HomeNavSection.tsx";
 
 export const HomePage = (): JSX.Element => {
   return (
@@ -20,12 +20,16 @@ export const HomePage = (): JSX.Element => {
     >
       <div
         id="top"
-        className="relative h-[6731.4px] w-[1536px] shrink-0 overflow-hidden bg-[#eeeaf3]"
+        // ADDED z-0 HERE: This locks the background layers in the correct order!
+        className="relative z-0 h-[6731.4px] w-[1536px] shrink-0 overflow-hidden"
       >
+        {/* The -z-10 background will now perfectly cover the gradient starting at 1190px */}
+        <div className="absolute top-[1190px] left-0 w-full h-[calc(100%-1190px)] bg-[#eeeaf3] -z-10" />
+
         <div id="hero">
           <HomeHeroSection />
         </div>
-        <HomeNavSection />
+        {/* <HomeNavSection /> */}
 
         <div id="features">
           <FeatureCardsCarouselSection />
@@ -42,7 +46,6 @@ export const HomePage = (): JSX.Element => {
         </div>
 
         <MessengerAutomationFeatureSection />
-        <FooterSection />
       </div>
     </div>
   );
