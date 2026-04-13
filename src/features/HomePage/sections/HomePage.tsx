@@ -15,15 +15,14 @@ import { HomeHeroSection } from "./../sections/HomeHeroSection.tsx";
 export const HomePage = (): JSX.Element => {
   return (
     <div
-      className="flex min-h-screen w-full justify-center overflow-x-hidden"
+      className="flex min-h-screen justify-center overflow-x-hidden"
       style={{ background: "linear-gradient(90deg, #6271e1 0%, #a27bd6 100%)" }}
     >
       <div
         id="top"
-        // ADDED z-0 HERE: This locks the background layers in the correct order!
-        className="relative z-0 h-[6731.4px] w-[1536px] shrink-0 overflow-hidden"
+        // Added max-w-[1536px] to constrain maximum width while staying fluid on smaller screens
+        className="relative z-0 h-[6650.0px] w-full max-w-[1536px] shrink-0 overflow-hidden"
       >
-        {/* The -z-10 background will now perfectly cover the gradient starting at 1190px */}
         <div className="absolute top-[1190px] left-0 w-full h-[calc(100%-1190px)] bg-[#eeeaf3] -z-10" />
 
         <div id="hero">
@@ -40,12 +39,14 @@ export const HomePage = (): JSX.Element => {
         <ProductFeatureOverviewSection />
         <DashboardPreviewSection />
 
-        <div className="absolute left-px top-[5057px] h-[1675px] w-[1536px]">
+        {/* Changed w-[1536px] to w-full */}
+        <div className="absolute left-px top-[5057px] h-[1675px] w-full">
           <AnalyticsSection />
           <IntelligentCommentingSection />
         </div>
 
         <MessengerAutomationFeatureSection />
+        <FooterSection />
       </div>
     </div>
   );
