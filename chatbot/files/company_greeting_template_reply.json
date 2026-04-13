@@ -1,0 +1,11 @@
+{
+  "route_id": 3,
+  "route_label": "greeting",
+  "company_data": {
+    "greeting_response": {
+      "key": "response_template",
+      "description": "The default response when a user greets the bot.",
+      "value": "Hi {{username}}! 👋 Welcome to Fashion Hub! I'm here to help you find the perfect fashion items — clothing, footwear, accessories, and more. What can I help you with today? 😊"
+    }
+  }
+}

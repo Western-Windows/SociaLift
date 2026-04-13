@@ -8,10 +8,14 @@ This script fetches comments from Facebook posts using the Graph API, with optio
 It retrieves both top-level comments and their replies, checks if the page has replied, and saves the results in a structured JSON format.
 """
 
+import os
+from pathlib import Path
 import requests
 import json
 import logging
 import sys
+
+_JSON_DIR = Path(__file__).parent / "JSON"
 try:
     from config import Config
 except ImportError:
@@ -85,6 +89,7 @@ class FacebookFetcher:
 
     def save_to_json(self, data, filename):
         try:
+            os.makedirs(os.path.dirname(os.path.abspath(filename)), exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"   💾 Saved data to '{filename}'")
@@ -229,10 +234,10 @@ def run_interactive_mode():
 
         if results:
             if len(posts) == 1:
-                filename = f"./Graph API/JSON/post_{posts[0]['id']}_comments.json"
+                filename = str(_JSON_DIR / f"post_{posts[0]['id']}_comments.json")
             else:
                 suffix = "all" if filter_choice == "1" else "unreplied"
-                filename = f"./Graph API/JSON/comments_{suffix}.json"
+                filename = str(_JSON_DIR / f"comments_{suffix}.json")
             
             fetcher.save_to_json(results, filename)
         else:
