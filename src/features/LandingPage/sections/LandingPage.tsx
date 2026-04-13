@@ -1,4 +1,3 @@
-// src/screens/LandingPage/sections/LandingPage.tsx
 import {
   AnalyticsSection,
   DashboardPreviewSection,
@@ -15,6 +14,7 @@ import { DynamicPersonaBuilderSection } from "./DynamicPersonaBuilderSection";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { VideoModal } from "../../../components/VideoModal";
+
 export const LandingPage = (): JSX.Element => {
   const navigate = useNavigate();
 
@@ -31,8 +31,8 @@ export const LandingPage = (): JSX.Element => {
     >
       <div
         id="top"
-        // The entire layout now uses the unified #eeeaf3 background with zero white blocks
-        className="relative h-[6731.4px] w-[1536px] shrink-0 overflow-hidden bg-[#eeeaf3]"
+        // Changed w-[1536px] to w-full max-w-[1536px] for responsiveness
+        className="relative h-[6650.0px] w-full max-w-[1536px] shrink-0 overflow-hidden bg-[#eeeaf3]"
         data-model-id="124:747"
       >
         <div id="hero">
@@ -70,10 +70,12 @@ export const LandingPage = (): JSX.Element => {
         <ProductFeatureOverviewSection />
         <DashboardPreviewSection />
 
-        <div className="absolute left-px top-[5057px] h-[1675px] w-[1536px]">
+        {/* Changed w-[1536px] to w-full */}
+        <div className="absolute left-px top-[5057px] h-[1675px] w-full">
           <AnalyticsSection />
           <IntelligentCommentingSection />
         </div>
+        
         <VideoModal
           isOpen={isVideoOpen}
           onClose={() => setIsVideoOpen(false)}

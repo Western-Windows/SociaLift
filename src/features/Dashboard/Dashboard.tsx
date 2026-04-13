@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ResponsiveContainer,
   XAxis,
@@ -60,17 +60,77 @@ const followsWeeklyData = [
   { week: 'W4', thisMonth: 1830, lastMonth: 1300 },
 ];
 
-
+// In a real app, these would likely have full date strings (e.g., '2026-04-15') 
+// rather than just a day number to match against the exact month/year.
 const calendarEventsData = [
-  { date: 15, time: '12:30 PM', title: 'Post 5', color: 'green' },
-  { date: 18, time: '12:00 AM', title: 'Post 1', color: 'purple' },
-  { date: 16, time: '12:00 PM', title: 'Post 6', color: 'green' },
-  { date: 22, time: '3:00 PM', title: 'Post 2', color: 'orange' },
-  { date: 12, time: '2:00 PM', title: 'Post 3', color: 'blue' },
-  { date: 28, time: '10:00 AM', title: 'Post 4', color: 'yellow' },
+  { date: 15, time: '11:00 AM', title: 'Seminar Demo', color: 'green' }
+];
+
+const monthNames = [
+  "January", "February", "March", "April", "May", "June", 
+  "July", "August", "September", "October", "November", "December"
 ];
 
 export const Dashboard: React.FC = () => {
+  // --- Dynamic Calendar State & Logic ---
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  };
+
+  const generateCalendarDays = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    const today = new Date();
+    const isCurrentMonthThisMonth = today.getFullYear() === year && today.getMonth() === month;
+
+    const days = [];
+
+    // Fill in days from the previous month
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push({
+        date: daysInPrevMonth - firstDayOfMonth + i + 1,
+        isCurrentMonth: false,
+        isToday: false,
+      });
+    }
+
+    // Fill in days for the current month
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push({
+        date: i,
+        isCurrentMonth: true,
+        isToday: isCurrentMonthThisMonth && i === today.getDate(),
+      });
+    }
+
+    // Fill in days for the next month to complete the grid (ensure 35 or 42 cells total)
+    const totalCells = days.length > 35 ? 42 : 35;
+    const extraDays = totalCells - days.length;
+
+    for (let i = 1; i <= extraDays; i++) {
+      days.push({
+        date: i,
+        isCurrentMonth: false,
+        isToday: false,
+      });
+    }
+
+    return days;
+  };
+
+  const calendarDays = generateCalendarDays();
+
   return (
     <div className="dashboard-container">
       <main className="dashboard-main">
@@ -125,11 +185,9 @@ export const Dashboard: React.FC = () => {
             <div className="card Total-reactions">
               <div className="reactions-header">
                 <h2>Total Reactions</h2>
-                {/* Removed the top-right total badge from here */}
               </div>
               <div className="reactions-pie-wrapper" style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px', position: 'relative' }}>
 
-                {/* Added Floating Center Circle */}
                 <div className="pie-center-label">
                   <span className="pie-center-title">Total Reactions</span>
                   <span className="pie-center-value">150</span>
@@ -140,10 +198,10 @@ export const Dashboard: React.FC = () => {
                     data={reactionTypes}
                     cx="50%"
                     cy="50%"
-                    innerRadius={80}   /* Decreased inner radius for thickness */
-                    outerRadius={115}  /* Increased outer radius for thickness */
+                    innerRadius={80}
+                    outerRadius={115}
                     paddingAngle={6}
-                    cornerRadius={12}  /* Added to make segments rounded */
+                    cornerRadius={12}
                     dataKey="percentage"
                     nameKey="type"
                     stroke="none"
@@ -175,9 +233,9 @@ export const Dashboard: React.FC = () => {
             <div className="card calendar-widget">
               <div className="calendar-header">
                 <div className="calendar-nav">
-                  <button className="nav-btn">{'<'}</button>
-                  <h3>April 2026</h3>
-                  <button className="nav-btn">{'>'}</button>
+                  <button className="nav-btn" onClick={handlePrevMonth}>{'<'}</button>
+                  <h3>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
+                  <button className="nav-btn" onClick={handleNextMonth}>{'>'}</button>
                 </div>
                 <div className="calendar-filters">
                   <button>Month</button>
@@ -188,20 +246,21 @@ export const Dashboard: React.FC = () => {
               </div>
 
               <div className="calendar-grid">
+                {/* Standardized Sunday -> Saturday layout to match JavaScript's native date mapping */}
                 <div className="days-row">
-                  <span>Sat</span><span>Fri</span><span>Thu</span><span>Wed</span><span>Tue</span><span>Mon</span><span>Sun</span>
+                  <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
                 </div>
                 <div className="dates-grid">
-                  {/* Generated dates for grid. 5 rows of 7 */}
-                  {[...Array(35)].map((_, i) => {
-                    const date = (i + 1) % 31 || 31;
-                    const isOtherMonth = i < 2 || i > 32;
-                    const isActive = i === 15;
-                    const eventsForDay = calendarEventsData.filter(e => e.date === date && !isOtherMonth);
+                  {calendarDays.map((dayObj, i) => {
+                    // Find events for this date (Note: simplified to just match the day number)
+                    const eventsForDay = calendarEventsData.filter(e => e.date === dayObj.date && dayObj.isCurrentMonth);
 
                     return (
-                      <div key={i} className={`date-cell ${isOtherMonth ? 'other-month' : ''} ${isActive ? 'active' : ''}`}>
-                        <span className="date-number">{date}</span>
+                      <div 
+                        key={i} 
+                        className={`date-cell ${!dayObj.isCurrentMonth ? 'other-month' : ''} ${dayObj.isToday ? 'active' : ''}`}
+                      >
+                        <span className="date-number">{dayObj.date}</span>
                         <div className="cell-events">
                           {eventsForDay.map((evt, idx) => (
                             <div key={idx} className={`mini-event event-${evt.color}`}>
@@ -217,6 +276,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
+        
         {/* Header Cards */}
         <section className="stats-row">
           {/* Engagement Card */}
@@ -336,7 +396,6 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </section>
-
       </main>
     </div>
   );

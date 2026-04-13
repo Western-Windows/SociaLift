@@ -28,7 +28,7 @@ export function Signup() {
       // Handle Final Submit
       console.log('Form Submitted', formData);
       // Navigate to Getting Started Step 1
-      navigate('/getting-started/1-0');
+      navigate('/getting-started');
     }
   };
 
@@ -46,7 +46,7 @@ export function Signup() {
     formData.confirmPassword.trim() !== '' &&
     formData.password === formData.confirmPassword; // Ensures passwords match
 
-  const isStep2Valid = formData.agreeToTerms;
+  const isStep2Valid = true; // For now, we can assume step 2 is always valid since it's just informational and a checkbox
 
   const canProceed = step === 1 ? isStep1Valid : isStep2Valid;
 
