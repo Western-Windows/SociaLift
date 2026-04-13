@@ -71,8 +71,12 @@ class LLMConfig:
 
 
 def _build_llm(cfg: LLMConfig):
-    """Factory: build LLM from config. Supports Groq, OpenAI, Ollama, HuggingFace."""
+    """Factory: build LLM from config. Supports Groq, OpenAI, Ollama, HuggingFace, Google."""
     provider = (cfg.provider or "").lower().strip()
+
+    if provider in {"google", "gemini"}:
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        return ChatGoogleGenerativeAI(model=cfg.model, temperature=0.0)
 
     if provider == "groq":
         from langchain_groq import ChatGroq
@@ -108,9 +112,14 @@ good_llm = _build_llm(LLMConfig(
     provider=os.environ.get("GOOD_LLM_PROVIDER", ""),
     model=os.environ.get("GOOD_LLM_MODEL", ""),
 ))
+generation_llm = _build_llm(LLMConfig(
+    provider=os.environ.get("GENERATION_LLM_PROVIDER", ""),
+    model=os.environ.get("GENERATION_LLM_MODEL", ""),
+)) or good_llm  # fallback to good_llm if generation LLM is not configured
 
-_log(f"[PIPELINE] Light LLM: {getattr(light_llm, 'model_name', None) or getattr(light_llm, 'model', 'not configured')}")
-_log(f"[PIPELINE] Good LLM:  {getattr(good_llm, 'model_name', None) or getattr(good_llm, 'model', 'not configured')}")
+_log(f"[PIPELINE] Light LLM:      {getattr(light_llm, 'model_name', None) or getattr(light_llm, 'model', 'not configured')}")
+_log(f"[PIPELINE] Good LLM:       {getattr(good_llm, 'model_name', None) or getattr(good_llm, 'model', 'not configured')}")
+_log(f"[PIPELINE] Generation LLM: {getattr(generation_llm, 'model_name', None) or getattr(generation_llm, 'model', 'not configured')}")
 
 
 # =============================================================================
@@ -141,58 +150,80 @@ def clean_token(token: str) -> str:
     return token
 
 
+# =============================================================================
+# COLUMN → VOCAB MAPPING  (single source of truth)
+# Used by DomainVocabularyBuilder when writing vocab, and by
+# route_2_product_query when reading vocab to build filters.
+# =============================================================================
+COLUMN_TO_VOCAB: Dict[str, str] = {
+    "Gender":      "gender",
+    "Colour":      "colors",   "Color":    "colors",
+    "BrandName":   "brands",   "Brand":    "brands",
+    "Category":    "categories",
+    "SubCategory": "subcategories",
+    "ProductType": "products",
+    "Size":        "sizes",
+    "Usage":       "styles",   "Style":    "styles",
+    "Material":    "materials",
+}
+
+
 class DomainVocabularyBuilder:
-    """Enhanced and optimized builder for fashion domain vocabulary."""
+    """The Best of Both Worlds: Robust, Optimized, Smart Domain Extraction."""
 
     def __init__(self, fashion_df):
         self.fashion_df = fashion_df
         self.vocabulary = {
-            'brands': set(), 'colors': set(), 'products': set(),
+            'brands': set(), 'colors': set(),
+            'categories': set(), 'subcategories': set(), 'products': set(),
             'materials': set(), 'sizes': set(), 'styles': set(),
-            'gender': set(), 'categories': set(), 'all_tokens': set()
+            'gender': set(), 'all_tokens': set()
         }
 
     def _clean_token(self, token):
         return clean_token(token)
 
     def extract_from_structured_columns(self):
-        """Extracts using resilient substring matching for columns."""
-        print("Extracting from structured columns...")
-
-        column_mapping = {
-            'color': 'colors', 'colour': 'colors', 'size': 'sizes', 'material': 'materials',
-            'style': 'styles', 'usage': 'styles', 'gender': 'gender',
-            'category': 'categories', 'type': 'products'
-        }
+        """Extracts structured column values into vocab buckets using COLUMN_TO_VOCAB."""
+        print("\n[1] Extracting from structured columns...")
 
         for col in self.fashion_df.columns:
-            col_lower = str(col).lower()
-            for key, vocab_key in column_mapping.items():
-                if key in col_lower:
-                    tokens = {
-                        self._clean_token(t) for val in self.fashion_df[col].dropna()
-                        for t in str(val).split(',') if len(str(t).strip()) > 1
-                    }
-                    self.vocabulary[vocab_key].update(tokens)
-                    break
+            # Exact match first (preferred), then case-insensitive substring fallback
+            vocab_key = COLUMN_TO_VOCAB.get(col)
+            if vocab_key is None:
+                col_lower = col.lower()
+                for key, vk in COLUMN_TO_VOCAB.items():
+                    if key.lower() in col_lower:
+                        vocab_key = vk
+                        break
+            # Brands are handled by extract_brands(); skip here to avoid duplication
+            if not vocab_key or vocab_key == 'brands':
+                continue
+            tokens = {
+                self._clean_token(t) for val in self.fashion_df[col].dropna()
+                for t in str(val).split(',') if len(str(t).strip()) > 1
+            }
+            if tokens:
+                self.vocabulary[vocab_key].update(tokens)
+                print(f"  ✓ Extracted {len(tokens)} {vocab_key} from column '{col}'")
 
-        # Specific dynamic extraction for Brand columns
+    def extract_brands(self):
+        """Specific dynamic extraction for Brand columns."""
+        print("\n[2] Mining for specific brand columns...")
         brand_cols = [c for c in self.fashion_df.columns if 'brand' in str(c).lower()]
         for col in brand_cols:
-            brands = {str(b).strip() for b in self.fashion_df[col].dropna()}
+            brands = {str(b).strip().lower() for b in self.fashion_df[col].dropna() if len(str(b).strip()) > 1}
             self.vocabulary['brands'].update(brands)
+            print(f"  ✓ Extracted {len(brands)} brands from '{col}'")
 
     def extract_products_from_titles(self):
-        """Advanced logic to find missing products focusing on head nouns."""
-        print("Mining titles for additional products...")
+        """Advanced logic to find missing products focusing on head nouns and excluding knowns."""
+        print("\n[3] Mining titles for additional product nouns...")
 
-        # ⚡ Optimization: Native C-speed set union
-        cats_to_exclude = ['brands', 'colors', 'gender', 'styles', 'materials', 'categories']
+        cats_to_exclude = ['brands', 'colors', 'gender', 'styles', 'materials', 'categories', 'subcategories']
         exclusions = set().union(*(self.vocabulary[cat] for cat in cats_to_exclude))
-
         noise = {'navy', 'golden', 'length', 'lifestyle', 'coloured', 'kids', 'men', 'women', 'canvas', 'leather', 'printed'}
 
-        # ⚡ Optimization: Pre-compile Regex
         word_pattern = re.compile(r'\b\w+\b')
         potential_products = []
 
@@ -200,56 +231,101 @@ class DomainVocabularyBuilder:
             words = word_pattern.findall(str(title).lower())
             if not words: continue
 
-            # Logic: Check the last two words for product nouns
             candidates = [words[-1]]
-            if len(words) > 1: candidates.append(words[-2])
+            if len(words) > 1:
+                candidates.append(words[-2])
 
             for word in candidates:
                 word_clean = self._clean_token(word)
-                if len(word_clean) > 2 and word_clean not in exclusions and word_clean not in noise:
-                    potential_products.append(word_clean.capitalize())
+                if len(word_clean) > 2 and word_clean not in exclusions and word_clean not in noise and not word_clean.isnumeric():
+                    potential_products.append(word_clean)
 
-        # Keep words appearing at least 5 times (ensures they are generic types)
         word_counts = Counter(potential_products)
-        common_nouns = {word for word, count in word_counts.items() if count >= 5}
+        common_nouns = {word for word, count in word_counts.items() if count >= 3}
 
         self.vocabulary['products'].update(common_nouns)
-        print(f"  ✓ Added {len(common_nouns)} extra product terms from titles.")
+        print(f"  ✓ Added {len(common_nouns)} highly-probable product types from titles.")
 
-    def add_llm_descriptors(self, groq_client):
-        """Dynamic domain expansion via LLM, strictly enforcing JSON format."""
-        print("Calling LLM for domain expansion...")
-        prompt = """Generate a comprehensive list of generic fashion-related terms in JSON format.
-Include these 4 categories: gender, styles, materials, and colors.
-Return ONLY a valid JSON object with these 4 keys, containing arrays of lowercase strings."""
+    def inject_hardcoded_failsafe(self):
+        """Ensure crucial baseline descriptors always exist, protecting against partial data or LLM failure."""
+        print("\n[4] Injecting baseline failsafe descriptors...")
+        gender_terms = {'men', 'mens', "men's", 'women', 'womens', "women's", 'unisex',
+                        'boys', 'boy', "boy's", 'girls', 'girl', "girl's", 'kids', "kids'",
+                        'infant', 'baby', 'toddler', 'children', 'kidswear', 'son', 'daughter'}
+        self.vocabulary['gender'].update(self._clean_token(t) for t in gender_terms)
+        print(f"  ✓ Injected {len(gender_terms)} core routing terms for gender.")
+
+    def add_llm_descriptors(self, genai_client=None):
+        """Dynamic domain review and expansion via Google GenAI SDK, strictly enforcing JSON format."""
+        if not genai_client:
+            print("\n[5] Skipping LLM augmentation: no LLM client provided.")
+            return
+
+        print("\n[5] Calling Gemini LLM for domain sanitization and expansion (Strict JSON mode)...")
+
+        # Excluded brands entirely to protect raw CSV data
+        current_state = {
+            'gender': list(self.vocabulary['gender']),
+            'colors': list(self.vocabulary['colors']),
+            'styles': list(self.vocabulary['styles']),
+            'materials': list(self.vocabulary['materials']),
+            'products': list(self.vocabulary['products'])
+        }
+        state_json = json.dumps(current_state, indent=2)
+
+        prompt = f"""You are an elite Fashion Domain Data Scientist.
+I am providing you with a raw, extracted fashion dataset vocabulary in JSON format. It contains noisy and irrelevant terms, and is likely missing key generic fashion terms.
+
+Your tasks:
+1. REVIEW AND CLEAN: Prune each category. Remove words that are pure numbers, nonsensical, misspellings, or definitively NOT related to fashion clothing. For colors, products, materials, and styles, be strictly rigorous and permanently remove noise like 'printed', 'lifestyle', 'length', 'toprated', etc.
+2. EXPAND: Add any fundamental fashion descriptors that are completely missing from each category to make it a globally comprehensive dictionary.
+
+Return ONLY a valid JSON object strictly matching these 5 exact keys: 'gender', 'styles', 'materials', 'colors', 'products', each containing arrays of cleaned, lowercase python strings.
+
+Here is the current raw vocabulary state limit output to json:
+{state_json}"""
 
         try:
-            response = groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.4,
-                # ⚡ Optimization: Strict JSON Mode prevents text parsing errors
-                response_format={"type": "json_object"}
+            from google.genai import types
+
+            response = genai_client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.3,
+                    max_output_tokens=8192
+                )
             )
+            llm_vocab = json.loads(response.text)
 
-            llm_output = response.choices[0].message.content
-            llm_vocab = json.loads(llm_output)
+            target_keys = ['gender', 'colors', 'styles', 'materials', 'products']
+            print("  ✓ Received LLM Review...")
 
-            for category in ['gender', 'colors', 'styles', 'materials']:
+            for category in target_keys:
                 if category in llm_vocab and isinstance(llm_vocab[category], list):
-                    clean_terms = {self._clean_token(t) for t in llm_vocab[category]}
-                    self.vocabulary[category].update(clean_terms)
-
-            print("  ✓ LLM descriptors successfully integrated.")
+                    original_len = len(self.vocabulary[category])
+                    clean_terms = {self._clean_token(t) for t in llm_vocab[category] if len(str(t).strip()) > 1}
+                    self.vocabulary[category] = clean_terms
+                    new_len = len(clean_terms)
+                    diff = new_len - original_len
+                    sign = "+" if diff >= 0 else ""
+                    print(f"    - {category.capitalize()}: {original_len} -> {new_len} terms ({sign}{diff})")
 
         except Exception as e:
-            print(f"  ⚠️ LLM domain expansion failed: {e}. Relying solely on CSV data.")
+            print(f"  ⚠️ LLM domain review/expansion failed: {e}. Relying solely on CSV data.")
 
-    def build_and_save(self, groq_client=None, filename="domain_vocabulary.json"):
+    def build_and_save(self, genai_client=None, filename="domain_vocabulary.json"):
+        """Execute the full pipeline, flatten, and export the vocabulary."""
+        print("\n" + "*"*50)
+        print("BUILDING MIXED DOMAIN VOCABULARY")
+        print("*"*50)
+
         self.extract_from_structured_columns()
+        self.extract_brands()
         self.extract_products_from_titles()
-        if groq_client:
-            self.add_llm_descriptors(groq_client)
+        self.inject_hardcoded_failsafe()
+        self.add_llm_descriptors(genai_client)
 
         # Consolidate 'all_tokens' for your router into purely lowercase generic terms
         for cat, terms in self.vocabulary.items():
@@ -259,11 +335,44 @@ Return ONLY a valid JSON object with these 4 keys, containing arrays of lowercas
         # Convert sets to sorted lists for clean JSON rendering
         final_vocab = {k: sorted(list(v)) for k, v in self.vocabulary.items()}
 
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(final_vocab, f, indent=4, ensure_ascii=False)
-        print(f"✅ Domain successfully saved to {filename}")
+        print("\n📊 Final Domain Vocabulary Summary")
+        for category, tokens in final_vocab.items():
+            if category != 'all_tokens' and tokens:
+                print(f"  {category:15s}: {len(tokens):4d} terms")
+        print(f"\n✓ TOTAL UNIQUE TOKENS (all_tokens): {len(final_vocab['all_tokens'])}")
+
+        try:
+            dir_name = os.path.dirname(filename)
+            if dir_name:
+                os.makedirs(dir_name, exist_ok=True)
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(final_vocab, f, indent=4, ensure_ascii=False)
+            print(f"\n✅ Domain explicitly saved to '{filename}' for router.")
+        except Exception as e:
+            print(f"\n⚠️ Failed to export '{filename}': {e}")
+
+        # Update metadata_schema.json with actual unique values per filterable column
+        self._save_metadata_schema(filename)
 
         return final_vocab
+
+    def _save_metadata_schema(self, vocab_filename: str):
+        """Overwrite metadata_schema.json as a dict: field → sorted unique actual values.
+        Lets route_2_product_query resolve vocab terms to real metadata values at query time."""
+        try:
+            schema_path = Path(vocab_filename).parent / "metadata_schema.json"
+            primary_cols = {col for col in COLUMN_TO_VOCAB if col in self.fashion_df.columns}
+            metadata_schema = {
+                col: sorted(
+                    self.fashion_df[col].dropna().astype(str).str.strip().unique().tolist()
+                )
+                for col in primary_cols
+            }
+            with open(schema_path, 'w', encoding='utf-8') as f:
+                json.dump(metadata_schema, f, indent=4, ensure_ascii=False)
+            print(f"✅ Metadata schema (with actual values) saved to '{schema_path}'.")
+        except Exception as e:
+            print(f"⚠️ Failed to export metadata schema: {e}")
 
 
 def smart_compress_query(query, domain_vocab):
@@ -446,12 +555,16 @@ def determine_route(query: str) -> QueryRoute:
         return QueryRoute.IRRELEVANT
 
 
-def route_0_irrelevant_query(query: str, username: str = "Customer") -> Dict[str, Any]:
+def route_0_irrelevant_query(query: str, username: str = "") -> Dict[str, Any]:
     template = routing_config.get(
         'irrelevant_template',
         "Sorry {{username}}, I cannot help with that. At Fashion Hub, we specialize in fashion products."
     )
-    response_text = template.replace("{{username}}", username)
+    if username:
+        response_text = template.replace("{{username}}", username)
+    else:
+        # Strip "{{username}}, " or "{{username}} " so no orphaned comma appears
+        response_text = re.sub(r'\{\{username\}\},?\s*', '', template)
     return {"query": query, "route": QueryRoute.IRRELEVANT.name, "route_value": 0, "response": response_text}
 
 
@@ -476,14 +589,18 @@ def route_1_company_query(query: str) -> Dict[str, Any]:
 def route_2_product_query(query: str, compressed_query: str = None) -> Dict[str, Any]:
     query_for_filtering = (compressed_query or query or "").lower()
 
-    metadata_schema = []
+    # Load metadata schema: dict format (field → actual unique values) preferred;
+    # falls back to legacy flat-list (no actual values) if not yet regenerated.
+    metadata_schema_values: Dict[str, List[str]] = {}
     try:
         with open(BASE_DIR / "metadata_schema.json", "r", encoding="utf-8-sig") as f:
             loaded_schema = json.load(f)
-            if isinstance(loaded_schema, list):
-                metadata_schema = [str(col).strip() for col in loaded_schema if str(col).strip()]
+            if isinstance(loaded_schema, dict):
+                metadata_schema_values = loaded_schema
+            elif isinstance(loaded_schema, list):
+                metadata_schema_values = {col: [] for col in loaded_schema if col != "ProductId"}
     except FileNotFoundError:
-        metadata_schema = ["ProductId", "Gender", "Category", "SubCategory", "ProductType", "Colour", "Size", "BrandName"]
+        metadata_schema_values = {k: [] for k in ["Gender", "Category", "SubCategory", "ProductType", "Colour", "BrandName", "Size", "Usage"]}
 
     domain_vocab = {}
     try:
@@ -495,16 +612,37 @@ def route_2_product_query(query: str, compressed_query: str = None) -> Dict[str,
         domain_vocab = routing_config.get('domain_vocab', {}) or {}
 
     filters: Dict[str, List[str]] = {}
-    for schema_field in metadata_schema:
-        terms = domain_vocab.get(schema_field, [])
-        if isinstance(terms, list):
-            matched = sorted({
-                term for term in terms
-                if str(term).strip() and str(term).strip().lower() in query_for_filtering
+    for schema_field, actual_values in metadata_schema_values.items():
+        vocab_key = COLUMN_TO_VOCAB.get(schema_field)
+        if not vocab_key:
+            continue
+        terms = domain_vocab.get(vocab_key, [])
+        if not isinstance(terms, list):
+            continue
+        # Find vocab terms present in the query
+        matched_terms = {
+            clean_token(term) for term in terms
+            if str(term).strip() and str(term).strip().lower() in query_for_filtering
+        }
+        if not matched_terms:
+            continue
+        if actual_values:
+            # Resolve vocab terms → real metadata values via fuzzy matching
+            matched_actual = sorted({
+                v for v in actual_values
+                for t in matched_terms
+                if _term_matches_value(t, clean_token(v))
             })
-            if matched:
-                filters[schema_field] = matched
+            if matched_actual:
+                filters[schema_field] = matched_actual
+        else:
+            # Fallback: no actual values available, use vocab terms directly
+            filters[schema_field] = sorted(matched_terms)
 
+    if filters:
+        _log(f"[ROUTER] 🔖 Metadata filters built: {filters}")
+    else:
+        _log("[ROUTER] 🔖 No metadata filters matched — unfiltered retrieval")
     return {"query": query, "compressed_query": compressed_query, "route": QueryRoute.PRODUCT_QUERY.name,
             "route_value": 2, "metadata_filters": filters}
 
@@ -535,7 +673,7 @@ def decision_node(state: RouterState) -> RouterState:
 
 def route_0_node(state: RouterState) -> RouterState:
     query = state["query"]
-    username = state.get("username", "Customer")
+    username = state.get("username") or ""
     response = route_0_irrelevant_query(query, username)
     state["response"] = response.get("response")
     return state
@@ -763,6 +901,18 @@ embeddings = embedding_function  # alias
 # SEARCH FUNCTIONS (Hybrid Retrieval)
 # =============================================================================
 
+def _term_matches_value(term: str, value_norm: str) -> bool:
+    """Check whether a normalized vocab term corresponds to a normalized metadata value.
+    Handles compound words (e.g. 'top' → 'topwear', 'shirt' → 'tshirt')."""
+    if value_norm == term:
+        return True
+    if value_norm.startswith(term) or value_norm.endswith(term):
+        return True
+    if len(term) >= 4 and term in value_norm:
+        return True
+    return False
+
+
 def _passes_metadata_filter(metadata: dict, filters: dict | None) -> bool:
     if not filters:
         return True
@@ -805,13 +955,17 @@ def bm25_search(query: str, k: int = 10, filters: dict | None = None) -> list:
         return []
     scores = bm25.get_scores(tokens)
     scored = []
+    filtered_out = 0
     for idx, score in enumerate(scores):
         doc = langchain_docs[idx]
         if not _passes_metadata_filter(doc.metadata, filters):
+            filtered_out += 1
             continue
         scored.append({"id": idx, "text": doc.page_content, "metadata": doc.metadata,
                         "score": float(score), "source": "bm25"})
     scored.sort(key=lambda x: x["score"], reverse=True)
+    if filters and filtered_out:
+        _log(f"[RETRIEVAL] 🔖 {filtered_out}/{len(langchain_docs)} docs excluded by filter")
     return scored[:k]
 
 
@@ -984,6 +1138,8 @@ def generate_query_variations(query: str, llm=None, n: int = 3) -> list:
 
 def rag_fusion_retrieve(query: str, k: int = 10, filters: dict = None, original_docs: list = None) -> tuple:
     variations = generate_query_variations(query, llm=light_llm, n=3)
+    if filters:
+        _log(f"[RETRIEVAL] 🔖 Applying filters across {len(variations)} variations: {filters}")
     all_results = [query_router(q, k=k, filters=filters) for q in variations]
     doc_scores = {}
     for result_set in all_results:
@@ -1198,8 +1354,9 @@ PROMPT_VARIANTS = {
             "- Include specific details (name, color, price when relevant)",
             "- Mention product IDs only when a product name is unavailable",
             "- If no relevant products found, acknowledge honestly and suggest alternatives",
-            "- If a product has an Image Link, include it in your response so the customer can view it",
+            "- If a product has an Image Link, put it on its own line as a plain URL — no markdown, no [text](url) syntax",
             "- When mentioning multiple products, separate each one with a blank line for easy reading",
+            "- Do NOT use any markdown formatting — no *bold*, no _italic_, no [text](url) links",
             "- Answer ONLY the user's current question — do NOT bring up or reference previous topics from chat history unless the user explicitly asks about them",
         ]),
     },
@@ -1464,6 +1621,10 @@ def retrieve_node(state: RetrievalState) -> dict:
         _log(f"[PIPELINE] 📄 Fusion retrieved {len(docs)} docs")
         return {"retrieved_docs": docs, "fusion_queries": variations}
     else:
+        if filters:
+            _log(f"[RETRIEVAL] 🔖 Applying filters: {filters}")
+        else:
+            _log("[RETRIEVAL] 🔖 No filters — full unfiltered retrieval")
         _log("[PIPELINE] 🔍 Retrieving docs (single query)...")
         docs = query_router(query, k=10, filters=filters)
         _log(f"[PIPELINE] 📄 Retrieved {len(docs)} docs")
@@ -1663,7 +1824,7 @@ def irrelevant_template_node(state: dict) -> dict:
     is_greeting = bool(_GREETING_RE.match(state.get("query", "").strip()))
     _log(f"[PIPELINE] {'👋 Greeting' if is_greeting else '🚫 Irrelevant query'} → returning template response")
     fallback_from_route = route_0_irrelevant_query(
-        state.get("query", ""), state.get("username", "Customer")
+        state.get("query", ""), state.get("username") or ""
     ).get("response", "")
     template_answer = (
         state.get("ready_template_answer")
@@ -1817,6 +1978,7 @@ def generate_node(state: dict) -> dict:
         chat_history=state.get("chat_history", []),
         company_info=load_company_info(),
         persona=load_persona(),
+        llm=generation_llm,
     )
     response_text = result.get("response", "")
     _log(f"[PIPELINE] 💬 Response ({len(response_text)} chars) | status={result.get('status')}")
@@ -1985,7 +2147,7 @@ def run_full_pipeline(
         "chat_history": chat_history or [],
         "ready_template_answer": ready_template_answer,
         "company_answer": company_answer,
-        "username": username.split()[0] if username else "Customer",
+        "username": username.split()[0] if username else "",
     })
 
     return {

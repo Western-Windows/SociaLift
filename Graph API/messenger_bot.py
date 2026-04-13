@@ -51,11 +51,34 @@ import sys
 import json
 import logging
 import argparse
+import threading
 from pathlib import Path
 from datetime import datetime
 
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
+
+_MSG_MAX_LEN = 1900  # Messenger API hard limit is 2000; leave a small buffer
+
+def _split_message(text: str) -> list:
+    """Split a message into ≤1900-char chunks on sentence/newline boundaries."""
+    if len(text) <= _MSG_MAX_LEN:
+        return [text]
+    chunks = []
+    while text:
+        if len(text) <= _MSG_MAX_LEN:
+            chunks.append(text)
+            break
+        cut = text.rfind('. ', 0, _MSG_MAX_LEN)
+        if cut == -1:
+            cut = text.rfind('\n', 0, _MSG_MAX_LEN)
+        if cut == -1:
+            cut = _MSG_MAX_LEN
+        else:
+            cut += 1  # include the period
+        chunks.append(text[:cut].strip())
+        text = text[cut:].strip()
+    return chunks
 
 load_dotenv(override=True)
 
@@ -100,6 +123,12 @@ messenger = None  # lazily initialized
 # In-memory chat history per sender PSID for the live webhook session
 # { psid: [{"role": "user"/"assistant", "content": "..."}, ...] }
 _chat_histories: dict = {}
+_chat_lock = threading.Lock()
+
+# Deduplication: track message IDs already processed this session
+# Prevents double-processing when Facebook retries the webhook on slow responses
+_processed_mids: set = set()
+_mid_lock = threading.Lock()
 
 
 def _get_messenger() -> FacebookMessenger:
@@ -133,8 +162,11 @@ def handle_message(psid: str, user_name: str, message_text: str,
     _log(f"[MESSENGER BOT] 🤖 Bot response ({len(response_text)} chars):")
     _log(f"[MESSENGER BOT]    \"{response_text[:120]}{'...' if len(response_text) > 120 else ''}\"")
 
-    # Send reply
-    success = _get_messenger().send_message(psid, response_text)
+    # Send reply (split if over Messenger's 2000-char limit)
+    chunks = _split_message(response_text)
+    if len(chunks) > 1:
+        _log(f"[MESSENGER BOT] ✂ Response split into {len(chunks)} chunks")
+    success = all(_get_messenger().send_message(psid, chunk) for chunk in chunks)
     if success:
         _log(f"[MESSENGER BOT] ✅ Replied to {user_name} ({psid})")
     else:
@@ -169,8 +201,8 @@ def webhook_receive():
     if not payload:
         return "Bad Request", 400
 
-    # Always return 200 immediately — Facebook requires fast ack
-    _process_messenger_payload(payload)
+    # Return 200 immediately so Facebook doesn't retry — process in background
+    threading.Thread(target=_process_messenger_payload, args=(payload,), daemon=True).start()
     return "EVENT_RECEIVED", 200
 
 
@@ -206,25 +238,48 @@ def _process_messenger_payload(payload: dict):
             if not message_text:
                 continue
 
-            # Retrieve or initialize chat history for this user
-            history = _chat_histories.get(sender_id, [])
+            # Deduplicate: skip if this exact message was already processed
+            mid = message.get("mid", "")
+            if mid:
+                with _mid_lock:
+                    if mid in _processed_mids:
+                        _log(f"[MESSENGER BOT] ⏭ Duplicate mid {mid} — skipping")
+                        continue
+                    _processed_mids.add(mid)
+
+            # Retrieve or initialize chat history for this user (thread-safe)
+            with _chat_lock:
+                history = list(_chat_histories.get(sender_id, []))
 
             # Fetch user's real name from the Graph API
             user_name = _get_messenger().get_user_name(sender_id) or ""
             _log(f"\n[MESSENGER BOT] 📨 New message from {user_name or sender_id}")
 
-            success = handle_message(sender_id, user_name, message_text,
-                                     chat_history=history)
+            result = run_full_pipeline(message_text, chat_history=history, route=None, username=user_name)
+            response_text = (result.get("response") or "").strip()
 
+            if not response_text:
+                _log(f"[MESSENGER BOT] ⚠ Empty response from pipeline — skipping reply")
+                continue
+
+            _log(f"[MESSENGER BOT] 🤖 Bot response ({len(response_text)} chars):")
+            _log(f"[MESSENGER BOT]    \"{response_text[:120]}{'...' if len(response_text) > 120 else ''}\"")
+
+            chunks = _split_message(response_text)
+            if len(chunks) > 1:
+                _log(f"[MESSENGER BOT] ✂ Response split into {len(chunks)} chunks")
+            success = all(_get_messenger().send_message(sender_id, chunk) for chunk in chunks)
             if success:
-                # Update history for next turn
-                result_response = _get_last_response(sender_id)
-                history = history + [
+                _log(f"[MESSENGER BOT] ✅ Replied to {user_name} ({sender_id})")
+                # Update history for next turn (thread-safe)
+                updated = history + [
                     {"role": "user", "content": message_text},
-                    {"role": "assistant", "content": result_response},
+                    {"role": "assistant", "content": response_text},
                 ]
-                # Keep last 10 turns (20 messages) to avoid unbounded growth
-                _chat_histories[sender_id] = history[-20:]
+                with _chat_lock:
+                    _chat_histories[sender_id] = updated[-20:]
+            else:
+                _log(f"[MESSENGER BOT] ❌ Failed to send reply to {user_name} ({sender_id})")
 
 
 def _get_last_response(psid: str) -> str:

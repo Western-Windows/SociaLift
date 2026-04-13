@@ -34,11 +34,11 @@ class FacebookMessenger:
     def send_message(self, recipient_psid: str, message_text: str) -> bool:
         """
         Sends a text message to a specific user (PSID).
-        
+
         Args:
             recipient_psid (str): The Page Scoped ID of the user.
             message_text (str): The text content to send.
-            
+
         Returns:
             bool: True if sent successfully, False otherwise.
         """
@@ -48,7 +48,7 @@ class FacebookMessenger:
 
         url = f"{self.base_url}/me/messages"
         params = {"access_token": self.access_token}
-     
+
         payload = {
             "recipient": {"id": recipient_psid},
             "message": {"text": message_text},
@@ -56,14 +56,14 @@ class FacebookMessenger:
         }
 
         try:
-     
+
             self._send_action(recipient_psid, "typing_on")
-           
+
             response = self.session.post(url, params=params, json=payload)
             response.raise_for_status()
 
             self._send_action(recipient_psid, "typing_off")
-            
+
             data = response.json()
             msg_id = data.get('message_id', 'Unknown ID')
             print(f"   ✅ Message sent! (ID: {msg_id})")
@@ -97,7 +97,7 @@ class FacebookMessenger:
         try:
             self.session.post(url, params={"access_token": self.access_token}, json=payload)
         except:
-            pass 
+            pass
 
     def _handle_error(self, e):
         """Parses and prints API errors clearly."""
@@ -107,7 +107,7 @@ class FacebookMessenger:
                 msg = err.get('error', {}).get('message', str(e))
                 code = err.get('error', {}).get('code')
                 print(f"   ❌ API Error ({code}): {msg}")
-        
+
                 if code == 230:
                     print("      ℹ️  Permissions missing. Check 'pages_messaging'.")
                 elif code == 100:
@@ -132,7 +132,7 @@ def main():
         sys.exit(1)
 
     psid = get_input("Enter User PSID (Page Scoped ID)")
-    
+
     if not psid:
         print("   👋 Exiting.")
         sys.exit(0)
@@ -142,7 +142,7 @@ def main():
 
     while True:
         msg = get_input("Type message")
-        
+
         if msg.lower() in ['exit', 'quit', 'q']:
             print("   👋 Goodbye!")
             break
