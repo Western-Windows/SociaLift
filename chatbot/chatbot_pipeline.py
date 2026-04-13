@@ -948,7 +948,7 @@ _FORCE_REINDEX = os.environ.get("FORCE_REINDEX", "false").lower() == "true"
 _chroma_exists = Path(_CHROMA_PERSIST_DIR).exists() and any(Path(_CHROMA_PERSIST_DIR).iterdir())
 
 if _chroma_exists and not _FORCE_REINDEX:
-    _log(f"[PIPELINE] [LOAD] Loading vector store from: {_CHROMA_PERSIST_DIR}")
+    _log("[PIPELINE] [LOAD] Loading vector store from ChromaDB")
     vector_store = load_vector_database(persist_directory=_CHROMA_PERSIST_DIR, collection_name=_COLLECTION_NAME)
     _raw = vector_store.get()
     _doc_count = len(_raw.get('ids', []))
@@ -960,7 +960,7 @@ if _chroma_exists and not _FORCE_REINDEX:
         for i in range(_doc_count)
     ]
 else:
-    _log(f"[PIPELINE] [LOAD] Processing data from: {_CSV_PATH}")
+    _log("[PIPELINE] [LOAD] Processing data from CSV")
     _df = pd.read_csv(_CSV_PATH, encoding="utf-8")
     _log(f"[PIPELINE] [OK] Loaded {len(_df)} rows from CSV")
     _NAME_COL = os.environ.get("NAME_COL", "ProductTitle")
@@ -970,7 +970,7 @@ else:
     _data_results = _ingestor.process()
     _log(f"[PIPELINE] [OK] Processed {len(_data_results)} records")
     langchain_docs = store_in_vector_database(_data_results)
-    _log(f"[PIPELINE] [BUILD] Indexing in ChromaDB: {_CHROMA_PERSIST_DIR}")
+    _log("[PIPELINE] [BUILD] Indexing in ChromaDB")
     vector_store = index_documents(docs=langchain_docs, persist_directory=_CHROMA_PERSIST_DIR,
                                    collection_name=_COLLECTION_NAME)
 
