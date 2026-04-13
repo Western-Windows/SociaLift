@@ -21,7 +21,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           <div className="nav-links">
             <Link to="/home" className={location.pathname === "/home" ? "active" : "link-white"}>Home</Link>
             <Link to="/dashboard" className={location.pathname === "/dashboard" ? "active" : "link-white"}>Dashboard & Calendar</Link>
-            <Link to="/post-gen" className={location.pathname === "/post-gen" ? "active" : "link-white"}>Post Generation</Link>
+            <Link
+              to="/post-gen1-0"
+              className={
+                ["/post-gen1-0", "/post-gen1-1a", "/post-gen1-1b", "/post-gen1-2"].includes(location.pathname)
+                  ? "active"
+                  : "link-white"
+              }
+            >
+              Post Generation
+            </Link>
           </div>
           <div className="nav-user">
             <img src={userAvatar} alt="User" />

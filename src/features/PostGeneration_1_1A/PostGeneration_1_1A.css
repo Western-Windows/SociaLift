@@ -1,0 +1,277 @@
+/* --- Base Container --- */
+.post-generation-container {
+    background-color: #eeeaf3 !important; 
+    width: 100% !important;
+    flex-grow: 1 !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.post-generation-container *,
+.post-generation-container *::before,
+.post-generation-container *::after {
+    box-sizing: inherit !important;
+}
+
+/* --- Main Layout --- */
+.pg-main-layout {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding: 3rem 4rem !important;
+    gap: 3rem !important;
+    align-items: flex-start !important;
+    background: transparent !important;
+    flex-grow: 1 !important;
+}
+
+/* --- Sidebar --- */
+.pg-sidebar {
+    width: 220px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important; 
+    flex-shrink: 0 !important;
+    padding-top: 1rem !important;
+}
+
+/* --- Clickable Step Styling --- */
+.pg-step-clickable {
+    cursor: pointer !important;
+    transition: opacity 0.2s ease !important;
+}
+
+.pg-step-clickable:hover {
+    opacity: 0.75 !important;
+}
+
+.pg-step {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 1rem !important;
+    width: 100% !important;
+}
+
+/* Sidebar Numbers & Checkmarks */
+.pg-step-check {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    background-color: #45c9c1 !important; /* Teal */
+    color: #ffffff !important;
+    flex-shrink: 0 !important;
+}
+
+.pg-step-num {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    flex-shrink: 0 !important;
+}
+
+.pg-active-num {
+    background-color: #a88bdf !important; /* Purple */
+    color: #ffffff !important;
+}
+
+/* Sidebar Text */
+.pg-step-text {
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    text-align: left !important;
+}
+
+.pg-active-text {
+    color: #07265c !important; 
+    font-weight: 600 !important;
+}
+
+.pg-completed-text {
+    color: #07265c !important;
+    font-weight: 700 !important;
+}
+
+/* Thick Vertical Line */
+.pg-step-line {
+    width: 4px !important;
+    height: 60px !important;
+    border-radius: 4px !important;
+    margin: 6px 0 6px 11px !important; 
+}
+
+.pg-line-completed {
+    background-color: #45c9c1 !important; /* Teal connecting line */
+}
+
+/* Sidebar Badge */
+.pg-badge {
+    margin-top: 2rem !important;
+    background: rgba(230, 135, 216, 0.3) !important;
+    color: #e687d8 !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    display: inline-block !important;
+}
+
+/* --- Form Card --- */
+.pg-form-card {
+    flex-grow: 1 !important;
+    background-color: #ffffff !important; 
+    border-radius: 12px !important;
+    padding: 3rem !important;
+    width: 100% !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important; 
+}
+
+/* --- Typography --- */
+.pg-title {
+    font-size: 20px !important;
+    color: #07265c !important; 
+    margin: 0 0 1.5rem 0 !important;
+    text-align: left !important;
+    font-weight: 500 !important;
+}
+
+/* --- Form Elements --- */
+.pg-form-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+}
+
+.pg-input-group {
+    width: 100% !important;
+}
+
+/* Read-Only Text Area styling */
+.pg-textarea-readonly {
+    width: 100% !important;
+    min-height: 280px !important;
+    border: 1px solid #e1e3e6 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+    font-family: inherit !important;
+    color: rgba(7, 38, 92, 0.75) !important; /* Grey text */
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    outline: none !important;
+    resize: none !important; 
+    cursor: default !important; 
+}
+
+.pg-textarea-readonly:focus {
+    border-color: #e1e3e6 !important;
+    box-shadow: none !important;
+}
+
+/* --- Action Area (Buttons & Note) --- */
+.pg-action-area {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-top: 2.5rem !important;
+}
+
+.pg-button-row {
+    display: flex !important;
+    justify-content: center !important; 
+    gap: 1.5rem !important;
+    width: 100% !important;
+}
+
+.pg-submit-btn {
+    border-radius: 6px !important;
+    height: 44px !important;
+    flex: 1 !important;
+    max-width: 250px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important; /* Added gap to properly space the text and the clock icon */
+}
+
+/* Primary Button Style applied to both buttons */
+.pg-btn-primary {
+    background-color: #a88bdf !important; 
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.pg-btn-primary:hover {
+    filter: brightness(0.9) !important; 
+}
+
+/* Info Note */
+.pg-info-note {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    margin-top: 1.25rem !important;
+    font-size: 14px !important;
+    color: #79aef5 !important; /* Soft blue */
+    text-align: center !important;
+    font-weight: 500 !important;
+}
+
+.pg-info-icon {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    margin-top: 1px !important;
+}
+
+/* --- Responsive Fallbacks --- */
+@media (max-width: 850px) {
+    .pg-main-layout {
+        flex-direction: column !important;
+        padding: 2rem !important;
+    }
+    
+    .pg-sidebar {
+        width: 100% !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 1rem !important;
+        padding-top: 0 !important;
+    }
+
+    .pg-step-line {
+        display: none !important; 
+    }
+
+    .pg-button-row {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1rem !important;
+    }
+
+    .pg-submit-btn {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
