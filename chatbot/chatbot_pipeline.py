@@ -684,6 +684,9 @@ def route_2_product_query(query: str, compressed_query: str = None) -> Dict[str,
     except FileNotFoundError:
         domain_vocab = routing_config.get('domain_vocab', {}) or {}
 
+    # Pre-compute lemmatized query tokens once for all fields
+    _query_lemma_tokens = {clean_token(t) for t in query_for_filtering.split() if t.strip()}
+
     filters: Dict[str, List[str]] = {}
     for schema_field, actual_values in metadata_schema_values.items():
         vocab_key = COLUMN_TO_VOCAB.get(schema_field)
@@ -692,13 +695,17 @@ def route_2_product_query(query: str, compressed_query: str = None) -> Dict[str,
         terms = domain_vocab.get(vocab_key, [])
         if not isinstance(terms, list):
             continue
-        # Find vocab terms present in the query (whole-word match to avoid
-        # "men" matching inside "women", "top" inside "laptop", etc.)
+        # Find vocab terms present in the query.
+        # Two-pass: (1) exact whole-word regex (handles multi-word terms like "flip flops"),
+        # (2) lemma-token match to handle plural/inflected forms ("socks" → "sock").
         matched_terms = {
             clean_token(term) for term in terms
-            if str(term).strip() and re.search(
-                r"\b" + re.escape(str(term).strip().lower()) + r"\b",
-                query_for_filtering
+            if str(term).strip() and (
+                re.search(
+                    r"\b" + re.escape(str(term).strip().lower()) + r"\b",
+                    query_for_filtering
+                )
+                or clean_token(str(term).strip()) in _query_lemma_tokens
             )
         }
         if not matched_terms:
@@ -1199,11 +1206,25 @@ def query_router(query: str, k: int = 10, filters: dict = None) -> list:
         return hybrid_retrieve(query, k=k, filters=filters)
 
 
-def generate_query_variations(query: str, llm=None, n: int = 3) -> list:
+def generate_query_variations(query: str, llm=None, n: int = 3, domain_vocab: dict = None) -> list:
     if llm is None:
         return [query]
     try:
-        prompt = f"Generate {n} diverse search queries that are paraphrases of: {query}\nReturn one per line."
+        catalog_hint = ""
+        if domain_vocab:
+            product_types = domain_vocab.get("products", [])[:40]
+            subcategories = domain_vocab.get("subcategories", [])
+            if product_types or subcategories:
+                catalog_hint = (
+                    f"\nThe catalog contains these product types: {', '.join(product_types)}."
+                    f"\nAnd these subcategories: {', '.join(subcategories)}."
+                    f"\nWhen generating variations, include any catalog terms that are semantically related to the query."
+                )
+        prompt = (
+            f"Generate {n} diverse search queries for a fashion product catalog based on: \"{query}\""
+            f"{catalog_hint}"
+            f"\nReturn exactly one query per line, no numbering or bullets."
+        )
         resp = llm.invoke([HumanMessage(content=prompt)])
         lines = [ln.strip() for ln in resp.content.splitlines() if ln.strip()]
         if query not in lines:
@@ -1214,7 +1235,7 @@ def generate_query_variations(query: str, llm=None, n: int = 3) -> list:
 
 
 def rag_fusion_retrieve(query: str, k: int = 10, filters: dict = None, original_docs: list = None) -> tuple:
-    variations = generate_query_variations(query, llm=light_llm, n=3)
+    variations = generate_query_variations(query, llm=light_llm, n=3, domain_vocab=routing_config.get('domain_vocab'))
     if filters:
         _log(f"[RETRIEVAL] [FILTER] Applying filters across {len(variations)} variations: {filters}")
     all_results = [query_router(q, k=k, filters=filters) for q in variations]
