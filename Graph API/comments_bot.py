@@ -214,24 +214,30 @@ def _process_feed_payload(payload: dict):
 
             _log(f"[COMMENTS BOT] [SEARCH] parent_id={parent_id!r} post_id={post_id!r} tags={value.get('message_tags')!r}")
 
-            # Skip replies to other users' comments (parent_id is a comment, not the post)
-            # This catches user-to-user threads where the page shouldn't interfere.
-            is_reply_to_comment = parent_id and parent_id != post_id
-            if is_reply_to_comment:
+            # Determine if this is a reply to another comment vs. a direct post comment.
+            # Facebook uses two distinct ID formats:
+            #   Direct comment on post:  parent_id = {page_id}_{post_number}   (ends with post_number)
+            #   Reply to a comment:      parent_id = {post_number}_{comment_id} (starts with post_number)
+            post_number = post_id.rsplit("_", 1)[-1] if "_" in post_id else post_id
+            parent_prefix = parent_id.rsplit("_", 1)[0] if "_" in parent_id else parent_id
+            is_reply_to_comment = bool(parent_id) and parent_prefix == post_number
+
+            # Check if the page is addressed: either via @tag or page name in text
+            message_tags = value.get("message_tags") or []
+            tagged_ids = {tag.get("id", "") for tag in message_tags}
+            page_tagged = PAGE_ID in tagged_ids
+            page_mentioned = bool(PAGE_NAME) and PAGE_NAME.lower() in message.lower()
+            page_addressed = page_tagged or page_mentioned
+
+            if is_reply_to_comment and not page_addressed:
                 _log(f"[COMMENTS BOT] [SKIP] Skipping reply to another comment (parent={parent_id})")
                 continue
 
-            # Skip comments that tag other users but not the page.
-            # message_tags is a list of dicts: {id, name, type, offset, length}
-            # type "user" = another person, type "page" = a page (could be ours)
-            message_tags = value.get("message_tags") or []
-            if message_tags:
-                tagged_ids = {tag.get("id", "") for tag in message_tags}
-                mentions_page = PAGE_ID in tagged_ids
-                if not mentions_page:
-                    sender_name = value.get("from", {}).get("name", "someone")
-                    _log(f"[COMMENTS BOT] [SKIP] Skipping user-to-user comment from {sender_name} (tags others, not page)")
-                    continue
+            # Skip user-to-user direct comments that tag others but not the page
+            if not is_reply_to_comment and message_tags and not page_tagged:
+                sender_name = value.get("from", {}).get("name", "someone")
+                _log(f"[COMMENTS BOT] [SKIP] Skipping user-to-user comment from {sender_name} (tags others, not page)")
+                continue
 
             sender_name = value.get("from", {}).get("name", "")
             _log(f"[COMMENTS BOT] [IN] New comment event | post={post_id} | from={sender_name}")

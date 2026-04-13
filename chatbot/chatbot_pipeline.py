@@ -687,8 +687,12 @@ def route_2_product_query(query: str, compressed_query: str = None) -> Dict[str,
     # Pre-compute lemmatized query tokens once for all fields
     _query_lemma_tokens = {clean_token(t) for t in query_for_filtering.split() if t.strip()}
 
+    _FILTER_FIELDS = {"Gender", "Colour", "Color", "SubCategory", "ProductType", "BrandName", "Usage", "Style"}
+
     filters: Dict[str, List[str]] = {}
     for schema_field, actual_values in metadata_schema_values.items():
+        if schema_field not in _FILTER_FIELDS:
+            continue
         vocab_key = COLUMN_TO_VOCAB.get(schema_field)
         if not vocab_key:
             continue
@@ -1223,6 +1227,10 @@ def generate_query_variations(query: str, llm=None, n: int = 3, domain_vocab: di
         prompt = (
             f"Generate {n} diverse search queries for a fashion product catalog based on: \"{query}\""
             f"{catalog_hint}"
+            f"\nMake the queries intentionally varied in style:"
+            f"\n- At least one should be a short keyword phrase (1-3 words)"
+            f"\n- At least one should be a descriptive natural language sentence about the product's purpose, feel, or use case"
+            f"\n- At least one should use synonyms or related catalog terms"
             f"\nReturn exactly one query per line, no numbering or bullets."
         )
         resp = llm.invoke([HumanMessage(content=prompt)])
