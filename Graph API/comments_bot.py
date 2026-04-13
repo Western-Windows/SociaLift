@@ -60,14 +60,14 @@ load_dotenv(override=True)
 
 # ── Import chatbot pipeline ───────────────────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent.parent / "chatbot"))
-from chatbot_pipeline import run_full_pipeline  # noqa: E402
+from chatbot_pipeline import run_full_pipeline, _ColorFormatter  # noqa: E402
 
 # ── Import Facebook API utilities ─────────────────────────────────────────────
 try:
     from comment_reply import FacebookBot
     from config import Config
 except ImportError as e:
-    print(f"❌ Could not import Facebook utilities: {e}")
+    print(f"[ERR] Could not import Facebook utilities: {e}")
     sys.exit(1)
 
 # ── Logger ────────────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ logger.setLevel(logging.INFO)
 logger.propagate = False
 if not logger.handlers:
     _h = logging.StreamHandler()
-    _h.setFormatter(logging.Formatter("%(message)s"))
+    _h.setFormatter(_ColorFormatter("%(message)s"))
     logger.addHandler(_h)
 
 def _log(msg: str):
@@ -122,7 +122,7 @@ def handle_comment(comment_id: str, message: str, post_snippet: str = "",
     """
     message = _strip_page_mention(message)
 
-    _log(f"[COMMENTS BOT] 💬 Comment {comment_id}")
+    _log(f"[COMMENTS BOT] [MSG] Comment {comment_id}")
     _log(f"[COMMENTS BOT]    From: {username or 'unknown'}")
     _log(f"[COMMENTS BOT]    Post: \"{post_snippet[:60]}\"")
     _log(f"[COMMENTS BOT]    Message: \"{message[:80]}\"")
@@ -132,18 +132,18 @@ def handle_comment(comment_id: str, message: str, post_snippet: str = "",
     response_text = result.get("response", "").strip()
 
     if not response_text:
-        _log(f"[COMMENTS BOT] ⚠ Empty response from pipeline — skipping reply")
+        _log(f"[COMMENTS BOT] [WARN] Empty response from pipeline — skipping reply")
         return False
 
-    _log(f"[COMMENTS BOT] 🤖 Bot response ({len(response_text)} chars):")
+    _log(f"[COMMENTS BOT] [LLM] Bot response ({len(response_text)} chars):")
     _log(f"[COMMENTS BOT]    \"{response_text[:120]}{'...' if len(response_text) > 120 else ''}\"")
 
     # Send reply
     success = _get_bot().send_reply(comment_id, response_text)
     if success:
-        _log(f"[COMMENTS BOT] ✅ Replied to comment {comment_id}")
+        _log(f"[COMMENTS BOT] [OK] Replied to comment {comment_id}")
     else:
-        _log(f"[COMMENTS BOT] ❌ Failed to send reply to comment {comment_id}")
+        _log(f"[COMMENTS BOT] [ERR] Failed to send reply to comment {comment_id}")
 
     return success
 
@@ -160,10 +160,10 @@ def webhook_verify():
     challenge = request.args.get("hub.challenge")
 
     if mode == "subscribe" and token == VERIFY_TOKEN:
-        _log("[COMMENTS BOT] ✅ Webhook verified by Facebook")
+        _log("[COMMENTS BOT] [OK] Webhook verified by Facebook")
         return challenge, 200
     else:
-        _log("[COMMENTS BOT] ❌ Webhook verification failed — check WEBHOOK_VERIFY_TOKEN in .env")
+        _log("[COMMENTS BOT] [ERR] Webhook verification failed — check WEBHOOK_VERIFY_TOKEN in .env")
         return "Forbidden", 403
 
 
@@ -201,7 +201,7 @@ def _process_feed_payload(payload: dict):
             # Skip page's own comments
             sender_id = value.get("from", {}).get("id", "")
             if sender_id == PAGE_ID:
-                _log("[COMMENTS BOT] ⏭ Skipping own page comment")
+                _log("[COMMENTS BOT] [SKIP] Skipping own page comment")
                 continue
 
             comment_id = value.get("comment_id", "")
@@ -212,13 +212,13 @@ def _process_feed_payload(payload: dict):
             if not comment_id or not message:
                 continue
 
-            _log(f"[COMMENTS BOT] 🔍 parent_id={parent_id!r} post_id={post_id!r} tags={value.get('message_tags')!r}")
+            _log(f"[COMMENTS BOT] [SEARCH] parent_id={parent_id!r} post_id={post_id!r} tags={value.get('message_tags')!r}")
 
             # Skip replies to other users' comments (parent_id is a comment, not the post)
             # This catches user-to-user threads where the page shouldn't interfere.
             is_reply_to_comment = parent_id and parent_id != post_id
             if is_reply_to_comment:
-                _log(f"[COMMENTS BOT] ⏭ Skipping reply to another comment (parent={parent_id})")
+                _log(f"[COMMENTS BOT] [SKIP] Skipping reply to another comment (parent={parent_id})")
                 continue
 
             # Skip comments that tag other users but not the page.
@@ -230,11 +230,11 @@ def _process_feed_payload(payload: dict):
                 mentions_page = PAGE_ID in tagged_ids
                 if not mentions_page:
                     sender_name = value.get("from", {}).get("name", "someone")
-                    _log(f"[COMMENTS BOT] ⏭ Skipping user-to-user comment from {sender_name} (tags others, not page)")
+                    _log(f"[COMMENTS BOT] [SKIP] Skipping user-to-user comment from {sender_name} (tags others, not page)")
                     continue
 
             sender_name = value.get("from", {}).get("name", "")
-            _log(f"[COMMENTS BOT] 📨 New comment event | post={post_id} | from={sender_name}")
+            _log(f"[COMMENTS BOT] [IN] New comment event | post={post_id} | from={sender_name}")
             handle_comment(comment_id, message, post_snippet=f"Post {post_id}", username=sender_name)
 
 
@@ -250,16 +250,16 @@ def run_from_file(json_path: Path = None):
     json_path = json_path or COMMENTS_JSON_PATH
 
     _log(f"[COMMENTS BOT] {'=' * 60}")
-    _log(f"[COMMENTS BOT] 📂 Loading comments from: {json_path}")
+    _log(f"[COMMENTS BOT] [LOAD] Loading comments from: {json_path}")
 
     if not json_path.exists():
-        _log(f"[COMMENTS BOT] ❌ File not found: {json_path}")
+        _log(f"[COMMENTS BOT] [ERR] File not found: {json_path}")
         return
 
     with open(json_path, encoding="utf-8") as f:
         posts = json.load(f)
 
-    _log(f"[COMMENTS BOT] 📊 Found {len(posts)} posts")
+    _log(f"[COMMENTS BOT] [STATS] Found {len(posts)} posts")
 
     total_comments = 0
     replied = 0
@@ -285,7 +285,7 @@ def run_from_file(json_path: Path = None):
             and c.get("id") not in replied_to_ids
         ]
 
-        _log(f"\n[COMMENTS BOT] 📄 Post: \"{post_snippet[:60]}\"")
+        _log(f"\n[COMMENTS BOT] [DOCS] Post: \"{post_snippet[:60]}\"")
         _log(f"[COMMENTS BOT]    {len(unreplied)} unreplied comment(s) out of {len(comments)} total")
 
         for comment in unreplied:
@@ -300,7 +300,7 @@ def run_from_file(json_path: Path = None):
             if message_tags:
                 tagged_ids = {tag.get("id", "") for tag in message_tags}
                 if PAGE_ID not in tagged_ids:
-                    _log(f"\n[COMMENTS BOT] ⏭ Skipping user-to-user comment: \"{message[:60]}\"")
+                    _log(f"\n[COMMENTS BOT] [SKIP] Skipping user-to-user comment: \"{message[:60]}\"")
                     skipped += 1
                     continue
 
@@ -314,7 +314,7 @@ def run_from_file(json_path: Path = None):
                 skipped += 1
 
     _log(f"\n[COMMENTS BOT] {'=' * 60}")
-    _log(f"[COMMENTS BOT] ✅ Done — {total_comments} comment(s) processed, {replied} replied, {skipped} skipped")
+    _log(f"[COMMENTS BOT] [OK] Done — {total_comments} comment(s) processed, {replied} replied, {skipped} skipped")
     _log(f"[COMMENTS BOT] {'=' * 60}")
 
 
@@ -343,11 +343,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.test:
-        _log("[COMMENTS BOT] ▶ Running in TEST mode (file-based)")
+        _log("[COMMENTS BOT] >> Running in TEST mode (file-based)")
         run_from_file()
     else:
         if not VERIFY_TOKEN:
-            _log("[COMMENTS BOT] ⚠ WEBHOOK_VERIFY_TOKEN is not set in .env — webhook verification will fail")
-        _log(f"[COMMENTS BOT] ▶ Starting webhook server on port {args.port}")
+            _log("[COMMENTS BOT] [WARN] WEBHOOK_VERIFY_TOKEN is not set in .env — webhook verification will fail")
+        _log(f"[COMMENTS BOT] >> Starting webhook server on port {args.port}")
         _log(f"[COMMENTS BOT]   Next: run 'ngrok http {args.port}' and register the URL in Facebook Developer Console")
         app.run(port=args.port, debug=True)

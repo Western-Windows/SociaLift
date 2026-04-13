@@ -8,6 +8,7 @@
 
 # ── Standard Library ──────────────────────────────────────────────────────────
 import os
+import sys
 import re
 import time
 import json
@@ -47,13 +48,85 @@ load_dotenv(override=True)
 BASE_DIR = Path(__file__).parent / "files"
 CHROMA_DIR = Path(__file__).parent / "chroma_db"
 
-# ── Demo Logger ───────────────────────────────────────────────────────────────
+# ── Colored logging ───────────────────────────────────────────────────────────
+if os.name == "nt":
+    os.system("")  # enable ANSI escape codes on Windows 10+
+
+_C = {
+    "reset":   "\033[0m",
+    "dim":     "\033[2m",
+    "bold":    "\033[1m",
+    "grey":    "\033[90m",
+    "green":   "\033[92m",
+    "red":     "\033[91m",
+    "yellow":  "\033[93m",
+    "blue":    "\033[94m",
+    "cyan":    "\033[96m",
+    "magenta": "\033[95m",
+    "white":   "\033[97m",
+}
+
+_TAG_COLORS = {
+    "[OK]":       _C["green"],
+    "[ERR]":      _C["red"],
+    "[WARN]":     _C["yellow"],
+    "[FILTER]":   _C["cyan"],
+    "[SEARCH]":   _C["blue"],
+    "[ROUTE]":    _C["magenta"],
+    "[EVAL]":     _C["blue"],
+    "[LOAD]":     _C["cyan"],
+    "[BUILD]":    _C["cyan"],
+    "[DOCS]":     _C["white"],
+    "[MSG]":      _C["white"],
+    "[IN]":       _C["green"],
+    "[LLM]":      _C["magenta"],
+    "[GEN]":      _C["magenta"],
+    "[PERSONA]":  _C["magenta"],
+    "[INFO]":     _C["cyan"],
+    "[STATS]":    _C["cyan"],
+    "[CONTEXT]":  _C["cyan"],
+    "[COMPRESS]": _C["grey"],
+    "[SKIP]":     _C["grey"],
+    "[SPLIT]":    _C["yellow"],
+    "[BM25]":     _C["blue"],
+    "[SEM]":      _C["blue"],
+    "[HYB]":      _C["blue"],
+    "[KW]":       _C["blue"],
+    "[?]":        _C["grey"],
+}
+
+_USE_COLOR = sys.stdout.isatty()
+
+class _ColorFormatter(logging.Formatter):
+    _prefix_re = re.compile(r"\[(PIPELINE|ROUTER|RETRIEVAL|MESSENGER BOT|COMMENTS BOT)\]")
+    _quote_re  = re.compile(r'"([^"\n]{1,150})"')
+    _arrow_re  = re.compile(r"(>> Query:)")
+
+    def format(self, record):
+        msg = super().format(record)
+        if not _USE_COLOR:
+            return msg
+        # Dim the module prefix  [PIPELINE], [ROUTER], etc.
+        msg = self._prefix_re.sub(
+            lambda m: f"{_C['grey']}[{m.group(1)}]{_C['reset']}", msg)
+        # Color the tag tokens
+        for tag, color in _TAG_COLORS.items():
+            if tag in msg:
+                msg = msg.replace(tag, f"{color}{tag}{_C['reset']}")
+        # Bold-green the query-start marker
+        msg = self._arrow_re.sub(
+            lambda m: f"{_C['bold']}{_C['green']}{m.group(1)}{_C['reset']}", msg)
+        # Bright-white the quoted previews ("…")
+        msg = self._quote_re.sub(
+            lambda m: f'{_C["white"]}"{m.group(1)}"{_C["reset"]}', msg)
+        return msg
+
 _logger = logging.getLogger("pipeline")
 _logger.setLevel(logging.INFO)
-_logger.propagate = False  # prevent double-printing via root logger
+_logger.propagate = False
 if not _logger.handlers:
     _h = logging.StreamHandler()
-    _h.setFormatter(logging.Formatter("%(message)s"))
+    _h.setFormatter(_ColorFormatter("%(message)s"))
     _logger.addHandler(_h)
 
 def _log(msg: str):
@@ -205,7 +278,7 @@ class DomainVocabularyBuilder:
             }
             if tokens:
                 self.vocabulary[vocab_key].update(tokens)
-                print(f"  ✓ Extracted {len(tokens)} {vocab_key} from column '{col}'")
+                print(f"  + Extracted {len(tokens)} {vocab_key} from column '{col}'")
 
     def extract_brands(self):
         """Specific dynamic extraction for Brand columns."""
@@ -214,7 +287,7 @@ class DomainVocabularyBuilder:
         for col in brand_cols:
             brands = {str(b).strip().lower() for b in self.fashion_df[col].dropna() if len(str(b).strip()) > 1}
             self.vocabulary['brands'].update(brands)
-            print(f"  ✓ Extracted {len(brands)} brands from '{col}'")
+            print(f"  + Extracted {len(brands)} brands from '{col}'")
 
     def extract_products_from_titles(self):
         """Advanced logic to find missing products focusing on head nouns and excluding knowns."""
@@ -244,7 +317,7 @@ class DomainVocabularyBuilder:
         common_nouns = {word for word, count in word_counts.items() if count >= 3}
 
         self.vocabulary['products'].update(common_nouns)
-        print(f"  ✓ Added {len(common_nouns)} highly-probable product types from titles.")
+        print(f"  + Added {len(common_nouns)} highly-probable product types from titles.")
 
     def inject_hardcoded_failsafe(self):
         """Ensure crucial baseline descriptors always exist, protecting against partial data or LLM failure."""
@@ -253,7 +326,7 @@ class DomainVocabularyBuilder:
                         'boys', 'boy', "boy's", 'girls', 'girl', "girl's", 'kids', "kids'",
                         'infant', 'baby', 'toddler', 'children', 'kidswear', 'son', 'daughter'}
         self.vocabulary['gender'].update(self._clean_token(t) for t in gender_terms)
-        print(f"  ✓ Injected {len(gender_terms)} core routing terms for gender.")
+        print(f"  + Injected {len(gender_terms)} core routing terms for gender.")
 
     def add_llm_descriptors(self, genai_client=None):
         """Dynamic domain review and expansion via Google GenAI SDK, strictly enforcing JSON format."""
@@ -300,7 +373,7 @@ Here is the current raw vocabulary state limit output to json:
             llm_vocab = json.loads(response.text)
 
             target_keys = ['gender', 'colors', 'styles', 'materials', 'products']
-            print("  ✓ Received LLM Review...")
+            print("  + Received LLM Review...")
 
             for category in target_keys:
                 if category in llm_vocab and isinstance(llm_vocab[category], list):
@@ -313,7 +386,7 @@ Here is the current raw vocabulary state limit output to json:
                     print(f"    - {category.capitalize()}: {original_len} -> {new_len} terms ({sign}{diff})")
 
         except Exception as e:
-            print(f"  ⚠️ LLM domain review/expansion failed: {e}. Relying solely on CSV data.")
+            print(f"  [WARN] LLM domain review/expansion failed: {e}. Relying solely on CSV data.")
 
     def build_and_save(self, genai_client=None, filename="domain_vocabulary.json"):
         """Execute the full pipeline, flatten, and export the vocabulary."""
@@ -335,11 +408,11 @@ Here is the current raw vocabulary state limit output to json:
         # Convert sets to sorted lists for clean JSON rendering
         final_vocab = {k: sorted(list(v)) for k, v in self.vocabulary.items()}
 
-        print("\n📊 Final Domain Vocabulary Summary")
+        print("\n[STATS] Final Domain Vocabulary Summary")
         for category, tokens in final_vocab.items():
             if category != 'all_tokens' and tokens:
                 print(f"  {category:15s}: {len(tokens):4d} terms")
-        print(f"\n✓ TOTAL UNIQUE TOKENS (all_tokens): {len(final_vocab['all_tokens'])}")
+        print(f"\n+ TOTAL UNIQUE TOKENS (all_tokens): {len(final_vocab['all_tokens'])}")
 
         try:
             dir_name = os.path.dirname(filename)
@@ -347,9 +420,9 @@ Here is the current raw vocabulary state limit output to json:
                 os.makedirs(dir_name, exist_ok=True)
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(final_vocab, f, indent=4, ensure_ascii=False)
-            print(f"\n✅ Domain explicitly saved to '{filename}' for router.")
+            print(f"\n[OK] Domain explicitly saved to '{filename}' for router.")
         except Exception as e:
-            print(f"\n⚠️ Failed to export '{filename}': {e}")
+            print(f"\n[WARN] Failed to export '{filename}': {e}")
 
         # Update metadata_schema.json with actual unique values per filterable column
         self._save_metadata_schema(filename)
@@ -370,9 +443,9 @@ Here is the current raw vocabulary state limit output to json:
             }
             with open(schema_path, 'w', encoding='utf-8') as f:
                 json.dump(metadata_schema, f, indent=4, ensure_ascii=False)
-            print(f"✅ Metadata schema (with actual values) saved to '{schema_path}'.")
+            print(f"[OK] Metadata schema (with actual values) saved to '{schema_path}'.")
         except Exception as e:
-            print(f"⚠️ Failed to export metadata schema: {e}")
+            print(f"[WARN] Failed to export metadata schema: {e}")
 
 
 def smart_compress_query(query, domain_vocab):
@@ -433,7 +506,7 @@ def load_routing_config():
         with open(BASE_DIR / "company_info.json", encoding="utf-8-sig") as f:
             config['company_info'] = json.load(f)
     except FileNotFoundError:
-        _log("[PIPELINE] ⚠ company_info.json not found")
+        _log("[PIPELINE] [WARN] company_info.json not found")
 
     try:
         with open(BASE_DIR / "company_irrelevant_template_reply.json", encoding="utf-8-sig") as f:
@@ -444,7 +517,7 @@ def load_routing_config():
                 .get("value", "")
             )
     except FileNotFoundError:
-        _log("[PIPELINE] ⚠ company_irrelevant_template_reply.json not found")
+        _log("[PIPELINE] [WARN] company_irrelevant_template_reply.json not found")
 
     try:
         with open(BASE_DIR / "company_greeting_template_reply.json", encoding="utf-8-sig") as f:
@@ -455,7 +528,7 @@ def load_routing_config():
                 .get("value", "")
             )
     except FileNotFoundError:
-        _log("[PIPELINE] ⚠ company_greeting_template_reply.json not found")
+        _log("[PIPELINE] [WARN] company_greeting_template_reply.json not found")
 
     try:
         with open(BASE_DIR / "domain_vocabulary.json", encoding="utf-8-sig") as f:
@@ -467,7 +540,7 @@ def load_routing_config():
                     all_tokens.update(str(t).lower().strip() for t in terms if str(t).strip())
             config['domain_vocab']['all_tokens'] = sorted(all_tokens)
     except FileNotFoundError:
-        _log("[PIPELINE] ⚠ domain_vocabulary.json not found")
+        _log("[PIPELINE] [WARN] domain_vocabulary.json not found")
 
     return config
 
@@ -619,10 +692,14 @@ def route_2_product_query(query: str, compressed_query: str = None) -> Dict[str,
         terms = domain_vocab.get(vocab_key, [])
         if not isinstance(terms, list):
             continue
-        # Find vocab terms present in the query
+        # Find vocab terms present in the query (whole-word match to avoid
+        # "men" matching inside "women", "top" inside "laptop", etc.)
         matched_terms = {
             clean_token(term) for term in terms
-            if str(term).strip() and str(term).strip().lower() in query_for_filtering
+            if str(term).strip() and re.search(
+                r"\b" + re.escape(str(term).strip().lower()) + r"\b",
+                query_for_filtering
+            )
         }
         if not matched_terms:
             continue
@@ -640,9 +717,9 @@ def route_2_product_query(query: str, compressed_query: str = None) -> Dict[str,
             filters[schema_field] = sorted(matched_terms)
 
     if filters:
-        _log(f"[ROUTER] 🔖 Metadata filters built: {filters}")
+        _log(f"[ROUTER] [FILTER] Metadata filters built: {filters}")
     else:
-        _log("[ROUTER] 🔖 No metadata filters matched — unfiltered retrieval")
+        _log("[ROUTER] [FILTER] No metadata filters matched — unfiltered retrieval")
     return {"query": query, "compressed_query": compressed_query, "route": QueryRoute.PRODUCT_QUERY.name,
             "route_value": 2, "metadata_filters": filters}
 
@@ -734,7 +811,7 @@ class UniversalRAGIngestor:
         self.llm = llm
         self.schema_file = schema_file or str(BASE_DIR / "metadata_schema.json")
         if self.llm is None:
-            _log("[PIPELINE] ⚠ No LLM configured for ingestor; using fallback logic.")
+            _log("[PIPELINE] [WARN] No LLM configured for ingestor; using fallback logic.")
 
     def _call_agent_for_metadata_selection(self, sample_data):
         if self.llm is None:
@@ -756,7 +833,7 @@ Task: Identify which columns represents useful "Metadata" (facets, categories, t
             selected_cols = ast.literal_eval(clean_text)
             return [c for c in selected_cols if c in self.df.columns]
         except Exception as e:
-            _log(f"[PIPELINE] ⚠ Metadata agent failed: {e}. Using all columns.")
+            _log(f"[PIPELINE] [WARN] Metadata agent failed: {e}. Using all columns.")
             exclude = [self.name_col, self.desc_col] if self.desc_col else [self.name_col]
             return [c for c in self.df.columns if c not in exclude]
 
@@ -779,21 +856,21 @@ Task: Identify which columns represents useful "Metadata" (facets, categories, t
 
     def process(self):
         sample = self.df.head(3).to_dict(orient='records')
-        _log("[PIPELINE] 🤖 Analyzing columns for importance...")
+        _log("[PIPELINE] [LLM] Analyzing columns for importance...")
         self.meta_cols = self._call_agent_for_metadata_selection(sample)
-        _log(f"[PIPELINE] ✔ Metadata columns: {self.meta_cols}")
+        _log(f"[PIPELINE] [OK] Metadata columns: {self.meta_cols}")
         try:
             with open(self.schema_file, 'w', encoding='utf-8') as f:
                 json.dump(self.meta_cols, f, indent=4)
         except Exception as e:
-            _log(f"[PIPELINE] ⚠ Could not save metadata schema: {e}")
+            _log(f"[PIPELINE] [WARN] Could not save metadata schema: {e}")
 
         if self.desc_col and self.desc_col in self.df.columns:
             template = None
         else:
-            _log("[PIPELINE] 🤖 Generating description template...")
+            _log("[PIPELINE] [LLM] Generating description template...")
             template = self._call_agent_for_template(sample)
-            _log(f"[PIPELINE] ✔ Template: \"{template}\"")
+            _log(f"[PIPELINE] [OK] Template: \"{template}\"")
 
         non_meta_cols = [c for c in self.df.columns if c not in self.meta_cols]
         results = []
@@ -837,7 +914,7 @@ def index_documents(docs: list, persist_directory: str = None, collection_name: 
         documents=docs, embedding=embedding_function,
         persist_directory=persist_directory, collection_name=collection_name
     )
-    _log(f"[PIPELINE] ✅ Indexed {len(docs)} documents to {persist_directory}")
+    _log(f"[PIPELINE] [OK] Indexed {len(docs)} documents to {persist_directory}")
     return vector_store
 
 
@@ -864,11 +941,11 @@ _FORCE_REINDEX = os.environ.get("FORCE_REINDEX", "false").lower() == "true"
 _chroma_exists = Path(_CHROMA_PERSIST_DIR).exists() and any(Path(_CHROMA_PERSIST_DIR).iterdir())
 
 if _chroma_exists and not _FORCE_REINDEX:
-    _log(f"[PIPELINE] 📂 Loading vector store from: {_CHROMA_PERSIST_DIR}")
+    _log(f"[PIPELINE] [LOAD] Loading vector store from: {_CHROMA_PERSIST_DIR}")
     vector_store = load_vector_database(persist_directory=_CHROMA_PERSIST_DIR, collection_name=_COLLECTION_NAME)
     _raw = vector_store.get()
     _doc_count = len(_raw.get('ids', []))
-    _log(f"[PIPELINE] ✅ Vector store loaded ({_doc_count} documents)")
+    _log(f"[PIPELINE] [OK] Vector store loaded ({_doc_count} documents)")
     langchain_docs = [
         Document(page_content=_raw['documents'][i],
                  metadata=_raw['metadatas'][i] if _raw['metadatas'] else {},
@@ -876,24 +953,24 @@ if _chroma_exists and not _FORCE_REINDEX:
         for i in range(_doc_count)
     ]
 else:
-    _log(f"[PIPELINE] 📂 Processing data from: {_CSV_PATH}")
+    _log(f"[PIPELINE] [LOAD] Processing data from: {_CSV_PATH}")
     _df = pd.read_csv(_CSV_PATH, encoding="utf-8")
-    _log(f"[PIPELINE] ✅ Loaded {len(_df)} rows from CSV")
+    _log(f"[PIPELINE] [OK] Loaded {len(_df)} rows from CSV")
     _NAME_COL = os.environ.get("NAME_COL", "ProductTitle")
     _DESC_COL = os.environ.get("DESC_COL", None)
-    _log("[PIPELINE] 🤖 Processing with UniversalRAGIngestor...")
+    _log("[PIPELINE] [LLM] Processing with UniversalRAGIngestor...")
     _ingestor = UniversalRAGIngestor(df=_df, name_col=_NAME_COL, desc_col=_DESC_COL, llm=good_llm)
     _data_results = _ingestor.process()
-    _log(f"[PIPELINE] ✅ Processed {len(_data_results)} records")
+    _log(f"[PIPELINE] [OK] Processed {len(_data_results)} records")
     langchain_docs = store_in_vector_database(_data_results)
-    _log(f"[PIPELINE] 🔧 Indexing in ChromaDB: {_CHROMA_PERSIST_DIR}")
+    _log(f"[PIPELINE] [BUILD] Indexing in ChromaDB: {_CHROMA_PERSIST_DIR}")
     vector_store = index_documents(docs=langchain_docs, persist_directory=_CHROMA_PERSIST_DIR,
                                    collection_name=_COLLECTION_NAME)
 
-_log("[PIPELINE] 🔧 Building BM25 index...")
+_log("[PIPELINE] [BUILD] Building BM25 index...")
 _corpus_tokens = [preprocess_for_bm25(doc.page_content) for doc in langchain_docs]
 bm25 = BM25Okapi(_corpus_tokens)
-_log(f"[PIPELINE] ✅ BM25 ready ({len(langchain_docs)} documents)")
+_log(f"[PIPELINE] [OK] BM25 ready ({len(langchain_docs)} documents)")
 embeddings = embedding_function  # alias
 
 
@@ -965,7 +1042,7 @@ def bm25_search(query: str, k: int = 10, filters: dict | None = None) -> list:
                         "score": float(score), "source": "bm25"})
     scored.sort(key=lambda x: x["score"], reverse=True)
     if filters and filtered_out:
-        _log(f"[RETRIEVAL] 🔖 {filtered_out}/{len(langchain_docs)} docs excluded by filter")
+        _log(f"[RETRIEVAL] [FILTER] {filtered_out}/{len(langchain_docs)} docs excluded by filter")
     return scored[:k]
 
 
@@ -1053,7 +1130,7 @@ Respond with exactly one word: keyword, semantic, or hybrid"""
             return result
         return _classify_query_rules(query)
     except Exception as e:
-        _log(f"[PIPELINE] ⚠ LLM classification failed: {str(e)[:50]}. Using rules.")
+        _log(f"[PIPELINE] [WARN] LLM classification failed: {str(e)[:50]}. Using rules.")
         return _classify_query_rules(query)
 
 
@@ -1112,8 +1189,8 @@ def classify_query(query: str, llm=None) -> Literal["keyword", "semantic", "hybr
 
 def query_router(query: str, k: int = 10, filters: dict = None) -> list:
     query_type = classify_query(query)
-    icons = {"keyword": "🔑", "semantic": "🧠", "hybrid": "🔀"}
-    _log(f"[PIPELINE]   🔍 Retrieval type: {icons.get(query_type, '❓')} {query_type.upper()}")
+    icons = {"keyword": "[KW]", "semantic": "[SEM]", "hybrid": "[HYB]"}
+    _log(f"[PIPELINE]   [SEARCH] Retrieval type: {icons.get(query_type, '[?]')} {query_type.upper()}")
     if query_type == "keyword":
         return bm25_search(query, k=k, filters=filters)
     elif query_type == "semantic":
@@ -1139,7 +1216,7 @@ def generate_query_variations(query: str, llm=None, n: int = 3) -> list:
 def rag_fusion_retrieve(query: str, k: int = 10, filters: dict = None, original_docs: list = None) -> tuple:
     variations = generate_query_variations(query, llm=light_llm, n=3)
     if filters:
-        _log(f"[RETRIEVAL] 🔖 Applying filters across {len(variations)} variations: {filters}")
+        _log(f"[RETRIEVAL] [FILTER] Applying filters across {len(variations)} variations: {filters}")
     all_results = [query_router(q, k=k, filters=filters) for q in variations]
     doc_scores = {}
     for result_set in all_results:
@@ -1200,10 +1277,10 @@ Explanation: <brief reasoning>"""
         explanation = (resp[resp_lower.find("explanation:") + len("explanation:"):].strip()
                        if "explanation:" in resp_lower else resp)
         is_relevant = normalized_score >= threshold
-        _log(f"[PIPELINE]   📊 Relevance: {score}/10 ({'✅ relevant' if is_relevant else '❌ not relevant'})")
+        _log(f"[PIPELINE]   [STATS] Relevance: {score}/10 ({'[OK] relevant' if is_relevant else '[ERR] not relevant'})")
         return {"is_relevant": is_relevant, "reason": explanation[:200], "score": normalized_score}
     except Exception as e:
-        _log(f"[PIPELINE]   ⚠ Relevance check error: {str(e)[:50]}")
+        _log(f"[PIPELINE]   [WARN] Relevance check error: {str(e)[:50]}")
         return {"is_relevant": True, "reason": f"llm_error: {str(e)[:50]}", "score": 0.5}
 
 
@@ -1288,7 +1365,7 @@ def load_persona(persona_id: str = None) -> dict:
             emotional_tone = _p.get("emotional_tone", "")
             keywords = _p.get("keywords", [])
             voice_description = _p.get("voice_description", "")
-            _log(f"[PIPELINE] 🎭 Persona loaded: {archetype} ({emotional_tone})")
+            _log(f"[PIPELINE] [PERSONA] Persona loaded: {archetype} ({emotional_tone})")
             return {
                 "brand_voice": voice_description,
                 "brand_values": keywords,
@@ -1314,7 +1391,7 @@ def load_persona(persona_id: str = None) -> dict:
                 ],
             }
         except Exception as _e:
-            _log(f"[PIPELINE] ⚠ Could not load final_persona.json ({_e}) — using default persona")
+            _log(f"[PIPELINE] [WARN] Could not load final_persona.json ({_e}) — using default persona")
     return PERSONA
 
 
@@ -1586,7 +1663,7 @@ def generate_response(query: str, docs: list, chat_history: list = None,
         return {"response": response.content.strip(), "sources": sources,
                 "status": "success" if docs else "no_context"}
     except Exception as e:
-        _log(f"[PIPELINE] ⚠ Generation failed: {str(e)[:50]}")
+        _log(f"[PIPELINE] [WARN] Generation failed: {str(e)[:50]}")
         return {"response": "I apologize, but I encountered an issue. Please try again.",
                 "sources": [], "status": f"error: {str(e)[:50]}"}
 
@@ -1615,24 +1692,24 @@ def retrieve_node(state: RetrievalState) -> dict:
     query = state["query"]
     filters = state.get("metadata_filters")
     if state.get("use_fusion"):
-        _log("[PIPELINE] 🔀 RAG Fusion: generating query variations...")
+        _log("[PIPELINE] [ROUTE] RAG Fusion: generating query variations...")
         original_docs = state.get("retrieved_docs", [])
         docs, variations = rag_fusion_retrieve(query, k=10, filters=filters, original_docs=original_docs)
-        _log(f"[PIPELINE] 📄 Fusion retrieved {len(docs)} docs")
+        _log(f"[PIPELINE] [DOCS] Fusion retrieved {len(docs)} docs")
         return {"retrieved_docs": docs, "fusion_queries": variations}
     else:
         if filters:
-            _log(f"[RETRIEVAL] 🔖 Applying filters: {filters}")
+            _log(f"[RETRIEVAL] [FILTER] Applying filters: {filters}")
         else:
-            _log("[RETRIEVAL] 🔖 No filters — full unfiltered retrieval")
-        _log("[PIPELINE] 🔍 Retrieving docs (single query)...")
+            _log("[RETRIEVAL] [FILTER] No filters — full unfiltered retrieval")
+        _log("[PIPELINE] [SEARCH] Retrieving docs (single query)...")
         docs = query_router(query, k=10, filters=filters)
-        _log(f"[PIPELINE] 📄 Retrieved {len(docs)} docs")
+        _log(f"[PIPELINE] [DOCS] Retrieved {len(docs)} docs")
         return {"retrieved_docs": docs}
 
 
 def reflect_node(state: RetrievalState) -> dict:
-    _log("[PIPELINE] 🤔 Reflecting on relevance...")
+    _log("[PIPELINE] [EVAL] Reflecting on relevance...")
     result = check_relevance(state["query"], state.get("retrieved_docs", []), llm=good_llm)
     return {"is_relevant": result["is_relevant"], "relevance_reason": result["reason"]}
 
@@ -1754,7 +1831,7 @@ def contextualize_node(state: dict) -> dict:
         return {}
     expanded = contextualize_query(query, chat_history)
     if expanded != query:
-        _log(f"[PIPELINE] 🔗 Context: \"{query}\" → \"{expanded}\"")
+        _log(f"[PIPELINE] [CONTEXT] Context: \"{query}\" → \"{expanded}\"")
         return {"query": expanded}
     return {}
 
@@ -1764,12 +1841,12 @@ def pre_retrieval_router_node(state: dict) -> dict:
     if _GREETING_RE.match(query.strip()):
         greeting_template = routing_config.get(
             "greeting_template",
-            "Hi {{username}}! 👋 Welcome! How can I help you today? 😊"
+            "Hi {{username}}! Welcome! How can I help you today? 😊"
         )
         username = state.get("username", "") or ""
         first_name = username.split()[0] if username else "there"
         greeting_text = greeting_template.replace("{{username}}", first_name)
-        _log("[PIPELINE] 🔀 Route: GREETING (0)")
+        _log("[PIPELINE] [ROUTE] Route: GREETING (0)")
         return {
             "route": "0",
             "compressed_query": query,
@@ -1782,7 +1859,7 @@ def pre_retrieval_router_node(state: dict) -> dict:
     if state.get("route") is not None:
         normalized = _normalize_route(state.get("route"))
         route_names = {"0": "IRRELEVANT", "1": "COMPANY_RELATED", "2": "PRODUCT_QUERY"}
-        _log(f"[PIPELINE] 🔀 Route: {route_names.get(normalized, '?')} ({normalized})")
+        _log(f"[PIPELINE] [ROUTE] Route: {route_names.get(normalized, '?')} ({normalized})")
         return {"route": normalized}
 
     routing_state = routing_graph.invoke({
@@ -1797,11 +1874,11 @@ def pre_retrieval_router_node(state: dict) -> dict:
     })
     normalized = _normalize_route(routing_state.get("route"))
     route_names = {"0": "IRRELEVANT", "1": "COMPANY_RELATED", "2": "PRODUCT_QUERY"}
-    _log(f"[PIPELINE] 🔀 Route: {route_names.get(normalized, '?')} ({normalized})")
+    _log(f"[PIPELINE] [ROUTE] Route: {route_names.get(normalized, '?')} ({normalized})")
     compressed = routing_state.get("compressed_query")
     original = state.get("query", "")
     if compressed and compressed != original:
-        _log(f"[PIPELINE] 🗜 Compressed: \"{original}\" → \"{compressed}\"")
+        _log(f"[PIPELINE] [COMPRESS] Compressed: \"{original}\" → \"{compressed}\"")
     return {
         "route": normalized,
         "compressed_query": routing_state.get("compressed_query"),
@@ -1822,7 +1899,7 @@ def route_decision(state: dict) -> str:
 
 def irrelevant_template_node(state: dict) -> dict:
     is_greeting = bool(_GREETING_RE.match(state.get("query", "").strip()))
-    _log(f"[PIPELINE] {'👋 Greeting' if is_greeting else '🚫 Irrelevant query'} → returning template response")
+    _log(f"[PIPELINE] {'Greeting' if is_greeting else 'Irrelevant query'} → returning template response")
     fallback_from_route = route_0_irrelevant_query(
         state.get("query", ""), state.get("username") or ""
     ).get("response", "")
@@ -1835,7 +1912,7 @@ def irrelevant_template_node(state: dict) -> dict:
         or routing_config.get("irrelevant_template", "")
         or "Sorry, this question is outside what I can help with here."
     )
-    _log(f"[PIPELINE] 💬 Response ({len(template_answer)} chars)")
+    _log(f"[PIPELINE] [MSG] Response ({len(template_answer)} chars)")
     _log(f"[PIPELINE]    \"{template_answer[:200]}{'...' if len(template_answer) > 200 else ''}\"")
     return {
         "generated_response": template_answer,
@@ -1866,7 +1943,7 @@ def _format_company_value(value: Any) -> str:
 
 
 def company_answer_node(state: dict) -> dict:
-    _log("[PIPELINE] 🏢 Company query → generating company answer")
+    _log("[PIPELINE] [INFO] Company query → generating company answer")
     company_payload = state.get("company_response")
     if not company_payload:
         company_payload = route_1_company_query(state.get("query", "")).get("company_response", {})
@@ -1904,7 +1981,7 @@ def company_answer_node(state: dict) -> dict:
                 if company_answer:
                     generation_status = "success_company_llm"
             except Exception as e:
-                _log(f"[PIPELINE] ⚠ Company route generation failed: {str(e)[:80]}")
+                _log(f"[PIPELINE] [WARN] Company route generation failed: {str(e)[:80]}")
 
         if not company_answer:
             if company_context:
@@ -1919,7 +1996,7 @@ def company_answer_node(state: dict) -> dict:
                     or "Happy to help! I can share details about our stores, contact information, and company background."
                 )
 
-    _log(f"[PIPELINE] 💬 Response ({len(company_answer)} chars) | status={generation_status}")
+    _log(f"[PIPELINE] [MSG] Response ({len(company_answer)} chars) | status={generation_status}")
     _log(f"[PIPELINE]    \"{company_answer[:200]}{'...' if len(company_answer) > 200 else ''}\"")
     return {
         "generated_response": company_answer,
@@ -1932,7 +2009,7 @@ def company_answer_node(state: dict) -> dict:
 
 
 def product_retrieval_node(state: dict) -> dict:
-    _log("[PIPELINE] 🔍 Product query → starting retrieval...")
+    _log("[PIPELINE] [SEARCH] Product query → starting retrieval...")
     query_text = state.get("compressed_query") or state.get("query", "")
     result = retrieval_graph.invoke({
         "query": query_text,
@@ -1971,7 +2048,7 @@ class OrchestrationState(TypedDict, total=False):
 
 
 def generate_node(state: dict) -> dict:
-    _log("[PIPELINE] ✍️  Generating response...")
+    _log("[PIPELINE] [GEN] Generating response...")
     result = generate_response(
         query=state.get("query", ""),
         docs=state.get("retrieved_docs", []),
@@ -1981,7 +2058,7 @@ def generate_node(state: dict) -> dict:
         llm=generation_llm,
     )
     response_text = result.get("response", "")
-    _log(f"[PIPELINE] 💬 Response ({len(response_text)} chars) | status={result.get('status')}")
+    _log(f"[PIPELINE] [MSG] Response ({len(response_text)} chars) | status={result.get('status')}")
     _log(f"[PIPELINE]    \"{response_text[:200]}{'...' if len(response_text) > 200 else ''}\"")
     return {
         "generated_response": response_text,
@@ -2013,9 +2090,9 @@ def validate_node(state: dict) -> dict:
     retry_count = state.get("retry_count", 0)
     is_valid, reason = validate_response(response, docs)
     if not is_valid:
-        _log(f"[PIPELINE] ⚠ Validation failed ({reason}) — retry {retry_count + 1}/{MAX_RETRIES}")
+        _log(f"[PIPELINE] [WARN] Validation failed ({reason}) — retry {retry_count + 1}/{MAX_RETRIES}")
     else:
-        _log(f"[PIPELINE] ✅ Response validated")
+        _log(f"[PIPELINE] [OK] Response validated")
     return {
         "retry_count": retry_count + (0 if is_valid else 1),
         "generation_status": "valid" if is_valid else f"invalid_{reason}",
@@ -2071,7 +2148,7 @@ def product_query_node(state: dict) -> dict:
     }
 
 
-_log("[PIPELINE] ✅ Chatbot pipeline ready!")
+_log("[PIPELINE] [OK] Chatbot pipeline ready!")
 
 
 # =============================================================================
@@ -2110,13 +2187,13 @@ def run_full_pipeline(
                         retrieved_docs, relevance_reason, route
     """
     _log(f'[PIPELINE] {"=" * 60}')
-    _log(f'[PIPELINE] 🚀 Query: "{query[:100]}"')
+    _log(f'[PIPELINE] >> Query: "{query[:100]}"')
 
     # Multi-intent detection: split into sub-queries and process each independently
     if not _is_subquery:
         parts = split_query(query)
         if len(parts) > 1:
-            _log(f'[PIPELINE] ✂️  Multi-intent query — {len(parts)} parts detected')
+            _log(f'[PIPELINE] [SPLIT] Multi-intent query — {len(parts)} parts detected')
             responses = []
             for i, part in enumerate(parts, 1):
                 _log(f'[PIPELINE] ├─ Sub-query {i}/{len(parts)}: "{part}"')

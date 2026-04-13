@@ -84,14 +84,14 @@ load_dotenv(override=True)
 
 # ── Import chatbot pipeline ───────────────────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent.parent / "chatbot"))
-from chatbot_pipeline import run_full_pipeline  # noqa: E402
+from chatbot_pipeline import run_full_pipeline, _ColorFormatter  # noqa: E402
 
 # ── Import Facebook API utilities ─────────────────────────────────────────────
 try:
     from message_reply import FacebookMessenger
     from config import Config
 except ImportError as e:
-    print(f"❌ Could not import Facebook utilities: {e}")
+    print(f"[ERR] Could not import Facebook utilities: {e}")
     sys.exit(1)
 
 # ── Logger ────────────────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ logger.setLevel(logging.INFO)
 logger.propagate = False
 if not logger.handlers:
     _h = logging.StreamHandler()
-    _h.setFormatter(logging.Formatter("%(message)s"))
+    _h.setFormatter(_ColorFormatter("%(message)s"))
     logger.addHandler(_h)
 
 def _log(msg: str):
@@ -148,7 +148,7 @@ def handle_message(psid: str, user_name: str, message_text: str,
     Process a single Messenger message through the chatbot and reply.
     Returns True if reply was sent successfully.
     """
-    _log(f"[MESSENGER BOT] 💬 Message from {user_name} (PSID: {psid})")
+    _log(f"[MESSENGER BOT] [MSG] Message from {user_name} (PSID: {psid})")
     _log(f"[MESSENGER BOT]    \"{message_text[:80]}\"")
 
     # Run chatbot pipeline — route=None lets the routing graph auto-decide
@@ -156,21 +156,21 @@ def handle_message(psid: str, user_name: str, message_text: str,
     response_text = result.get("response", "").strip()
 
     if not response_text:
-        _log(f"[MESSENGER BOT] ⚠ Empty response from pipeline — skipping reply")
+        _log(f"[MESSENGER BOT] [WARN] Empty response from pipeline — skipping reply")
         return False
 
-    _log(f"[MESSENGER BOT] 🤖 Bot response ({len(response_text)} chars):")
+    _log(f"[MESSENGER BOT] [LLM] Bot response ({len(response_text)} chars):")
     _log(f"[MESSENGER BOT]    \"{response_text[:120]}{'...' if len(response_text) > 120 else ''}\"")
 
     # Send reply (split if over Messenger's 2000-char limit)
     chunks = _split_message(response_text)
     if len(chunks) > 1:
-        _log(f"[MESSENGER BOT] ✂ Response split into {len(chunks)} chunks")
+        _log(f"[MESSENGER BOT] [SPLIT] Response split into {len(chunks)} chunks")
     success = all(_get_messenger().send_message(psid, chunk) for chunk in chunks)
     if success:
-        _log(f"[MESSENGER BOT] ✅ Replied to {user_name} ({psid})")
+        _log(f"[MESSENGER BOT] [OK] Replied to {user_name} ({psid})")
     else:
-        _log(f"[MESSENGER BOT] ❌ Failed to send reply to {user_name} ({psid})")
+        _log(f"[MESSENGER BOT] [ERR] Failed to send reply to {user_name} ({psid})")
 
     return success
 
@@ -187,10 +187,10 @@ def webhook_verify():
     challenge = request.args.get("hub.challenge")
 
     if mode == "subscribe" and token == VERIFY_TOKEN:
-        _log("[MESSENGER BOT] ✅ Webhook verified by Facebook")
+        _log("[MESSENGER BOT] [OK] Webhook verified by Facebook")
         return challenge, 200
     else:
-        _log("[MESSENGER BOT] ❌ Webhook verification failed — check WEBHOOK_VERIFY_TOKEN in .env")
+        _log("[MESSENGER BOT] [ERR] Webhook verification failed — check WEBHOOK_VERIFY_TOKEN in .env")
         return "Forbidden", 403
 
 
@@ -221,7 +221,7 @@ def _process_messenger_payload(payload: dict):
 
             # Skip echo events (page's own messages)
             if sender_id == PAGE_ID:
-                _log("[MESSENGER BOT] ⏭ Skipping echo event (page's own message)")
+                _log("[MESSENGER BOT] [SKIP] Skipping echo event (page's own message)")
                 continue
 
             message = messaging.get("message", {})
@@ -243,7 +243,7 @@ def _process_messenger_payload(payload: dict):
             if mid:
                 with _mid_lock:
                     if mid in _processed_mids:
-                        _log(f"[MESSENGER BOT] ⏭ Duplicate mid {mid} — skipping")
+                        _log(f"[MESSENGER BOT] [SKIP] Duplicate mid {mid} — skipping")
                         continue
                     _processed_mids.add(mid)
 
@@ -253,24 +253,24 @@ def _process_messenger_payload(payload: dict):
 
             # Fetch user's real name from the Graph API
             user_name = _get_messenger().get_user_name(sender_id) or ""
-            _log(f"\n[MESSENGER BOT] 📨 New message from {user_name or sender_id}")
+            _log(f"\n[MESSENGER BOT] [IN] New message from {user_name or sender_id}")
 
             result = run_full_pipeline(message_text, chat_history=history, route=None, username=user_name)
             response_text = (result.get("response") or "").strip()
 
             if not response_text:
-                _log(f"[MESSENGER BOT] ⚠ Empty response from pipeline — skipping reply")
+                _log(f"[MESSENGER BOT] [WARN] Empty response from pipeline — skipping reply")
                 continue
 
-            _log(f"[MESSENGER BOT] 🤖 Bot response ({len(response_text)} chars):")
+            _log(f"[MESSENGER BOT] [LLM] Bot response ({len(response_text)} chars):")
             _log(f"[MESSENGER BOT]    \"{response_text[:120]}{'...' if len(response_text) > 120 else ''}\"")
 
             chunks = _split_message(response_text)
             if len(chunks) > 1:
-                _log(f"[MESSENGER BOT] ✂ Response split into {len(chunks)} chunks")
+                _log(f"[MESSENGER BOT] [SPLIT] Response split into {len(chunks)} chunks")
             success = all(_get_messenger().send_message(sender_id, chunk) for chunk in chunks)
             if success:
-                _log(f"[MESSENGER BOT] ✅ Replied to {user_name} ({sender_id})")
+                _log(f"[MESSENGER BOT] [OK] Replied to {user_name} ({sender_id})")
                 # Update history for next turn (thread-safe)
                 updated = history + [
                     {"role": "user", "content": message_text},
@@ -279,7 +279,7 @@ def _process_messenger_payload(payload: dict):
                 with _chat_lock:
                     _chat_histories[sender_id] = updated[-20:]
             else:
-                _log(f"[MESSENGER BOT] ❌ Failed to send reply to {user_name} ({sender_id})")
+                _log(f"[MESSENGER BOT] [ERR] Failed to send reply to {user_name} ({sender_id})")
 
 
 def _get_last_response(psid: str) -> str:
@@ -321,11 +321,11 @@ def run_from_file(json_path: Path = None):
     json_path = json_path or MESSENGER_JSON_PATH
 
     _log(f"[MESSENGER BOT] {'=' * 60}")
-    _log(f"[MESSENGER BOT] 📂 Loading conversations from: {json_path}")
+    _log(f"[MESSENGER BOT] [LOAD] Loading conversations from: {json_path}")
     _log(f"[MESSENGER BOT]    Page name: \"{PAGE_NAME}\"")
 
     if not json_path.exists():
-        _log(f"[MESSENGER BOT] ❌ File not found: {json_path}")
+        _log(f"[MESSENGER BOT] [ERR] File not found: {json_path}")
         return
 
     with open(json_path, encoding="utf-8") as f:
@@ -345,7 +345,7 @@ def run_from_file(json_path: Path = None):
         return last_sender != PAGE_NAME
 
     needs_reply = [c for c in conversations if _needs_reply(c)]
-    _log(f"[MESSENGER BOT] 📊 {len(conversations)} total conversations, {len(unread)} unread, {len(needs_reply)} need a reply")
+    _log(f"[MESSENGER BOT] [STATS] {len(conversations)} total conversations, {len(unread)} unread, {len(needs_reply)} need a reply")
 
     total = 0
     replied = 0
@@ -363,7 +363,7 @@ def run_from_file(json_path: Path = None):
             None
         )
         if not user:
-            _log(f"[MESSENGER BOT] ⚠ Could not identify user in conversation {conv_id} — skipping")
+            _log(f"[MESSENGER BOT] [WARN] Could not identify user in conversation {conv_id} — skipping")
             skipped += 1
             continue
 
@@ -379,7 +379,7 @@ def run_from_file(json_path: Path = None):
 
         # Skip if the bot already replied as the last message (avoid duplicate replies)
         if full_history and full_history[-1]["role"] == "assistant":
-            _log(f"[MESSENGER BOT] ⏭ Conversation {conv_id} already has a bot reply as last message — skipping")
+            _log(f"[MESSENGER BOT] [SKIP] Conversation {conv_id} already has a bot reply as last message — skipping")
             skipped += 1
             continue
 
@@ -389,7 +389,7 @@ def run_from_file(json_path: Path = None):
             None
         )
         if not latest_user_msg:
-            _log(f"[MESSENGER BOT] ⚠ No user message found in conversation {conv_id} — skipping")
+            _log(f"[MESSENGER BOT] [WARN] No user message found in conversation {conv_id} — skipping")
             skipped += 1
             continue
 
@@ -411,7 +411,7 @@ def run_from_file(json_path: Path = None):
             skipped += 1
 
     _log(f"\n[MESSENGER BOT] {'=' * 60}")
-    _log(f"[MESSENGER BOT] ✅ Done — {total} conversation(s) processed, {replied} replied, {skipped} skipped")
+    _log(f"[MESSENGER BOT] [OK] Done — {total} conversation(s) processed, {replied} replied, {skipped} skipped")
     _log(f"[MESSENGER BOT] {'=' * 60}")
 
 
@@ -440,11 +440,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.test:
-        _log("[MESSENGER BOT] ▶ Running in TEST mode (file-based)")
+        _log("[MESSENGER BOT] >> Running in TEST mode (file-based)")
         run_from_file()
     else:
         if not VERIFY_TOKEN:
-            _log("[MESSENGER BOT] ⚠ WEBHOOK_VERIFY_TOKEN is not set in .env — webhook verification will fail")
-        _log(f"[MESSENGER BOT] ▶ Starting webhook server on port {args.port}")
+            _log("[MESSENGER BOT] [WARN] WEBHOOK_VERIFY_TOKEN is not set in .env — webhook verification will fail")
+        _log(f"[MESSENGER BOT] >> Starting webhook server on port {args.port}")
         _log(f"[MESSENGER BOT]   Next: run 'ngrok http {args.port}' and register the URL in Facebook Developer Console")
         app.run(port=args.port, debug=True)
