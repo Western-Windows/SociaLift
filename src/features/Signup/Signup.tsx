@@ -22,13 +22,35 @@ export function Signup() {
     agreeToTerms: false
   });
 
-  const handleNext = () => {
+const handleNext = async () => {
     if (step === 1) setStep(2);
     else {
-      // Handle Final Submit
-      console.log('Form Submitted', formData);
-      // Navigate to Getting Started Step 1
-      navigate('/getting-started');
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: formData.username,
+            email: formData.email,
+            password: formData.password
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Signup failed");
+        }
+
+        const data = await response.json();
+        // Automatically log them in by saving ID, or let them login manually
+        localStorage.setItem("socialift_user_id", data.id.toString());
+        localStorage.setItem("socialift_username", data.username);
+        
+        navigate('/getting-started');
+      } catch (error: any) {
+        console.error("Error signing up:", error.message);
+        alert(error.message); // Add proper error state handling later
+      }
     }
   };
 

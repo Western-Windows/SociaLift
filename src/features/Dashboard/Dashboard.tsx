@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ResponsiveContainer,
   XAxis,
@@ -13,23 +13,17 @@ import {
 } from 'recharts';
 import './Dashboard.css';
 
-// Mock Data for Charts
-const visitorData = [
+// Fallback Mock Data (used if backend hasn't populated data yet)
+const fallbackVisitorData = [
   { name: 'Jan', postReactions: 120, mediaViews: 200, impressions: 300 },
   { name: 'Feb', postReactions: 130, mediaViews: 210, impressions: 320 },
   { name: 'Mar', postReactions: 150, mediaViews: 190, impressions: 310 },
   { name: 'Apr', postReactions: 180, mediaViews: 250, impressions: 380 },
   { name: 'May', postReactions: 170, mediaViews: 240, impressions: 350 },
   { name: 'Jun', postReactions: 240, mediaViews: 300, impressions: 390 },
-  { name: 'Jul', postReactions: 250, mediaViews: 280, impressions: 400 },
-  { name: 'Aug', postReactions: 230, mediaViews: 290, impressions: 360 },
-  { name: 'Sep', postReactions: 280, mediaViews: 340, impressions: 430 },
-  { name: 'Oct', postReactions: 310, mediaViews: 330, impressions: 460 },
-  { name: 'Nov', postReactions: 350, mediaViews: 360, impressions: 480 },
-  { name: 'Dec', postReactions: 380, mediaViews: 390, impressions: 500 },
 ];
 
-const reactionTypes = [
+const fallbackReactionTypes = [
   { type: 'HAHA', percentage: 20, color: '#E687D8' },
   { type: 'WOW', percentage: 15, color: '#0F2F65' },
   { type: 'Sad', percentage: 10, color: '#799CE5' },
@@ -38,33 +32,19 @@ const reactionTypes = [
   { type: 'Like', percentage: 20, color: '#799CE5' },
 ];
 
-// New Weekly Data for the 3 Stat Cards
-const engagementWeeklyData = [
+const fallbackEngagementData = [
   { week: 'W1', thisMonth: 800, lastMonth: 600 },
   { week: 'W2', thisMonth: 1200, lastMonth: 800 },
   { week: 'W3', thisMonth: 900, lastMonth: 750 },
   { week: 'W4', thisMonth: 1604, lastMonth: 854 },
 ];
 
-const unfollowsWeeklyData = [
-  { week: 'W1', thisMonth: 400, lastMonth: 500 },
-  { week: 'W2', thisMonth: 300, lastMonth: 450 },
-  { week: 'W3', thisMonth: 350, lastMonth: 300 },
-  { week: 'W4', thisMonth: 190, lastMonth: 250 },
-];
-
-const followsWeeklyData = [
-  { week: 'W1', thisMonth: 1000, lastMonth: 800 },
-  { week: 'W2', thisMonth: 1500, lastMonth: 1100 },
-  { week: 'W3', thisMonth: 1300, lastMonth: 1000 },
-  { week: 'W4', thisMonth: 1830, lastMonth: 1300 },
-];
-
-// In a real app, these would likely have full date strings (e.g., '2026-04-15') 
-// rather than just a day number to match against the exact month/year.
-const calendarEventsData = [
-  { date: 15, time: '11:00 AM', title: 'Seminar Demo', color: 'green' }
-];
+// Formatting helper for standardizing event dates (YYYY-MM-DD)
+const formatDateString = (date: Date) => {
+  const offset = date.getTimezoneOffset()
+  const adjustedDate = new Date(date.getTime() - (offset*60*1000))
+  return adjustedDate.toISOString().split('T')[0]
+}
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June", 
@@ -72,22 +52,66 @@ const monthNames = [
 ];
 
 export const Dashboard: React.FC = () => {
-  // --- Dynamic Calendar State & Logic ---
+  // --- Backend Data States ---
+  const [visitorData, setVisitorData] = useState(fallbackVisitorData);
+  const [reactionTypes, setReactionTypes] = useState(fallbackReactionTypes);
+  const [engagementWeeklyData, setEngagementWeeklyData] = useState(fallbackEngagementData);
+  const [unfollowsWeeklyData, setUnfollowsWeeklyData] = useState(fallbackEngagementData);
+  const [followsWeeklyData, setFollowsWeeklyData] = useState(fallbackEngagementData);
+  const [calendarEventsData, setCalendarEventsData] = useState<any[]>([]);
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // --- Dynamic Calendar State ---
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-  };
+  // --- Fetch Backend Insights ---
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+          throw new Error("User not authenticated.");
+        }
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-  };
+        // Adjust base URL to match your FastAPI server configuration (assuming 8000 default)
+        const response = await fetch(`http://localhost:8000/api/dashboard/insights?user_id=${userId}`);
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch dashboard insights");
+        }
+
+        const result = await response.json();
+        const data = result.data;
+        
+        // Map backend data to frontend states if available, else keep fallback
+        if (data && data.visitorData) setVisitorData(data.visitorData);
+        if (data && data.reactionTypes) setReactionTypes(data.reactionTypes);
+        if (data && data.engagementData) setEngagementWeeklyData(data.engagementData);
+        if (data && data.calendarEvents) setCalendarEventsData(data.calendarEvents);
+
+      } catch (err: any) {
+        console.error("Dashboard Fetch Error:", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // --- Calendar Logic ---
+  const handlePrevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  const handleNextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
 
   const generateCalendarDays = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
-    const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+    const firstDayOfMonth = new Date(year, month, 1).getDay(); 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const daysInPrevMonth = new Date(year, month, 0).getDate();
 
@@ -96,31 +120,35 @@ export const Dashboard: React.FC = () => {
 
     const days = [];
 
-    // Fill in days from the previous month
+    // Fill previous month padding
     for (let i = 0; i < firstDayOfMonth; i++) {
+      const dayNum = daysInPrevMonth - firstDayOfMonth + i + 1;
       days.push({
-        date: daysInPrevMonth - firstDayOfMonth + i + 1,
+        date: dayNum,
+        fullDate: new Date(year, month - 1, dayNum),
         isCurrentMonth: false,
         isToday: false,
       });
     }
 
-    // Fill in days for the current month
+    // Fill current month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({
         date: i,
+        fullDate: new Date(year, month, i),
         isCurrentMonth: true,
         isToday: isCurrentMonthThisMonth && i === today.getDate(),
       });
     }
 
-    // Fill in days for the next month to complete the grid (ensure 35 or 42 cells total)
+    // Fill next month padding
     const totalCells = days.length > 35 ? 42 : 35;
     const extraDays = totalCells - days.length;
 
     for (let i = 1; i <= extraDays; i++) {
       days.push({
         date: i,
+        fullDate: new Date(year, month + 1, i),
         isCurrentMonth: false,
         isToday: false,
       });
@@ -131,11 +159,21 @@ export const Dashboard: React.FC = () => {
 
   const calendarDays = generateCalendarDays();
 
+  // Highlight selected cell
+  const isSelected = (dayDate: Date) => {
+    if (!selectedDate) return false;
+    return formatDateString(dayDate) === formatDateString(selectedDate);
+  }
+
   return (
     <div className="dashboard-container">
+      {/* Optional: Add a lightweight error/loading banner at the top */}
+      {error && <div style={{ color: 'red', padding: '10px', textAlign: 'center' }}>Warning: Using cached data. {error}</div>}
+      
       <main className="dashboard-main">
         {/* Two Column Layout */}
         <div className="content-grid">
+          
           {/* Left Column */}
           <div className="left-panel">
             {/* Visitor Insights */}
@@ -143,13 +181,11 @@ export const Dashboard: React.FC = () => {
               <div className="card-header">
                 <h2>Visitor Insights</h2>
               </div>
-
               <div className="chart-legend">
                 <span className="legend-item"><span className="dot impressions" />Impressions</span>
                 <span className="legend-item"><span className="dot views" />Media views</span>
                 <span className="legend-item"><span className="dot reactions" />Post Reactions</span>
               </div>
-
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height={280}>
                   <AreaChart data={visitorData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -170,9 +206,7 @@ export const Dashboard: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#A3AED0', fontSize: 12 }} dy={10} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fill: '#A3AED0', fontSize: 12 }} />
-                    <Tooltip
-                      contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0px 10px 20px rgba(0,0,0,0.05)' }}
-                    />
+                    <Tooltip contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0px 10px 20px rgba(0,0,0,0.05)' }} />
                     <Area type="monotone" dataKey="impressions" stroke="#4318FF" strokeWidth={3} fillOpacity={1} fill="url(#colorImpressions)" />
                     <Area type="monotone" dataKey="mediaViews" stroke="#39B8FF" strokeWidth={3} fillOpacity={1} fill="url(#colorViews)" />
                     <Area type="monotone" dataKey="postReactions" stroke="#CBD5E1" strokeWidth={3} fillOpacity={1} fill="url(#colorReactions)" />
@@ -187,12 +221,13 @@ export const Dashboard: React.FC = () => {
                 <h2>Total Reactions</h2>
               </div>
               <div className="reactions-pie-wrapper" style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px', position: 'relative' }}>
-
                 <div className="pie-center-label">
                   <span className="pie-center-title">Total Reactions</span>
-                  <span className="pie-center-value">150</span>
+                  <span className="pie-center-value">
+                    {/* Sum up all reactions dynamically */}
+                    {reactionTypes.reduce((acc, curr) => acc + curr.percentage, 0)}%
+                  </span>
                 </div>
-
                 <PieChart width={250} height={250}>
                   <Pie
                     data={reactionTypes}
@@ -228,7 +263,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column */}
+          {/* Right Column: Calendar */}
           <div className="right-panel">
             <div className="card calendar-widget">
               <div className="calendar-header">
@@ -237,33 +272,32 @@ export const Dashboard: React.FC = () => {
                   <h3>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
                   <button className="nav-btn" onClick={handleNextMonth}>{'>'}</button>
                 </div>
-                <div className="calendar-filters">
-                  <button>Month</button>
-                  <button className="active">Week</button>
-                  <button>Day</button>
-                  <button>List</button>
-                </div>
               </div>
 
               <div className="calendar-grid">
-                {/* Standardized Sunday -> Saturday layout to match JavaScript's native date mapping */}
                 <div className="days-row">
                   <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
                 </div>
                 <div className="dates-grid">
                   {calendarDays.map((dayObj, i) => {
-                    // Find events for this date (Note: simplified to just match the day number)
-                    const eventsForDay = calendarEventsData.filter(e => e.date === dayObj.date && dayObj.isCurrentMonth);
+                    const formattedDayDate = formatDateString(dayObj.fullDate);
+                    
+                    // Match events dynamically by true date string
+                    const eventsForDay = calendarEventsData.filter(e => e.date === formattedDayDate);
 
                     return (
                       <div 
                         key={i} 
-                        className={`date-cell ${!dayObj.isCurrentMonth ? 'other-month' : ''} ${dayObj.isToday ? 'active' : ''}`}
+                        onClick={() => setSelectedDate(dayObj.fullDate)}
+                        style={{ cursor: 'pointer' }}
+                        className={`date-cell ${!dayObj.isCurrentMonth ? 'other-month' : ''} 
+                                   ${dayObj.isToday ? 'active' : ''} 
+                                   ${isSelected(dayObj.fullDate) && !dayObj.isToday ? 'selected' : ''}`}
                       >
                         <span className="date-number">{dayObj.date}</span>
                         <div className="cell-events">
                           {eventsForDay.map((evt, idx) => (
-                            <div key={idx} className={`mini-event event-${evt.color}`}>
+                            <div key={idx} className={`mini-event event-${evt.color || 'blue'}`}>
                               {evt.time} {evt.title}
                             </div>
                           ))}
@@ -277,7 +311,7 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
         
-        {/* Header Cards */}
+        {/* Header Cards Row (Bottom) */}
         <section className="stats-row">
           {/* Engagement Card */}
           <div className="stat-card">
@@ -307,10 +341,7 @@ export const Dashboard: React.FC = () => {
                 <AreaChart data={engagementWeeklyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#A3AED0' }} dy={5} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#A3AED0' }} />
-                  <Tooltip
-                    cursor={{ stroke: 'rgba(0,0,0,0.05)', strokeWidth: 2 }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}
-                  />
+                  <Tooltip cursor={{ stroke: 'rgba(0,0,0,0.05)', strokeWidth: 2 }} />
                   <Area type="monotone" dataKey="thisMonth" name="This Month" stroke="#799CE5" fill="#799CE5" fillOpacity={0.1} strokeWidth={3} />
                   <Area type="monotone" dataKey="lastMonth" name="Last Month" stroke="#E687D8" fill="none" strokeWidth={2} />
                 </AreaChart>
@@ -346,10 +377,7 @@ export const Dashboard: React.FC = () => {
                 <AreaChart data={unfollowsWeeklyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#A3AED0' }} dy={5} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#A3AED0' }} />
-                  <Tooltip
-                    cursor={{ stroke: 'rgba(0,0,0,0.05)', strokeWidth: 2 }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}
-                  />
+                  <Tooltip cursor={{ stroke: 'rgba(0,0,0,0.05)', strokeWidth: 2 }} />
                   <Area type="monotone" dataKey="thisMonth" name="This Month" stroke="#799CE5" fill="#799CE5" fillOpacity={0.1} strokeWidth={3} />
                   <Area type="monotone" dataKey="lastMonth" name="Last Month" stroke="#E687D8" fill="none" strokeWidth={2} />
                 </AreaChart>
@@ -385,10 +413,7 @@ export const Dashboard: React.FC = () => {
                 <AreaChart data={followsWeeklyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#A3AED0' }} dy={5} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#A3AED0' }} />
-                  <Tooltip
-                    cursor={{ stroke: 'rgba(0,0,0,0.05)', strokeWidth: 2 }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}
-                  />
+                  <Tooltip cursor={{ stroke: 'rgba(0,0,0,0.05)', strokeWidth: 2 }} />
                   <Area type="monotone" dataKey="thisMonth" name="This Month" stroke="#799CE5" fill="#799CE5" fillOpacity={0.1} strokeWidth={3} />
                   <Area type="monotone" dataKey="lastMonth" name="Last Month" stroke="#E687D8" fill="none" strokeWidth={2} />
                 </AreaChart>

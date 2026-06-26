@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional, Union
 
 try:
-    from config import Config
+    from . import config
 except ImportError:
     print("❌ Error: config.py not found. Please ensure you have the configuration file.")
     sys.exit(1)
@@ -28,14 +28,14 @@ logger = logging.getLogger(__name__)
 class FacebookPoster:
     MAX_VIDEO_SIZE_BYTES = 1024 * 1024 * 1024
 
-    def __init__(self):
-        self.access_token = Config.FACEBOOK_PAGE_ACCESS_TOKEN
-        self.page_id = Config.FACEBOOK_PAGE_ID
+    def __init__(self, access_token: str, page_id: str):
+        self.access_token = access_token
+        self.page_id = page_id
         self.base_url = "https://graph.facebook.com/v24.0"
+        self.session = requests.Session()
         
         if not self.access_token or not self.page_id:
-            print("❌ Credentials missing. Check .env file.")
-            sys.exit(1)
+            raise ValueError("Credentials missing for FacebookPoster")
 
         self.session = requests.Session()
 

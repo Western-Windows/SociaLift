@@ -13,7 +13,7 @@ This script fetches and processes insights data for a Facebook Page.
 """
 
 try:
-    from config import Config
+    from . import config
 except ImportError:
     print("❌ Error: config.py not found.")
     sys.exit(1)
@@ -22,11 +22,10 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 class PageInsightsFetcher:
-    def __init__(self):
+    def __init__(self, access_token: str, page_id: str):
         self.base_url = "https://graph.facebook.com/v19.0"
-        self.page_id = Config.FACEBOOK_PAGE_ID
-        self.access_token = Config.FACEBOOK_PAGE_ACCESS_TOKEN
-        
+        self.access_token = access_token
+        self.page_id = page_id
         # 1. Metric Mapping
         self.metric_map = {
             "page_post_engagements": "page_post_engagements",
