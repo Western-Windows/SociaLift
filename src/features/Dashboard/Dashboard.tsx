@@ -39,11 +39,10 @@ const fallbackEngagementData = [
   { week: 'W4', thisMonth: 1604, lastMonth: 854 },
 ];
 
-// Formatting helper for standardizing event dates (YYYY-MM-DD)
 const formatDateString = (date: Date) => {
-  const offset = date.getTimezoneOffset()
-  const adjustedDate = new Date(date.getTime() - (offset*60*1000))
-  return adjustedDate.toISOString().split('T')[0]
+  const offset = date.getTimezoneOffset();
+  const adjustedDate = new Date(date.getTime() - (offset*60*1000));
+  return adjustedDate.toISOString().split('T')[0];
 }
 
 const monthNames = [
@@ -76,7 +75,6 @@ export const Dashboard: React.FC = () => {
           throw new Error("User not authenticated.");
         }
 
-        // Adjust base URL to match your FastAPI server configuration (assuming 8000 default)
         const response = await fetch(`http://localhost:8000/api/dashboard/insights?user_id=${userId}`);
         
         if (!response.ok) {
@@ -86,11 +84,15 @@ export const Dashboard: React.FC = () => {
         const result = await response.json();
         const data = result.data;
         
-        // Map backend data to frontend states if available, else keep fallback
-        if (data && data.visitorData) setVisitorData(data.visitorData);
-        if (data && data.reactionTypes) setReactionTypes(data.reactionTypes);
-        if (data && data.engagementData) setEngagementWeeklyData(data.engagementData);
-        if (data && data.calendarEvents) setCalendarEventsData(data.calendarEvents);
+        // Map backend data to frontend states ONLY if they have data (preserves fallbacks otherwise)
+        if (data) {
+            if (data.visitorData?.length > 0) setVisitorData(data.visitorData);
+            if (data.reactionTypes?.length > 0) setReactionTypes(data.reactionTypes);
+            if (data.engagementData?.length > 0) setEngagementWeeklyData(data.engagementData);
+            if (data.followsData?.length > 0) setFollowsWeeklyData(data.followsData);
+            if (data.unfollowsData?.length > 0) setUnfollowsWeeklyData(data.unfollowsData);
+            if (data.calendarEvents) setCalendarEventsData(data.calendarEvents);
+        }
 
       } catch (err: any) {
         console.error("Dashboard Fetch Error:", err);
@@ -120,7 +122,6 @@ export const Dashboard: React.FC = () => {
 
     const days = [];
 
-    // Fill previous month padding
     for (let i = 0; i < firstDayOfMonth; i++) {
       const dayNum = daysInPrevMonth - firstDayOfMonth + i + 1;
       days.push({
@@ -131,7 +132,6 @@ export const Dashboard: React.FC = () => {
       });
     }
 
-    // Fill current month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({
         date: i,
@@ -141,7 +141,6 @@ export const Dashboard: React.FC = () => {
       });
     }
 
-    // Fill next month padding
     const totalCells = days.length > 35 ? 42 : 35;
     const extraDays = totalCells - days.length;
 
@@ -159,24 +158,57 @@ export const Dashboard: React.FC = () => {
 
   const calendarDays = generateCalendarDays();
 
-  // Highlight selected cell
   const isSelected = (dayDate: Date) => {
     if (!selectedDate) return false;
     return formatDateString(dayDate) === formatDateString(selectedDate);
   }
 
+  // Calculate totals dynamically for the Stat Cards
+  const engagementThisMonth = engagementWeeklyData.reduce((acc, curr) => acc + (curr.thisMonth || 0), 0);
+  const engagementLastMonth = engagementWeeklyData.reduce((acc, curr) => acc + (curr.lastMonth || 0), 0);
+
+  const unfollowsThisMonth = unfollowsWeeklyData.reduce((acc, curr) => acc + (curr.thisMonth || 0), 0);
+  const unfollowsLastMonth = unfollowsWeeklyData.reduce((acc, curr) => acc + (curr.lastMonth || 0), 0);
+
+  const followsThisMonth = followsWeeklyData.reduce((acc, curr) => acc + (curr.thisMonth || 0), 0);
+  const followsLastMonth = followsWeeklyData.reduce((acc, curr) => acc + (curr.lastMonth || 0), 0);
+
+  // --- Loading View (Rotating Spinner) ---
+  if (isLoading) {
+    return (
+      <div className="dashboard-container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}
+        </style>
+        <div 
+          style={{
+            width: '50px',
+            height: '50px',
+            border: '5px solid #E2E8F0',
+            borderTop: '5px solid #0F2F65',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            marginBottom: '16px'
+          }}
+        />
+        <h3 style={{ color: '#0F2F65', margin: 0 }}>Loading Insights...</h3>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-container">
-      {/* Optional: Add a lightweight error/loading banner at the top */}
       {error && <div style={{ color: 'red', padding: '10px', textAlign: 'center' }}>Warning: Using cached data. {error}</div>}
       
       <main className="dashboard-main">
-        {/* Two Column Layout */}
         <div className="content-grid">
           
-          {/* Left Column */}
           <div className="left-panel">
-            {/* Visitor Insights */}
             <div className="card visitor-insights">
               <div className="card-header">
                 <h2>Visitor Insights</h2>
@@ -215,7 +247,6 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Reactions Chart */}
             <div className="card Total-reactions">
               <div className="reactions-header">
                 <h2>Total Reactions</h2>
@@ -224,7 +255,6 @@ export const Dashboard: React.FC = () => {
                 <div className="pie-center-label">
                   <span className="pie-center-title">Total Reactions</span>
                   <span className="pie-center-value">
-                    {/* Sum up all reactions dynamically */}
                     {reactionTypes.reduce((acc, curr) => acc + curr.percentage, 0)}%
                   </span>
                 </div>
@@ -263,7 +293,6 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Calendar */}
           <div className="right-panel">
             <div className="card calendar-widget">
               <div className="calendar-header">
@@ -281,8 +310,6 @@ export const Dashboard: React.FC = () => {
                 <div className="dates-grid">
                   {calendarDays.map((dayObj, i) => {
                     const formattedDayDate = formatDateString(dayObj.fullDate);
-                    
-                    // Match events dynamically by true date string
                     const eventsForDay = calendarEventsData.filter(e => e.date === formattedDayDate);
 
                     return (
@@ -311,9 +338,7 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
         
-        {/* Header Cards Row (Bottom) */}
         <section className="stats-row">
-          {/* Engagement Card */}
           <div className="stat-card">
             <div className="stat-card-header">
               <div className="stat-title-section">
@@ -321,14 +346,14 @@ export const Dashboard: React.FC = () => {
               </div>
               <div className="stat-numbers-compact">
                 <div className="stat-number-item">
-                  <span className="amount">4,504</span>
+                  <span className="amount">{engagementThisMonth.toLocaleString()}</span>
                   <span className="label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#799CE5' }} />
                     This Month
                   </span>
                 </div>
                 <div className="stat-number-item">
-                  <span className="amount previous">3,004</span>
+                  <span className="amount previous">{engagementLastMonth.toLocaleString()}</span>
                   <span className="label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#E687D8' }} />
                     Last Month
@@ -349,7 +374,6 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Unfollows Card */}
           <div className="stat-card">
             <div className="stat-card-header">
               <div className="stat-title-section">
@@ -357,14 +381,14 @@ export const Dashboard: React.FC = () => {
               </div>
               <div className="stat-numbers-compact">
                 <div className="stat-number-item">
-                  <span className="amount">1,240</span>
+                  <span className="amount">{unfollowsThisMonth.toLocaleString()}</span>
                   <span className="label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#799CE5' }} />
                     This Month
                   </span>
                 </div>
                 <div className="stat-number-item">
-                  <span className="amount previous">1,500</span>
+                  <span className="amount previous">{unfollowsLastMonth.toLocaleString()}</span>
                   <span className="label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#E687D8' }} />
                     Last Month
@@ -385,7 +409,6 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Follows Card */}
           <div className="stat-card">
             <div className="stat-card-header">
               <div className="stat-title-section">
@@ -393,14 +416,14 @@ export const Dashboard: React.FC = () => {
               </div>
               <div className="stat-numbers-compact">
                 <div className="stat-number-item">
-                  <span className="amount">5,630</span>
+                  <span className="amount">{followsThisMonth.toLocaleString()}</span>
                   <span className="label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#799CE5' }} />
                     This Month
                   </span>
                 </div>
                 <div className="stat-number-item">
-                  <span className="amount previous">4,200</span>
+                  <span className="amount previous">{followsLastMonth.toLocaleString()}</span>
                   <span className="label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#E687D8' }} />
                     Last Month

@@ -21,8 +21,14 @@ class UserResponse(BaseModel):
         from_attributes = True # Allows Pydantic to read SQLAlchemy models
 
         # Add this to the bottom of backend/schemas.py
+from typing import Optional
+
 class FacebookLoginRequest(BaseModel):
     accessToken: str
+    is_signup: bool = False
+    username: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
 
 class ScheduleRequest(BaseModel):
     user_id: int

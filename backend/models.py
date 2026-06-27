@@ -9,7 +9,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     
     # Standard Login
-    hashed_password = Column(String, nullable=True) # Nullable because FB users don't need passwords
+    hashed_password = Column(String, nullable=False)
     
     # Facebook Login
     facebook_id = Column(String, unique=True, index=True, nullable=True)

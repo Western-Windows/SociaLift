@@ -61,18 +61,21 @@ export function Login() {
       const res = await fetch("http://127.0.0.1:8000/api/auth/facebook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken })
+        body: JSON.stringify({ accessToken, is_signup: false })
       });
 
       if (!res.ok) {
-        throw new Error("Backend verification failed");
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Backend verification failed");
       }
 
       const data = await res.json();
-      localStorage.setItem("user_id", data.user_id.toString());
+      localStorage.setItem("socialift_user_id", data.user_id.toString());
+      localStorage.setItem("socialift_username", data.username || "User");
       navigate('/home');
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during Facebook login sync:", error);
+      alert(error.message);
     }
   };
 

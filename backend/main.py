@@ -7,7 +7,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
+import bcrypt
 
 load_dotenv()
 FB_APP_ID = os.getenv("FACEBOOK_APP_ID")
@@ -34,14 +34,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Password hashing setup
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing setup using bcrypt natively
+def get_password_hash(password: str):
+    # Truncate to 72 characters to prevent bcrypt 72-byte limit crashes
+    print("Password: ", password)
+    truncated_password = password[:72].encode('utf-8')
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(truncated_password, salt).decode('utf-8')
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(plain_password: str, hashed_password: str):
+    if not hashed_password:
+        return False
+    try:
+        # We must also truncate the plain text password during login to match the hash
+        truncated_password = plain_password[:72].encode('utf-8')
+        return bcrypt.checkpw(truncated_password, hashed_password.encode('utf-8'))
+    except Exception:
+        return False
 
 @app.get("/api/health")
 def health_check():
@@ -55,9 +64,12 @@ def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+    print("BACKEND RECEIVED PASSWORD:", repr(user.password))
+    print("PASSWORD LENGTH:", len(user.password))
     # 2. Hash the password and save to DB
     hashed_pw = get_password_hash(user.password)
+    print("HASHED PASSWORD:", repr(hashed_pw))
+    print("HASHED LENGTH:", len(hashed_pw))
     new_user = models.User(username=user.username, email=user.email, hashed_password=hashed_pw)
     
     db.add(new_user)
@@ -125,8 +137,8 @@ def facebook_login(payload: schemas.FacebookLoginRequest, db: Session = Depends(
     # 1. Fetch user profile data
     profile_url = f"https://graph.facebook.com/me?fields=id,name,email&access_token={long_lived_token}"
     profile_response = requests.get(profile_url).json()
-    email = profile_response.get("email")
-    username = profile_response.get("name")
+    fb_email = profile_response.get("email")
+    fb_username = profile_response.get("name")
     fb_user_id = profile_response.get("id")
 
     # 2. Fetch the User's Pages and their specific PAGE ACCESS TOKENS
@@ -146,27 +158,50 @@ def facebook_login(payload: schemas.FacebookLoginRequest, db: Session = Depends(
     user = db.query(models.User).filter(models.User.facebook_id == fb_user_id).first()
     
     if not user:
-        if email:
-            user = db.query(models.User).filter(models.User.email == email).first()
-        
-        if user:
-            user.facebook_id = fb_user_id
-            user.fb_access_token = long_lived_token
-            user.fb_page_id = page_id
-            user.fb_page_access_token = page_token
+        if payload.is_signup:
+            if not payload.username or not payload.email or not payload.password:
+                raise HTTPException(status_code=400, detail="Username, email, and password are required for signup")
+            
+            # Check if email already exists
+            user = db.query(models.User).filter(models.User.email == payload.email).first()
+            if user:
+                user.facebook_id = fb_user_id
+                user.fb_access_token = long_lived_token
+                user.fb_page_id = page_id
+                user.fb_page_access_token = page_token
+            else:
+                hashed_pw = get_password_hash(payload.password)
+                user = models.User(
+                    username=payload.username,
+                    email=payload.email,
+                    hashed_password=hashed_pw,
+                    facebook_id=fb_user_id,
+                    fb_access_token=long_lived_token,
+                    fb_page_id=page_id,
+                    fb_page_access_token=page_token
+                )
+                db.add(user)
         else:
-            user = models.User(
-                username=username,
-                email=email if email else f"{fb_user_id}@facebook.local",
-                facebook_id=fb_user_id,
-                fb_access_token=long_lived_token,
-                fb_page_id=page_id,
-                fb_page_access_token=page_token
-            )
-            db.add(user)
+            if fb_email:
+                user = db.query(models.User).filter(models.User.email == fb_email).first()
+                if user:
+                    user.facebook_id = fb_user_id
+                    user.fb_access_token = long_lived_token
+                    user.fb_page_id = page_id
+                    user.fb_page_access_token = page_token
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND, 
+                        detail="User not found. Please sign up first."
+                    )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, 
+                    detail="User not found. Please sign up first."
+                )
     else:
         # Update tokens on returning login
-        user.fb_user_access_token = long_lived_token
+        user.fb_access_token = long_lived_token
         user.fb_page_id = page_id
         user.fb_page_access_token = page_token
 
@@ -176,6 +211,7 @@ def facebook_login(payload: schemas.FacebookLoginRequest, db: Session = Depends(
     return {
         "message": "Facebook login & Page link successful",
         "user_id": user.id,
+        "username": user.username,
         "linked_page_id": user.fb_page_id
     }
 
@@ -220,6 +256,8 @@ def schedule_facebook_post(request: schemas.ScheduleRequest, db: Session = Depen
 
 # --- DASHBOARD ENDPOINT ---
 
+# --- DASHBOARD ENDPOINT ---
+
 @app.get("/api/dashboard/insights")
 def get_dashboard_insights(user_id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -230,56 +268,103 @@ def get_dashboard_insights(user_id: int, db: Session = Depends(get_db)):
     page_id = user.fb_page_id
     fetcher = PageInsightsFetcher(access_token=user.fb_access_token, page_id=page_id)
     
-    daily_raw = fetcher.fetch_insights(days_ago=30)
-    fb_data = fetcher.group_and_aggregate(daily_raw) if daily_raw else {}
+    daily_raw = fetcher.fetch_insights(days_ago=60) # Increased to 60 to get last month data for comparison
+    print("RAW DATA LENGTH:", len(daily_raw))
+    if len(daily_raw) > 0:
+        print("SAMPLE RAW DATA:", daily_raw[0:3]) # Print the first 3 records
+    else:
+        print("FACEBOOK RETURNED NOTHING.")
+    fb_data = fetcher.group_and_aggregate(daily_raw) if daily_raw else []
     
-    # 1. Prepare your standard chart data (Visitor, Reactions, etc.)
-    visitor_data_formatted = fb_data.get("visitors", []) 
-    reaction_types_formatted = fb_data.get("reactions", [])
-    engagement_formatted = fb_data.get("engagement", [])
-    # ... (Keep your existing formatting logic here) ...
-    visitor_data_formatted = [] # Your existing mappings
-    reaction_types_formatted = [] 
+    # --- 1. FORMATTING WAREHOUSE: Map the list of months to Recharts format ---
+    visitor_data_formatted = []
     engagement_formatted = []
+    follows_formatted = []
+    unfollows_formatted = []
+    
+    for i, month_data in enumerate(fb_data):
+        # Format the month string for the X-Axis (e.g., "2024-05" -> "May")
+        raw_month = month_data.get("month", "")
+        if raw_month:
+            dt = datetime.datetime.strptime(raw_month, "%Y-%m")
+            month_label = dt.strftime("%b") # Outputs 'Jan', 'Feb', etc.
+        else:
+            month_label = f"M{i}"
 
-    # --- NEW WAREHOUSE B: Fetch Scheduled Posts DIRECTLY from Facebook ---
+        # A. Mapping Visitor Data (Area Chart)
+        visitor_data_formatted.append({
+            "name": month_label,
+            "impressions": month_data.get("page_impressions_unique", {}).get("value", 0),
+            "mediaViews": month_data.get("page_media_view", {}).get("value", 0),
+            "postReactions": month_data.get("page_actions_post_reactions_total", {}).get("value", 0)
+        })
+
+        # B. Mapping Stat Cards / Sparklines (Compares current index to previous index)
+        this_eng = month_data.get("page_post_engagements", {}).get("value", 0)
+        last_eng = fb_data[i - 1].get("page_post_engagements", {}).get("value", 0) if i > 0 else 0
+        engagement_formatted.append({"week": month_label, "thisMonth": this_eng, "lastMonth": last_eng})
+
+        this_fol = month_data.get("page_daily_follows", {}).get("value", 0)
+        last_fol = fb_data[i - 1].get("page_daily_follows", {}).get("value", 0) if i > 0 else 0
+        follows_formatted.append({"week": month_label, "thisMonth": this_fol, "lastMonth": last_fol})
+
+        this_unf = month_data.get("page_daily_unfollows_unique", {}).get("value", 0)
+        last_unf = fb_data[i - 1].get("page_daily_unfollows_unique", {}).get("value", 0) if i > 0 else 0
+        unfollows_formatted.append({"week": month_label, "thisMonth": this_unf, "lastMonth": last_unf})
+
+    # C. Mapping Total Reactions Pie Chart (Summing across all fetched months)
+    total_like = sum(m.get("page_actions_post_reactions_like_total", {}).get("value", 0) for m in fb_data)
+    total_love = sum(m.get("page_actions_post_reactions_love_total", {}).get("value", 0) for m in fb_data)
+    total_haha = sum(m.get("page_actions_post_reactions_haha_total", {}).get("value", 0) for m in fb_data)
+    total_wow = sum(m.get("page_actions_post_reactions_wow_total", {}).get("value", 0) for m in fb_data)
+    total_sad = sum(m.get("page_actions_post_reactions_sorry_total", {}).get("value", 0) for m in fb_data)
+    total_angry = sum(m.get("page_actions_post_reactions_anger_total", {}).get("value", 0) for m in fb_data)
+
+    total_reactions = total_like + total_love + total_haha + total_wow + total_sad + total_angry
+    reaction_types_formatted = []
+
+    if total_reactions > 0:
+        reaction_types_formatted = [
+            {"type": "Like", "percentage": round((total_like / total_reactions) * 100), "color": "#799CE5"},
+            {"type": "Love", "percentage": round((total_love / total_reactions) * 100), "color": "#0F2F65"},
+            {"type": "Haha", "percentage": round((total_haha / total_reactions) * 100), "color": "#E687D8"},
+            {"type": "Wow", "percentage": round((total_wow / total_reactions) * 100), "color": "#39B8FF"},
+            {"type": "Sad", "percentage": round((total_sad / total_reactions) * 100), "color": "#CBD5E1"},
+            {"type": "Angry", "percentage": round((total_angry / total_reactions) * 100), "color": "#FF4B4B"},
+        ]
+        # Filter out 0% reactions to keep the pie chart clean
+        reaction_types_formatted = [r for r in reaction_types_formatted if r["percentage"] > 0]
+
+
+    # --- 2. NEW WAREHOUSE B: Fetch Scheduled Posts DIRECTLY from Facebook ---
     calendar_events = []
     
-    # STEP 1: Trade the User Token for the Page Token
     accounts_url = "https://graph.facebook.com/v19.0/me/accounts"
     accounts_params = {"access_token": user.fb_access_token}
     accounts_response = requests.get(accounts_url, params=accounts_params)
     
     page_access_token = None
-    
     if accounts_response.status_code == 200:
         pages_data = accounts_response.json().get("data", [])
-        # Loop through the pages this user manages to find the matching token
         for page in pages_data:
             if page.get("id") == page_id:
                 page_access_token = page.get("access_token")
                 break
 
-    if not page_access_token:
-        print(f"Error: Could not find a Page Access Token for page {page_id}.")
-    else:
-        # STEP 2: Now ask for the scheduled posts using the PAGE Token!
+    if page_access_token:
         url = f"https://graph.facebook.com/v19.0/{page_id}/scheduled_posts"
         params = {
             "fields": "id,message,scheduled_publish_time",
-            "access_token": page_access_token # <--- This is the magic key
+            "access_token": page_access_token
         }
         
         response = requests.get(url, params=params)
-        
         if response.status_code == 200:
             fb_scheduled_posts = response.json().get("data", [])
-            
             for post in fb_scheduled_posts:
                 try:
                     unix_time = post.get("scheduled_publish_time")
                     message = post.get("message", "No caption")
-                    
                     dt_obj = datetime.datetime.fromtimestamp(unix_time)
                     
                     calendar_events.append({
@@ -290,8 +375,6 @@ def get_dashboard_insights(user_id: int, db: Session = Depends(get_db)):
                     })
                 except Exception as e:
                     print(f"Failed to parse Facebook scheduled post: {e}")
-        else:
-            print(f"Error fetching scheduled posts: {response.text}")
 
     # --- THE DELIVERY: Send it all to React ---
     return {
@@ -299,6 +382,8 @@ def get_dashboard_insights(user_id: int, db: Session = Depends(get_db)):
             "visitorData": visitor_data_formatted,
             "reactionTypes": reaction_types_formatted, 
             "engagementData": engagement_formatted,
+            "followsData": follows_formatted,
+            "unfollowsData": unfollows_formatted,
             "calendarEvents": calendar_events 
         }
     }
