@@ -10,7 +10,7 @@ from personatone import generate_persona_options, load_top_posts
 
 # Paths
 WORKSPACE = Path(__file__).resolve().parents[1]
-GRAPH_DIR = WORKSPACE / 'Graph API'
+GRAPH_DIR = WORKSPACE / 'backend' / 'Graph'
 FB_FULL_PATH = WORKSPACE / 'fb_full_history.json'
 SORTED_PATH = WORKSPACE / 'sorted_posts.json'
 CLEANED_PATH = WORKSPACE / 'sorted_posts_cleaned.json'
@@ -23,7 +23,7 @@ def run_graph_api_export():
         sys.path.insert(0, str(GRAPH_DIR))
     
     try:
-        from get_posts_insights import FacebookAnalyticsManager
+        from backend.Graph.get_posts_insights import FacebookAnalyticsManager
         manager = FacebookAnalyticsManager()
         raw_posts = manager.get_posts(limit=None)
         processed = manager.process_data(raw_posts)

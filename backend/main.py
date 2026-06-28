@@ -3,7 +3,7 @@ import sys
 import datetime
 import requests # <--- Add this import
 from dotenv import load_dotenv # <--- Add this import
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, logger, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -387,3 +387,52 @@ def get_dashboard_insights(user_id: int, db: Session = Depends(get_db)):
             "calendarEvents": calendar_events 
         }
     }
+
+# --- NEW: Persona Endpoints ---
+import sys
+from pathlib import Path
+import json
+
+PERSONA_MODULE_DIR = Path(__file__).resolve().parent.parent / "Persona Module"
+if str(PERSONA_MODULE_DIR) not in sys.path:
+    sys.path.insert(0, str(PERSONA_MODULE_DIR))
+
+@app.post("/api/persona/generate")
+def generate_persona(request: schemas.GeneratePersonaRequest):
+    try:
+        from Persona.personatone import generate_persona_options
+        import os
+        
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise HTTPException(status_code=500, detail="OPENAI_API_KEY missing from environment")
+            
+        print("Generating persona options...")
+        # Since we use the sample post as the only post context, we pass it as input_text
+        persona_options = generate_persona_options(
+            audience=request.target_audience,
+            input_text=request.sample_post,
+            api_key=api_key
+        )
+        
+        # persona_options is a Pydantic model PersonaOptions containing a list of PersonaTone
+        return persona_options.model_dump()
+        
+    except Exception as e:
+        logger.error(f"Error generating persona: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/persona/save")
+def save_persona(request: schemas.SavePersonaRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == request.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    try:
+        user.persona_json = json.dumps(request.persona_data, ensure_ascii=False)
+        db.commit()
+        return {"message": "Persona saved successfully"}
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error saving persona: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

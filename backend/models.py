@@ -20,6 +20,9 @@ class User(Base):
     fb_page_id = Column(String, nullable=True)
     fb_page_access_token = Column(String, nullable=True)
     
+    # --- NEW: Persona Data ---
+    persona_json = Column(String, nullable=True)
+    
     # Flags
     is_active = Column(Boolean, default=True)
 

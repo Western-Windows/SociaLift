@@ -34,3 +34,11 @@ class ScheduleRequest(BaseModel):
     user_id: int
     message: str
     scheduled_time_str: str
+
+class GeneratePersonaRequest(BaseModel):
+    target_audience: str
+    sample_post: str
+
+class SavePersonaRequest(BaseModel):
+    user_id: int
+    persona_data: dict
