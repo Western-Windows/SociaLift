@@ -1,0 +1,57 @@
+@startuml
+title SociaLift AI Chatbot Sequence Diagram
+
+skinparam style strictuml
+skinparam shadowing false
+
+actor User
+
+boundary "Facebook UI" as UI
+control "Meta Messenger\nWebhook" as Webhook
+
+control "Backend" as API
+control "Chatbot Service" as Chatbot
+control "Pre-Retrieval Router" as Router
+control "LLM API" as LLM
+
+entity "Conversation DB" as DB
+entity "Vector DB" as Vector
+
+User -> UI : Send comment / DM (User inquiry)
+
+UI -> Webhook : User message
+Webhook -> API : Comment / DM
+
+API -> Chatbot : multi-intent detection()
+Chatbot --> API : Query(s)
+
+API -> Router : pre-retrieval routing()
+Router --> API : Route
+
+API -> DB : Load conversation history
+DB --> API : Previous messages
+
+loop Hybrid Retrieval
+    API -> Vector : Retrieve relevant knowledge
+    Vector --> API : Context documents
+    
+    API -> API : Check relevance
+    
+    alt Context is relevant
+        API -> LLM : Prompt(history + context + question)
+        LLM --> API : Generated response
+    else Context is not relevant
+        API -> LLM : Generate 3 query variants (RAG Fusion)
+        LLM --> API : Query variants
+    end
+end
+
+API -> DB : Save question & answer
+DB --> API : Saved
+
+Webhook -> UI : Reply
+API -> Webhook : JSON response
+
+
+
+@enduml

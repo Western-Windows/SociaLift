@@ -1,0 +1,105 @@
+@startuml
+
+entity Users {
+* user_id : PK
+--
+name
+email
+password
+facebook_token
+}
+
+entity Pages {
+* page_id : PK
+--
+user_id : FK
+page_name
+page_token
+category
+}
+
+entity Posts {
+* post_id : PK
+--
+page_id : FK
+caption
+media_url
+scheduled_time
+status
+}
+
+entity Comments {
+* comment_id : PK
+--
+post_id : FK
+author
+comment
+replied
+}
+
+entity Messages {
+* message_id : PK
+--
+page_id : FK
+sender
+message
+replied
+}
+
+entity Personas {
+* persona_id : PK
+--
+page_id : FK
+age_group
+interests
+tone
+summary
+}
+
+entity Insights {
+* insight_id : PK
+--
+page_id : FK
+reach
+engagement
+impressions
+followers
+date
+}
+
+entity Competitors {
+* competitor_id : PK
+--
+page_name
+followers
+category
+}
+
+entity Trends {
+* trend_id : PK
+--
+source
+keyword
+score
+date
+}
+
+entity EnhancedPosts {
+* enhanced_id : PK
+--
+post_id : FK
+original_text
+enhanced_text
+model
+created_at
+}
+
+Users ||--o{ Pages
+Pages ||--o{ Posts
+Posts ||--o{ Comments
+Pages ||--o{ Messages
+Pages ||--o{ Personas
+Pages ||--o{ Insights
+Posts ||--|| EnhancedPosts
+
+@enduml

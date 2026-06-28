@@ -1,0 +1,79 @@
+@startuml
+
+class User{
++id
++name
++email
++accessToken
+}
+
+class FacebookPage{
++pageId
++pageName
++pageToken
+}
+
+class Post{
++id
++caption
++media
++scheduledTime
++publish()
+}
+
+class Comment{
++id
++message
++reply()
+}
+
+class Message{
++id
++text
++reply()
+}
+
+class AnalyticsService{
++getPageInsights()
++getPostInsights()
+}
+
+class EnhancementService{
++rewritePost()
++optimizeHashtags()
+}
+
+class PersonaService{
++generatePersona()
++analyzeAudience()
+}
+
+class CompetitorService{
++scrapePosts()
++comparePerformance()
+}
+
+class TrendService{
++googleTrends()
++xTrends()
+}
+
+class ChatbotService{
++askQuestion()
++retrieveKnowledge()
+}
+
+User "1" -- "*" FacebookPage
+
+FacebookPage "1" -- "*" Post
+FacebookPage "1" -- "*" Message
+Post "1" -- "*" Comment
+
+Post --> EnhancementService
+FacebookPage --> AnalyticsService
+FacebookPage --> PersonaService
+FacebookPage --> CompetitorService
+FacebookPage --> TrendService
+User --> ChatbotService
+
+@enduml

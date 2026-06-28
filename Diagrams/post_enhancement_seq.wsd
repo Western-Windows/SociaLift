@@ -1,0 +1,35 @@
+@startuml
+title SociaLift AI Content Enhancement & Scheduling
+
+hide footbox
+
+actor User
+
+boundary Frontend
+control Backend
+control EnhancementModule
+control LLM as AI
+
+control Scheduler
+control FacebookAPI
+
+User -> Frontend : Write post
+Frontend -> Backend : Post to enhance
+Backend -> EnhancementModule : enhance(post)
+EnhancementModule -> AI : Generate improved content
+AI --> EnhancementModule : Enhanced post
+EnhancementModule --> Backend : Enhanced post
+Backend --> Frontend : Enhanced post
+
+User -> Frontend : Schedule Enhanced post
+Frontend -> Backend : Post to schedule
+
+
+Scheduler -> FacebookAPI : Schedule on best time
+FacebookAPI --> Backend : Timestamp of scheduled post
+Backend -> Scheduler : Post to schedule
+Backend --> Frontend : Timestamp of scheduled post in calendar
+
+
+
+@enduml
