@@ -12,7 +12,7 @@ load_dotenv()
 from enhan_graph import build_graph, run_interactive, EnhancementState
 
 # Dynamically set the workspace to the folder containing 'Enhancement Module' (i.e., D:\SociaLift)
-WORKSPACE = Path(__file__).resolve().parents[1]
+WORKSPACE = Path(__file__).resolve().parents[2]
 
 PATHS = {
     "persona": WORKSPACE / "Persona Module" / "final_persona.json",

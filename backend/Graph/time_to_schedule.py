@@ -7,18 +7,13 @@ import sys
 from dateutil import parser
 from datetime import datetime
 
-# Try to import config
-try:
-    from config import Config
-except ImportError:
-    print("❌ Error: config.py not found.")
-    sys.exit(1)
+# Config import removed to allow dynamic page_id and access_token
 
 class HeatmapGenerator:
-    def __init__(self):
+    def __init__(self, page_id: str, access_token: str):
         self.base_url = "https://graph.facebook.com/v19.0"
-        self.page_id = Config.FACEBOOK_PAGE_ID
-        self.access_token = Config.FACEBOOK_PAGE_ACCESS_TOKEN
+        self.page_id = page_id
+        self.access_token = access_token
         self.post_limit = 100  # Analyzes last 100 posts
 
     def fetch_posts(self):
@@ -159,8 +154,35 @@ class HeatmapGenerator:
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(output, f, indent=4, ensure_ascii=False)
 
+    def get_best_upcoming_time(self) -> str:
+        from datetime import timedelta
+        raw_data = self.fetch_posts()
+        
+        # Fallback if no posts
+        if not raw_data:
+            now = datetime.now()
+            return (now + timedelta(hours=1)).isoformat()
+            
+        _, grouped_df = self.generate_matrix(raw_data)
+        
+        # Get top engagement time
+        top_time = grouped_df.sort_values(by='engagement', ascending=False).head(1).iloc[0]
+        target_day = int(top_time['day_index'])
+        target_hour = int(top_time['hour'])
+        
+        now = datetime.now()
+        days_ahead = target_day - now.weekday()
+        if days_ahead < 0 or (days_ahead == 0 and now.hour >= target_hour):
+            days_ahead += 7
+            
+        best_date = now + timedelta(days=days_ahead)
+        best_date = best_date.replace(hour=target_hour, minute=0, second=0, microsecond=0)
+        
+        return best_date.isoformat()
+
 if __name__ == "__main__":
-    generator = HeatmapGenerator()
+    import os
+    generator = HeatmapGenerator(os.environ.get("FACEBOOK_PAGE_ID", ""), os.environ.get("FACEBOOK_PAGE_ACCESS_TOKEN", ""))
     
     # 1. Fetch
     raw_data = generator.fetch_posts()

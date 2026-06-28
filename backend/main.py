@@ -222,6 +222,58 @@ from Graph.get_page_insights import PageInsightsFetcher
 
 # --- POST GENERATION ENDPOINT ---
 
+@app.post("/api/posts/generate")
+def generate_facebook_post(request: schemas.GeneratePostRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == request.user_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    import json
+    persona_data = {}
+    if user.persona_json:
+        try:
+            persona_data = json.loads(user.persona_json)
+        except Exception as e:
+            logger.warning(f"Failed to parse persona_json: {e}")
+            
+    from pathlib import Path
+    import sys
+    
+    ENHANCEMENT_DIR = Path(__file__).resolve().parent.parent / "Enhancement Module"
+    if str(ENHANCEMENT_DIR) not in sys.path:
+        sys.path.insert(0, str(ENHANCEMENT_DIR))
+        
+    try:
+        from Enhancement.enhan_graph import build_graph, EnhancementState
+        from langchain_core.runnables import RunnableConfig
+        
+        initial_state: EnhancementState = {
+            "persona": persona_data,
+            "competitors_data": [],
+            "holidays_trends": {}, 
+            "mode": "auto",
+            "input_type": request.input_type,
+            "raw_input": request.message,
+            "generated_post": None,
+            "action": None,
+            "action_input": None,
+            "final_post": None
+        }
+        
+        graph = build_graph()
+        config: RunnableConfig = {"configurable": {"thread_id": f"generate-{user.id}"}}
+        
+        print("Running AI Enhancement Module for generation...")
+        result_state = graph.invoke(initial_state, config=config)
+        final_message = result_state.get("final_post") or request.message
+        
+        return {"generated_post": final_message}
+        
+    except Exception as e:
+        logger.error(f"Error in AI Enhancement Module: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate post")
+
 @app.post("/api/posts/schedule")
 def schedule_facebook_post(request: schemas.ScheduleRequest, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == request.user_id).first()
@@ -230,24 +282,48 @@ def schedule_facebook_post(request: schemas.ScheduleRequest, db: Session = Depen
         raise HTTPException(status_code=400, detail="Facebook Page not connected")
         
     page_id = user.fb_page_id 
+    
+    final_message = request.message
+        
+    # 2. Determine Schedule Time
+    scheduled_time = request.scheduled_time_str
+    
     poster = FacebookPoster(access_token=user.fb_page_access_token, page_id=page_id)
     
-    # 1. Schedule via Facebook Graph API
-    result = poster.schedule_post(
-        message=request.message, 
-        scheduled_time_str=request.scheduled_time_str
-    )
-    
-    if not result.get('success'):
-        raise HTTPException(status_code=400, detail=result.get('error'))
+    if scheduled_time and scheduled_time.lower() == "now":
+        # 3a. Post Immediately via Facebook Graph API
+        result = poster.post_text(message=final_message)
+        if not result.get('success'):
+            raise HTTPException(status_code=400, detail=result.get('error'))
+        return {"message": "Post published successfully!", "post_id": result.get('post_id')}
         
-    # 2. NEW: Save a local record for the Calendar Dashboard
-    new_post = models.ScheduledPost(
-        user_id=user.id,
-        message=request.message,
-        scheduled_time_str=request.scheduled_time_str,
-        fb_post_id=result.get('post_id')
-    )
+    else:
+        # 3b. Schedule Post
+        if not scheduled_time or scheduled_time.lower() == "auto":
+            from Graph.time_to_schedule import HeatmapGenerator
+            try:
+                generator = HeatmapGenerator(page_id=page_id, access_token=user.fb_page_access_token)
+                scheduled_time = generator.get_best_upcoming_time()
+                print(f"Auto-calculated best time: {scheduled_time}")
+            except Exception as e:
+                logger.error(f"Error calculating best time: {e}")
+                raise HTTPException(status_code=500, detail="Failed to calculate best time")
+
+        result = poster.schedule_post(
+            message=final_message, 
+            scheduled_time_str=scheduled_time
+        )
+        
+        if not result.get('success'):
+            raise HTTPException(status_code=400, detail=result.get('error'))
+            
+        # 4. Save a local record for the Calendar Dashboard
+        new_post = models.ScheduledPost(
+            user_id=user.id,
+            message=final_message,
+            scheduled_time_str=scheduled_time,
+            fb_post_id=result.get('post_id')
+        )
     db.add(new_post)
     db.commit()
     

@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 from typing import TypedDict, List, Optional, Any, Dict, Literal
 from dotenv import load_dotenv
-env_path = Path(__file__).resolve().parents[1] / "Graph API" / ".env"
+env_path = Path(__file__).resolve().parents[2] / ".env"
 load_dotenv(dotenv_path=env_path)
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
@@ -75,6 +75,13 @@ def _extract_text(response) -> str:
 def ask_setup(state: EnhancementState) -> dict:
     """Ask mode, input type, and text — all before any generation."""
     print("\n🔵 NODE: ask_setup")
+
+    # If already provided in state (e.g. via API), skip interactive prompts
+    if state.get("mode") and state.get("input_type") and state.get("raw_input"):
+        print(f"  Mode: {state['mode']!r}")
+        print(f"  Input type: {state['input_type']!r}")
+        print(f"  Raw input: {state['raw_input'][:80]!r}...")
+        return {"mode": state["mode"], "input_type": state["input_type"], "raw_input": state["raw_input"]}
 
     # Q1 — mode
     mode_answer = interrupt({

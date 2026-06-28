@@ -33,7 +33,14 @@ class FacebookLoginRequest(BaseModel):
 class ScheduleRequest(BaseModel):
     user_id: int
     message: str
-    scheduled_time_str: str
+    input_type: str = "idea"  # "idea" or "post"
+    scheduled_time_str: Optional[str] = None
+    skip_enhancement: bool = False
+
+class GeneratePostRequest(BaseModel):
+    user_id: int
+    message: str
+    input_type: str = "idea"  # "idea" or "post"
 
 class GeneratePersonaRequest(BaseModel):
     target_audience: str
