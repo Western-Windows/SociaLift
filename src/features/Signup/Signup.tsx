@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import { Input, Button } from '../../components/components';
@@ -22,13 +22,73 @@ export function Signup() {
     agreeToTerms: false
   });
 
+  // 1. Load the official Facebook SDK natively
+  useEffect(() => {
+    (window as any).fbAsyncInit = function () {
+      (window as any).FB.init({
+        appId: '1104505465230235',
+        cookie: true,
+        xfbml: true,
+        version: 'v19.0'
+      });
+    };
+
+    (function (d, s, id) {
+      var js: any, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs?.parentNode?.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  }, []);
+
+  const handleFacebookSuccess = async (accessToken: string) => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/auth/facebook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accessToken,
+          is_signup: true,
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Facebook signup failed");
+      }
+
+      const data = await res.json();
+      localStorage.setItem("socialift_user_id", data.user_id.toString());
+      localStorage.setItem("socialift_username", data.username || "User");
+      window.location.href = '/getting-started';
+    } catch (error: any) {
+      console.error("Error during Facebook signup:", error);
+      alert(error.message);
+    }
+  };
+
+  const handleFacebookSignup = () => {
+    (window as any).FB.login(
+      (response: any) => {
+        if (response.authResponse && response.authResponse.accessToken) {
+          handleFacebookSuccess(response.authResponse.accessToken);
+        } else {
+          console.log('User cancelled login or did not fully authorize.');
+        }
+      },
+      { scope: "pages_show_list,pages_read_engagement,pages_manage_posts" }
+    );
+  };
+
   const handleNext = () => {
     if (step === 1) setStep(2);
     else {
-      // Handle Final Submit
-      console.log('Form Submitted', formData);
-      // Navigate to Getting Started Step 1
-      navigate('/getting-started');
+      // In step 2, "Create Account" should trigger the Facebook connection flow
+      handleFacebookSignup();
     }
   };
 
@@ -39,10 +99,10 @@ export function Signup() {
   const togglePassword = () => setShowPassword(!showPassword);
 
   // Validation Logic
-  const isStep1Valid = 
-    formData.username.trim() !== '' && 
-    formData.email.trim() !== '' && 
-    formData.password.trim() !== '' && 
+  const isStep1Valid =
+    formData.username.trim() !== '' &&
+    formData.email.trim() !== '' &&
+    formData.password.trim() !== '' &&
     formData.confirmPassword.trim() !== '' &&
     formData.password === formData.confirmPassword; // Ensures passwords match
 
@@ -178,8 +238,8 @@ export function Signup() {
                   <label htmlFor="terms">By creating an account, I agree to our <a href="#">Terms of use</a> and <a href="#">Privacy Policy</a></label>
                 </div>
 
-                <button className="fb-signup-btn">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                <button type="button" className="fb-signup-btn" onClick={handleFacebookSignup}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
                   Sign up with Facebook
                 </button>
               </div>
@@ -188,13 +248,13 @@ export function Signup() {
 
           {/* Primary Action Button */}
           <div className="action-button-wrapper">
-             <Button 
-               onClick={handleNext} 
-               disabled={!canProceed}
-               style={{ opacity: canProceed ? 1 : 0.5, cursor: canProceed ? 'pointer' : 'not-allowed' }}
-             >
-                {step === 1 ? 'Next' : 'Create Account'}
-             </Button>
+            <Button
+              onClick={handleNext}
+              disabled={!canProceed}
+              style={{ opacity: canProceed ? 1 : 0.5, cursor: canProceed ? 'pointer' : 'not-allowed' }}
+            >
+              {step === 1 ? 'Next' : 'Create Account'}
+            </Button>
           </div>
         </div>
       </div>

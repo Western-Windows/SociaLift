@@ -2,12 +2,21 @@ import { useState, useRef, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GettingStarted.css'; // Make sure this points to the merged file
 
+interface PersonaTone {
+    archetype: string;
+    emotional_tone: string;
+    keywords: string[];
+    voice_description: string;
+}
+
 export function GettingStarted() {
     const navigate = useNavigate();
 
     // === GLOBAL PROGRESS STATE ===
     const [step, setStep] = useState(0);
     const [showModal, setShowModal] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     // === STEP 0 STATE (Company Info 1) ===
     const [formData, setFormData] = useState({ companyName: '', founderName: '', hotline: '', phoneNumber: '', emailAddress: '' });
@@ -29,7 +38,8 @@ export function GettingStarted() {
     const [postText, setPostText] = useState('');
 
     // === STEP 5 STATE (Choose Persona) ===
-    const [selectedPersona, setSelectedPersona] = useState<number | null>(null);
+    const [personaOptions, setPersonaOptions] = useState<PersonaTone[]>([]);
+    const [selectedPersonaIndex, setSelectedPersonaIndex] = useState<number | null>(null);
 
     // === VALIDATION & HANDLERS ===
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,7 +71,7 @@ export function GettingStarted() {
     const isStep2Valid = services.every(s => s.trim() !== '') && locations.every(l => l.trim() !== '');
     const isStep3Valid = selectedFile !== null;
     const isStep4Valid = postText.trim() !== '';
-    const isStep5Valid = selectedPersona !== null;
+    const isStep5Valid = selectedPersonaIndex !== null;
 
     // Navigation Handlers
     const nextStep = () => setStep(prev => prev + 1);
@@ -70,17 +80,60 @@ export function GettingStarted() {
         else setStep(prev => prev - 1);
     };
 
-    // Dynamic Persona Mapping based on selection in Step 5
-    const getPersonaDetails = () => {
-        switch (selectedPersona) {
-            case 1:
-                return { name: "The Playful Rebel", tone: "Casual, Rebellious & Fun" };
-            case 2:
-                return { name: "The Trendsetter", tone: "Urban, Influencing & Authentic" };
-            case 3:
-                return { name: "The Ruler", tone: "Strategic, Exclusive & Elegant" };
-            default:
-                return { name: "Unknown", tone: "Unknown" };
+    const handleGeneratePersonas = async () => {
+        setIsGenerating(true);
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/persona/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    target_audience: targetAudience,
+                    sample_post: postText
+                })
+            });
+            
+            if (!response.ok) throw new Error("Failed to generate personas");
+            
+            const data = await response.json();
+            setPersonaOptions(data.options);
+            nextStep();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to generate personas. Please try again.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const handleSavePersonaAndFinish = async () => {
+        if (selectedPersonaIndex === null) return;
+        const selectedPersona = personaOptions[selectedPersonaIndex];
+        const userId = localStorage.getItem("socialift_user_id");
+        
+        if (!userId) {
+            alert("User not logged in");
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/persona/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: parseInt(userId, 10),
+                    persona_data: selectedPersona
+                })
+            });
+            
+            if (!response.ok) throw new Error("Failed to save persona");
+            
+            setShowModal(true);
+        } catch (error) {
+            console.error("Error saving persona:", error);
+            alert("Failed to save persona.");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -213,7 +266,9 @@ export function GettingStarted() {
                                 <textarea id="samplePost" className="gs-textarea" value={postText} onChange={(e) => setPostText(e.target.value)} placeholder="e.g.: From the playground to the boardroom..." />
                             </div>
                             <div className="gs-button-row">
-                                <button className="gs-continue-button" type="button" onClick={nextStep} disabled={!isStep4Valid} style={{ opacity: isStep4Valid ? 1 : 0.5 }}>Continue &rarr;</button>
+                                <button className="gs-continue-button" type="button" onClick={handleGeneratePersonas} disabled={!isStep4Valid || isGenerating} style={{ opacity: isStep4Valid && !isGenerating ? 1 : 0.5 }}>
+                                    {isGenerating ? 'Generating...' : 'Generate Personas \u2192'}
+                                </button>
                             </div>
                         </form>
                     </section>
@@ -222,13 +277,21 @@ export function GettingStarted() {
                 return (
                     <section className="gs-form-card">
                         <h2 className="gs-title">Persona Generation</h2>
-                        <p className="gs-subtitle">SociaLift provides persona for posts generation.</p>
+                        <p className="gs-subtitle">SociaLift provides persona options based on your brand.</p>
                         <div className="gs-choices-section">
                             <h3 className="gs-choices-title">Choose Your Persona</h3>
                             <div className="gs-choices-list">
-                                <button className={`gs-choice ${selectedPersona === 1 ? 'is-selected' : ''}`} type="button" onClick={() => setSelectedPersona(1)}>The Playful Rebel (Casual, Rebellious & Fun)</button>
-                                <button className={`gs-choice ${selectedPersona === 2 ? 'is-selected' : ''}`} type="button" onClick={() => setSelectedPersona(2)}>The Trendsetter (Urban, Influencing & Authentic)</button>
-                                <button className={`gs-choice ${selectedPersona === 3 ? 'is-selected' : ''}`} type="button" onClick={() => setSelectedPersona(3)}>The Ruler (Strategic, Exclusive & Elegant)</button>
+                                {personaOptions.map((option, index) => (
+                                    <button 
+                                        key={index}
+                                        className={`gs-choice ${selectedPersonaIndex === index ? 'is-selected' : ''}`} 
+                                        type="button" 
+                                        onClick={() => setSelectedPersonaIndex(index)}
+                                    >
+                                        <strong>{option.archetype}</strong>
+                                        <br/><span style={{fontSize: '0.8em'}}>{option.emotional_tone} Tone</span>
+                                    </button>
+                                ))}
                             </div>
                         </div>
                         <div className="gs-button-row">
@@ -237,17 +300,20 @@ export function GettingStarted() {
                     </section>
                 );
             case 6:
-                const persona = getPersonaDetails();
+                const selectedPersona = personaOptions[selectedPersonaIndex ?? 0];
                 return (
                     <section className="gs-form-card">
                         <h2 className="gs-title">Persona Generation</h2>
                         <div className="gs-results">
-                            <div className="gs-result-item"><span className="gs-result-label">Final Persona:</span><span className="gs-result-value">{persona.name}</span></div>
-                            <div className="gs-result-item"><span className="gs-result-label">Tone:</span><span className="gs-result-value">{persona.tone}</span></div>
-                            <div className="gs-result-item gs-long-item"><span className="gs-result-label">Example Post:</span><span className="gs-result-value">Quality you can trust for the people who matter most. From Nike active wear to Gini & Jony play-ready outfits, we've curated a complete wardrobe solution for your modern family since 1998.</span></div>
+                            <div className="gs-result-item"><span className="gs-result-label">Final Persona:</span><span className="gs-result-value">{selectedPersona?.archetype}</span></div>
+                            <div className="gs-result-item"><span className="gs-result-label">Tone:</span><span className="gs-result-value">{selectedPersona?.emotional_tone}</span></div>
+                            <div className="gs-result-item gs-long-item"><span className="gs-result-label">Keywords:</span><span className="gs-result-value">{selectedPersona?.keywords?.join(', ')}</span></div>
+                            <div className="gs-result-item gs-long-item"><span className="gs-result-label">Voice:</span><span className="gs-result-value">{selectedPersona?.voice_description}</span></div>
                         </div>
                         <div className="gs-button-row">
-                            <button className="gs-continue-button" type="button" onClick={() => setShowModal(true)}>Done!</button>
+                            <button className="gs-continue-button" type="button" onClick={handleSavePersonaAndFinish} disabled={isSaving} style={{opacity: isSaving ? 0.5 : 1}}>
+                                {isSaving ? 'Saving...' : 'Done!'}
+                            </button>
                         </div>
                     </section>
                 );

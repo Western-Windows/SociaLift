@@ -20,27 +20,79 @@ export function PostGeneration({}: PostGenerationProps) {
 
   // --- Step 2 State ---
   const [generatedText, setGeneratedText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isScheduling, setIsScheduling] = useState(false);
 
-  // The default mock generated content
-  const mockGeneratedContent = `We didn’t hire a photographer, we didn’t rent a studio, and guess what? You don’t need to either. This is how you actually wear it 🤯, a sprinkle of chaos, and a vibe that screams “I woke up like this, and I’m fabulous!” 😎✨
 
-Forget the runway, let’s strut down the street with our own unique flair! Because why blend in when you can stand out like a neon sign in a black-and-white movie? 💥
-
-So grab your favorite piece, throw on some mismatched socks, and let the world know you’re here to break all the fashion rules. Who's with me? ✋
-
-#PlayfulRebel #FashionRevolution #NoFilterJustFun`;
 
   // --- Handlers ---
-  const handleGeneratePost = () => {
-    // Mock the generation process by setting the generated text to our mock string.
-    // If you connect an API later, you'd fetch the data here.
-    setGeneratedText(mockGeneratedContent);
-    setCurrentStep(2);
+  const handleGeneratePost = async () => {
+    const userId = localStorage.getItem('socialift_user_id');
+    if (!userId) {
+      alert("Please log in first.");
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await fetch("http://localhost:8000/api/posts/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: parseInt(userId, 10),
+          message: inputText,
+          input_type: generationMode === 'sample' ? 'post' : 'idea'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate post");
+      }
+
+      const data = await response.json();
+      setGeneratedText(data.generated_post);
+      setCurrentStep(2);
+    } catch (error) {
+      console.error(error);
+      alert("Error generating post. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const handlePostAction = () => {
-    // Triggers the Success Modal overlay
-    setCurrentStep(3);
+  const handlePostAction = async (mode: 'schedule' | 'now') => {
+    const userId = localStorage.getItem('socialift_user_id');
+    if (!userId) {
+      alert("Please log in first.");
+      return;
+    }
+
+    setIsScheduling(true);
+    try {
+      const response = await fetch("http://localhost:8000/api/posts/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: parseInt(userId, 10),
+          message: generatedText,
+          input_type: generationMode === 'sample' ? 'post' : 'idea',
+          scheduled_time_str: mode === 'now' ? 'now' : 'auto',
+          skip_enhancement: true
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to schedule/post");
+      }
+
+      // Triggers the Success Modal overlay
+      setCurrentStep(3);
+    } catch (error) {
+      console.error(error);
+      alert(`Error ${mode === 'now' ? 'posting' : 'scheduling'}. Please try again.`);
+    } finally {
+      setIsScheduling(false);
+    }
   };
 
   return (
@@ -147,10 +199,10 @@ So grab your favorite piece, throw on some mismatched socks, and let the world k
                   <button 
                     className="pg-submit-btn pg-btn-primary" 
                     type="button"
-                    disabled={inputText.trim() === ''}
+                    disabled={inputText.trim() === '' || isGenerating}
                     onClick={handleGeneratePost}
                   >
-                    Generate Post &rarr;
+                    {isGenerating ? "Generating..." : "Generate Post \u2192"}
                   </button>
                 </div>
               </form>
@@ -181,16 +233,16 @@ So grab your favorite piece, throw on some mismatched socks, and let the world k
 
                 <div className="pg-action-area">
                   <div className="pg-button-row">
-                    <button className="pg-submit-btn pg-btn-primary" type="button" onClick={handlePostAction}>
-                      {requireApproval ? "Approve & Schedule Post" : "Schedule Post"}
+                    <button className="pg-submit-btn pg-btn-primary" type="button" onClick={() => handlePostAction('schedule')} disabled={isScheduling}>
+                      {isScheduling ? "Processing..." : (requireApproval ? "Approve & Schedule Post" : "Schedule Post")}
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{marginLeft: '8px'}}>
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                       </svg>
                     </button>
                     
-                    <button className="pg-submit-btn pg-btn-primary" type="button" onClick={handlePostAction}>
-                      {requireApproval ? "Approve & Post Now \u2192" : "Post Now \u2192"}
+                    <button className="pg-submit-btn pg-btn-primary" type="button" onClick={() => handlePostAction('now')} disabled={isScheduling}>
+                      {isScheduling ? "Processing..." : (requireApproval ? "Approve & Post Now \u2192" : "Post Now \u2192")}
                     </button>
                   </div>
                   

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeSlash } from '@phosphor-icons/react/dist/ssr'; 
 import './Login.css'; 
@@ -9,55 +9,109 @@ import logo from '../../assets/SociaLift logo 5.svg';
 export function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  
-  // Track form inputs for validation
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
+  // 1. Load the official Facebook SDK natively
+  useEffect(() => {
+    (window as any).fbAsyncInit = function() {
+      (window as any).FB.init({
+        appId      : '1104505465230235',
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v19.0'
+      });
+    };
+
+    (function(d, s, id) {
+      var js: any, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs?.parentNode?.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  }, []);
+
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Sign in clicked with", { email, password });
-    
-    // Navigate to Home page
-    navigate('/home');
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Login failed");
+      }
+      
+      const data = await response.json();
+      localStorage.setItem("socialift_user_id", data.user_id.toString());
+      localStorage.setItem("socialift_username", data.username);
+      
+      navigate('/home');
+    } catch (error: any) {
+      console.error("Error signing in:", error.message);
+    }
   };
 
+  const handleFacebookSuccess = async (accessToken: string) => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/auth/facebook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken, is_signup: false })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Backend verification failed");
+      }
+
+      const data = await res.json();
+      localStorage.setItem("socialift_user_id", data.user_id.toString());
+      localStorage.setItem("socialift_username", data.username || "User");
+      navigate('/home');
+    } catch (error: any) {
+      console.error("Error during Facebook login sync:", error);
+      alert(error.message);
+    }
+  };
+
+  // 2. Trigger the native login popup
   const handleFacebookLogin = () => {
-    console.log("Facebook login clicked");
-    
-    // Navigate to Home page
-    navigate('/home');
+    (window as any).FB.login(
+      (response: any) => {
+        if (response.authResponse && response.authResponse.accessToken) {
+          handleFacebookSuccess(response.authResponse.accessToken);
+        } else {
+          console.log('User cancelled login or did not fully authorize.');
+        }
+      },
+      { scope: "pages_show_list,pages_read_engagement,pages_manage_posts" }
+    );
   };
 
-  // Validation: Both fields must have text
   const isFormValid = email.trim() !== '' && password.trim() !== '';
 
   return (
     <div className="viewport-container">
       <div className="login-window">
-        {/* Background Image */}
         <img src={loginBg} alt="Background" className="login-bg" />
-
         <div className="login-content-wrapper">
           <div className="login-card">
             
-            {/* Header Section */}
             <div className="header-section">
               <div className="logo-wrapper">
                 <img src={logo} alt="SociaLift Logo" className="login-logo" />
               </div>
-              <h1 className="title">
-                Sign in
-              </h1>
+              <h1 className="title">Sign in</h1>
               <p className="subtitle">
-                New to SocialLift?{' '}
-                <a href="/signup" className="link">
-                  Sign up for free
-                </a>
+                New to SocialLift? <a href="/signup" className="link">Sign up for free</a>
               </p>
             </div>
 
-            {/* Form Section */}
             <form onSubmit={handleSignIn}>
               <Input 
                 label="Email address" 
@@ -65,44 +119,31 @@ export function Login() {
                 type="email" 
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              
               <Input 
                 label="Password" 
                 id="password" 
                 type={showPassword ? "text" : "password"} 
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 rightElement={
                   <div className="password-toggle" onClick={() => setShowPassword(!showPassword)} style={{ cursor: 'pointer' }}>
                     {showPassword ? <Eye size={16} /> : <EyeSlash size={16} />}
-                    <span>
-                      {showPassword ? "Hide" : "Show"}
-                    </span>
+                    <span>{showPassword ? "Hide" : "Show"}</span>
                   </div>
                 }
               />
-
               <div className="forgot-password-wrapper">
-                <a href="/forgot-password" className="link" style={{ fontSize: '0.775rem' }}>
-                  Forget password?
-                </a>
+                <a href="/forgot-password" className="link" style={{ fontSize: '0.775rem' }}>Forget password?</a>
               </div>
-
-              <Button 
-                type="submit" 
-                variant="primary"
-                disabled={!isFormValid}
-                style={{ opacity: isFormValid ? 1 : 0.5, cursor: isFormValid ? 'pointer' : 'not-allowed' }}
-              >
+              <Button type="submit" variant="primary" disabled={!isFormValid} style={{ opacity: isFormValid ? 1 : 0.5, cursor: isFormValid ? 'pointer' : 'not-allowed' }}>
                 Sign in
               </Button>
             </form>
 
             <Divider text="OR" />
 
-            {/* Social Login Section */}
             <Button 
               type="button" 
               variant="outline" 
