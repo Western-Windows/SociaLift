@@ -70,7 +70,7 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const userId = localStorage.getItem('user_id');
+        const userId = localStorage.getItem('socialift_user_id');
         if (!userId) {
           throw new Error("User not authenticated.");
         }
