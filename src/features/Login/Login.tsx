@@ -37,7 +37,7 @@ export function Login() {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
         body: JSON.stringify({ email, password })
       });
 
@@ -60,7 +60,7 @@ export function Login() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/facebook`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
         body: JSON.stringify({ accessToken, is_signup: false })
       });
 

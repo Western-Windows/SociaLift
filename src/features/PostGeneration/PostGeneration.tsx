@@ -37,7 +37,7 @@ export function PostGeneration({}: PostGenerationProps) {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/posts/generate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
         body: JSON.stringify({
           user_id: parseInt(userId, 10),
           message: inputText,
@@ -71,7 +71,7 @@ export function PostGeneration({}: PostGenerationProps) {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/posts/schedule`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,"ngrok-skip-browser-warning": "true" },
         body: JSON.stringify({
           user_id: parseInt(userId, 10),
           message: generatedText,
