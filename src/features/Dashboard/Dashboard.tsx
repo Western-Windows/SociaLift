@@ -75,7 +75,7 @@ export const Dashboard: React.FC = () => {
           throw new Error("User not authenticated.");
         }
 
-        const response = await fetch(`http://localhost:8000/api/dashboard/insights?user_id=${userId}`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/dashboard/insights?user_id=${userId}`);
         
         if (!response.ok) {
           throw new Error("Failed to fetch dashboard insights");
