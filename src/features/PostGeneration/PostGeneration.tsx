@@ -35,7 +35,7 @@ export function PostGeneration({}: PostGenerationProps) {
 
     setIsGenerating(true);
     try {
-      const response = await fetch("${import.meta.env.VITE_API_BASE_URL}/api/posts/generate", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/posts/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -69,7 +69,7 @@ export function PostGeneration({}: PostGenerationProps) {
 
     setIsScheduling(true);
     try {
-      const response = await fetch("${import.meta.env.VITE_API_BASE_URL}/api/posts/schedule", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/posts/schedule`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
