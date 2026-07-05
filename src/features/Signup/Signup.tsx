@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import { Input, Button } from '../../components/components';
 import logo from '../../assets/SociaLift logo 5.svg';
@@ -11,7 +10,6 @@ import messenger1 from '../../assets/messenger 1.svg';
 import socialmedia1 from '../../assets/social-media-marketing 1.svg';
 
 export function Signup() {
-  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
